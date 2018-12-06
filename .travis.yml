@@ -9,7 +9,7 @@ deploy:
   provider: releases
   api_key:
     secure: Dt26xifQZjxwt34xeRRh2JQwPcpafLY6ZUR7vcVlqzN6k+sicjdtrrMfd4uZ4HWm2GfzXxt5eo3q+PFrufeKaWqgmp+NKPDR1xXclX1WjkhqQmOzhZ7L4IEhBriQL1d/xviE5q3/nnKyPvku/MYhcphatwKXCo8WZErHbozI6Yds/1oQ6uiO012/SAlnmjDbUfWU3lECY8ZHPO19H+kURLX7e0+9voaJofKF1RM7mspe4SWDd976i+nBSOJRdb/Nv6fTCdcy8+0XoBul4rBm+qn/IT7NR9n1HQXWYun9a+AqQlX6+xRYo/14XfH48nRwaAYtjhd6lfrPiZHrZKTDH6iUkBh+F4T5MCl2OBBCKqwbpVOEcNiYRr8P2u1Acbv5UVnA8nmWJmF4W1VhnmsV+UZjcHGgxWtYGm6dIWyjYts2N9PxhgppYvxOmma3LF4gp0kFuueVhEOcT2s/r7ojKXqjIiWqRhmw86sgMe/rzVi93b/SpKF1xRg52+7JDYT/fQI22/vZ/74IW99tmRnoEY4RndMPahspkpWh9cH9k8Zy9Wx4DzIB+9FmpHUDv1bm/83VOkX0JFkmqkrSwbQEnjGuPBsfb3iUEngzX36jWSj/P/Qbb3BLyaoj+XcIdE2SHdg5FtFxmX8DYngboFgcChR0n8gnYkw0jc0xw1ORXus=
-  file: _build/AllegThesis.pdf
+  file: _build/thesis.pdf
   skip_cleanup: true
   on:
     tags: true

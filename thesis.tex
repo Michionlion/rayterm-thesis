@@ -7,62 +7,56 @@
 \NeedsTeXFormat{LaTeX2e}
 \documentclass[12pt]{report}
 
-%   ********************************************************************
-%   * ALL BUT ONE OF THE FOLLOWING 5 LINES SHOULD BE COMMENTED OUT.    *
-%   * (NOT ALL OF THESE OPTIONS HAVE BEEN TESTED IN THIS REVISION!)    *
-%   ********************************************************************
+
+% use varepsilon
+\DeclareSymbolFont{epsilon}{OML}{ntxmi}{m}{it}
+\DeclareMathSymbol{\epsilon}{\mathord}{epsilon}{"0F}
 
 %\usepackage[bottom,single]{gatorthesis} % for final department copy
 \usepackage[debug,draft,single]{gatorthesis} % for student workcopy
 %\usepackage[single]{gatorthesis} % for student
 %\usepackage[debug,draft,nolists,nofront,single]{gatorthesis} % more options
 
-\usepackage{comment}     % provides a way to "comment out" sections in blocks
-\usepackage{amsmath}     % special symbols
-\usepackage{amssymb}     % more special symbols
-\usepackage{epsfig}      % needed for including figures
+\usepackage{comment}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{epsfig}
 \usepackage{url}
 \usepackage{listings}
 \usepackage[figure]{algorithm2e}
 \usepackage{graphicx}
 
-%   ********************************************************************
-%   * OPTIONAL: IF YOU WANT FINE CONTROL OVER HOW LATEX HYPHENATES     *
-%   * CERTAIN WORDS, YOU CAN PUT WORDS IN A "\hyphenation" COMMAND AS  *
-%   * SHOWN IN THE FOLLOWING EXAMPLE. OTHERWISE, YOU MAY JUST IGNORE   *
-%   * THE NEXT COMMAND.                                                *
-%   ********************************************************************
+% custom packages
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{mathtools}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
 
-% EXAMPLE: Don't hyphenate the words "itself" or "linear". Hyphenate
+
+
+% Don't hyphenate the words "itself" or "linear". Hyphenate
 %          "representations" only at the places indicated by the "-":
-
 \hyphenation{itself repre-sen-tations linear}
 
-%   ********************************************************************
-%   * THE FOLLOWING COMMAND HAS BEEN DISABLED--IGNORE.                 *
-%   ********************************************************************
-% The following provides a box to surround the thesis statement
-%\newenvironment{Thesis}%
-%{\begin{Sbox}\begin{minipage}{.95\linewidth}}%
-%{\end{minipage}\end{Sbox}\begin{center}\fbox{\TheSbox}\end{center}}
+% custom commands
+\newcommand{\name}{{\sc RayTerm}}
+\newcommand{\rayorg}{\vec{R_{origin}}}
+\newcommand{\raydir}{\vec{R_{direction}}}
 
-%   ********************************************************************
-%   ********************************************************************
-%   ***  END OF PREAMBLE.                                            ***
-%   ********************************************************************
-%   ********************************************************************
-
-%   ********************************************************************
-%   * DOCUMENT CONTENT STARTS AT THE "\begin{document}" COMMAND:       *
-%   ********************************************************************
+\newcommand\todo[1]{
+\begin{center}
+  \color{red}
+  {\bf TODO}\\
+  #1
+\end{center}
+}
 
 \begin{document}
 
-%   ********************************************************************
-%   * FILL IN THE "{...}" BELOW WITH YOUR INFORMATION.                 *
-%   ********************************************************************
-
-\thesistitle{Title of Your Thesis: Can Be\\Broken Across Lines}
+\thesistitle{{\large \name:}\\{A Ray-Tracing Rendering Engine\\for XTerm-like Terminals}}
 
 \thesisauthor{Saejin Mahlau-Heinert} \thesisadvisor{Dr. Janyl Jumadinova}
 
@@ -70,13 +64,10 @@
 
 \thesisreadera{Dr. Gregory Kapfhammer}
 
-%   ********************************************************************
-%   * YOU MAY IGNORE THE FOLLOWING COMMAND:                            *
-%   ********************************************************************
 \date{\FileRevised \\ $\mbox{}$Revision: 1.8 $\mbox{}$}
 
-\thesismaketitle         % Creates the title page
-\thesismakecopyright     % Creates the copyright page
+\thesismaketitle
+\thesismakecopyright
 
 %   ********************************************************************
 %   * YOU MAY SPLIT YOUR THESIS INTO SEVERAL FILES AND "\include" THEM *
@@ -188,23 +179,12 @@
 %   * THE COMMAND "\nocite{*}" FORCES EVERY ITEM IN YOUR BIBTEX FILE.  *
 %   ********************************************************************
 
-%\nocite{ckm-acmap-99}   % EXAMPLES OF FORCING THINGS TO BE INCLUDED
-%\nocite{Dierckx93}      %   "   "   "
-%\nocite{obs-stcav-92}   %   "   "   "
-%\nocite{bb4471}         %   "   "   "
+\nocite{*}
 
-\nocite{*} % OR DO THIS TO INCLUDE ALL BIBTEX REFERENCES IN THE BIBLIOGRAPHY
-
-%   ********************************************************************
-%   * IF YOU HAVE YOUR BIBLIOGRAPHY IN A SEPARATE ".bib" FILE, HERE IS *
-%   * WHERE YOU MUST SPECIFY IT. IN THIS EXAMPLE, THE BIBLIOGRAPHY     *
-%   * ENTRIES ARE STORED IN A SUBDIRECTORY NAMED "Bibdir" IN A FILE    *
-%   * NAMED "myBibtexDB.bib".                                          *
-%   ********************************************************************
 
 \begin{spacing}{1}
 \bibliographystyle{plain}
-\bibliography{Bibdir/myBibtexDB}    % File type ".bib" is assumed
+\bibliography{AllegThesis}
 \end{spacing}
 
 \typeout{THEPAGE \thepage}
