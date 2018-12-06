@@ -4,7 +4,7 @@ before_install:
   texlive-latex-recommended texlive-pictures texlive-science
 script:
 - mkdir _build
-- latexmk -pdf -outdir=_build AllegThesis.tex
+- latexmk -pdf -outdir=_build thesis.tex
 deploy:
   provider: releases
   api_key:
