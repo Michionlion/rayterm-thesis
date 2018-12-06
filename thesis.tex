@@ -4,7 +4,6 @@
 % G. Kapfhammer, 2017
 % OBC, 2018
 
-\NeedsTeXFormat{LaTeX2e}
 \documentclass[12pt]{report}
 
 
@@ -23,7 +22,6 @@
 \usepackage{epsfig}
 \usepackage{url}
 \usepackage{listings}
-\usepackage[figure]{algorithm2e}
 \usepackage{graphicx}
 
 % custom packages
@@ -109,14 +107,6 @@
 %   ********************************************************************
 %\include{glossary}  % OMIT THIS IF YOU DON'T HAVE A GLOSSARY (FEW PEOPLE DO)
 
-%   ********************************************************************
-%   * THE FOLLOWING "lstset" COMMAND IS ADAPTED FROM ONE FOUND AT:     *
-%   * http://tex.stackexchange.com/questions/115467/                   *
-%   * listings-highlight-java-annotations                              *
-%   *                                                                  *
-%   * SEE CHAPTER 3 AND APPENDIX A                                     *
-%   ********************************************************************
-
 \lstset{
   basicstyle=\footnotesize\tt, % the size of the fonts that are used for the code
   breakatwhitespace=false,     % automatic breaks only happen at whitespace?
@@ -131,31 +121,21 @@
   tabsize=2                    % sets default tabsize to 2 spaces
 }
 
-%   ********************************************************************
-%   * NOW INCLUDE THE CHAPTER FILES; COMMENT OUT ANY YOU DON'T WANT TO *
-%   * PROCESS IN A PARTICULAR LATEX RUN.                               *
-%   *                                                                  *
-%   * INCLUDED FILES ARE ASSUMED TO END IN ".tex", E.G.,               *
-%   * "ch01_overview.tex", "ch02_relatedwork.tex", ETC.                *
-%   ********************************************************************
 
 % ch:intro
-\include{ch01_overview} % Introduction -- of course, you can name it anything!
+\include{ch01_overview}
 
 % ch:relatedwork
-\include{ch02_relatedwork} % Background, literature survey, ...
+\include{ch02_relatedwork}
 
 % ch:method
-\include{ch03_methodofapproach} % Chapter organization is topic-dependent
+\include{ch03_methodofapproach}
 
 %ch:implem
-\include{ch04_implementation} % Chapter organization is topic-dependent
-
-% YOU MAY HAVE SEVERAL MORE CHAPTERS, DEPENDING ON TOPIC AND ORGANIZATION
+\include{ch04_implementation}
 
 %ch:conclusion
-\include{ch05_conclusion} % Conclusion/future work
-
+\include{ch05_conclusion}
 %   ********************************************************************
 %   * IF YOU HAVE ANY APPENDICES (FOR INSTANCE, CODE, DATA, GRAPHS,    *
 %   * OR ANYTHING ELSE THAT DOESN'T "FIT" AS REGULAR CHAPTER CONTENT), *
@@ -170,23 +150,11 @@
 
 \include{appa}  % Appendices go here
 
-%   ********************************************************************
-%   * THE FINAL COMMANDS DEAL WITH BIBLIOGRAPHY/REFERENCES. IF THERE   *
-%   * ARE ANY ITEMS IN YOUR BIBTEX FILE THAT YOU DID NOT REFERENCE IN  *
-%   * YOUR PAPER, BUT THAT YOU WISH TO INCLUDE IN THE BIBLIOGRAPHY,    *
-%   * YOU MAY SPECIFY "\nocite" COMMANDS TO FORCE THEM TO BE INCLUDED. *
-%   *                                                                  *
-%   * THE COMMAND "\nocite{*}" FORCES EVERY ITEM IN YOUR BIBTEX FILE.  *
-%   ********************************************************************
-
+\cite{shirley2016ray}
 \nocite{*}
 
+\pagebreak
 
-\begin{spacing}{1}
 \bibliographystyle{plain}
-\bibliography{AllegThesis}
-\end{spacing}
-
-\typeout{THEPAGE \thepage}
-
+\bibliography{thesis}
 \end{document}
