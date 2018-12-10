@@ -16,6 +16,8 @@ This proposal is one part of enabling that retro-aesthetic to grow into a new an
 With the current generation of powerful CPU and GPU chips, able to execute billions and trillions of calculations per second respectively, it is finally possible to do real-time, close to photorealistic rendering.
 While the goal of \name\ is not high-resolution photorealism, some approximation of photorealism will be obtained, albeit at a lower resolution.
 
+\section{Motivation} \label{ch:intro:motivation}
+
 \section{Overview}
 \label{ch:intro:overview}
 
@@ -175,16 +177,19 @@ This is not a priority, however, since it is not related to the rendering nature
 \section{Background} \label{ch:intro:background}
 
 The background information for the algorithms and techniques used to implement \name\ are discussed in this section.
-In Section~\ref{ch:intro:background:algorithms} we detail most of the mathematics involved.
-Software tools and languages utilized to build \name\ are discussed in Section~\ref{ch:intro:background:software}.
-Finally, hardware interfaces, along with the current landscape of hardware availability, are covered in Section~\ref{ch:intro:background:hardware}.
-Additionally, discussion on parallelization is presented.
+We introduce basic vector mathematics in Section~\ref{ch:intro:background:vector_math}.
+In Section~\ref{ch:intro:background:raytracing_math} we detail most of the mathematics involved.
+In \name, many of these algorithms are implemented behind the scene in APIs like OptiX and CUDA \inlinetodo{update with actual implementation location}.
 
-\subsection{Algorithms and Mathematics}
-\label{ch:intro:background:algorithms}
-The mathematical basis for ray-tracing, which we describe later in this section, relies on an understanding of basic vector mathematics.
-These algorithms will be running millions of times per second in a highly parallelized environment.
-In this context, parallelization is a method of running two or more algorithm simultaneously; therefore even minor optimizations reduce the overall time to render, and are extremely important.
+\subsection{Vector Mathematics}
+\label{ch:intro:background:vector_math}
+
+
+\subsection{Raytracing Mathematics}
+\label{ch:intro:background:raytracing_math}
+The mathematical basis for ray-tracing is heavily dependent on understanding vector mathematics -- Section~\ref{ch:intro:background:vector_math} is a small introduction to such mathematics.
+The algorithms described below are run millions of times per second in a highly parallelized environment.
+In this context, parallelization is a technique for running two or more algorithms simultaneously; therefore even minor optimizations are extremely important since they reduce the overall time to render.
 All of the ray-tracing mathematics described here are synthesized from Peter Shirley's excellent {\it Ray Tracing in One Weekend} \cite{shirley2016ray} and the Morgan Kaufmann textbook {\it Physically Based Rendering: From Theory to Implementation} \cite{pharr2016physically}.
 
 Scenes that can be ray-traced must be a collection of surfaces that are mathematically intersectable with a ray.
@@ -277,11 +282,6 @@ One last addendum to this intersection test is the fact that it can be difficult
 We will therefore simply expect vertices to be specified in counter-clockwise order.
 This is similar to what many other 3D rendering programs assume.
 
-\name's implementation will be hosted on Github, a public platform for projects using the Git version control system.
-Travis CI \cite{travisci}, a continuous integration system, will be used for testing and environment management.
-Documentation was handled by \texttt{doxygen} \cite{van2008doxygen} -- all external facing functions, methods, and classes will have a minimum of a few sentences of documentation.
-More details about the implementation tools are given in Section~\ref{ch:intro:background:languages_and_libraries}.
-
 
 \section{Development Ecosystem}
 \label{ch:intro:background:development_ecosystem}
@@ -336,9 +336,6 @@ Therefore we do not focus on RTX hardware; instead we look to slightly older tec
 
 \todo{future section on what hardware API we actually use}
 \todo{future section on how we delt with GPU vs CPU}
-
-
-\section{Motivation} \label{ch:intro:motivation}
 
 \section{Current State of the Art}\label{ch:intro:stateofart}
 
