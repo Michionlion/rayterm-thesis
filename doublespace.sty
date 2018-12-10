@@ -102,28 +102,30 @@
 %---Reset baselinestretch within footnotes and floats. Originally stolen
 %   from Stanford thesis style.
 
-\def\@xfloat#1[#2]{\ifhmode \@bsphack\@floatpenalty -\@Mii\else
-   \@floatpenalty-\@Miii\fi\def\@captype{#1}\ifinner
-      \@parmoderr\@floatpenalty\z@
-    \else\@next\@currbox\@freelist{\@tempcnta\csname ftype@#1\endcsname
-       \multiply\@tempcnta\@xxxii\advance\@tempcnta\sixt@@n
-       \@tfor \@tempa :=#2\do
-                        {\if\@tempa h\advance\@tempcnta \@ne\fi
-                         \if\@tempa t\advance\@tempcnta \tw@\fi
-                         \if\@tempa b\advance\@tempcnta 4\relax\fi
-                         \if\@tempa p\advance\@tempcnta 8\relax\fi
-         }\global\count\@currbox\@tempcnta}\@fltovf\fi
-    \global\setbox\@currbox\vbox\bgroup 
-    \def\baselinestretch{1}
-    \ifx\undefined\selectfont %then new font selection scheme not invoked-MAR
-    \small\normalsize
-    \else %else new font selection scheme is invoked-MAR
-    \@newbaseline %include new baselinestretch-MAR
-    \fi %-MAR
-    \boxmaxdepth\z@
-    \hsize\columnwidth \@parboxrestore}
+% Commented out so as to allow xfloat to take on default value,
+% to get around bug or unintended side effect of disallowing figures
+% \def\@xfloat#1[#2]{\ifhmode \@bsphack\@floatpenalty -\@Mii\else
+%    \@floatpenalty-\@Miii\fi\def\@captype{#1}\ifinner
+%       \@parmoderr\@floatpenalty\z@
+%     \else\@next\@currbox\@freelist{\@tempcnta\csname ftype@#1\endcsname
+%        \multiply\@tempcnta\@xxxii\advance\@tempcnta\sixt@@n
+%        \@tfor \@tempa :=#2\do
+%                         {\if\@tempa h\advance\@tempcnta \@ne\fi
+%                          \if\@tempa t\advance\@tempcnta \tw@\fi
+%                          \if\@tempa b\advance\@tempcnta 4\relax\fi
+%                          \if\@tempa p\advance\@tempcnta 8\relax\fi
+%          }\global\count\@currbox\@tempcnta}\@fltovf\fi
+%     \global\setbox\@currbox\vbox\bgroup
+%     \def\baselinestretch{1}
+%     \ifx\undefined\selectfont %then new font selection scheme not invoked-MAR
+%     \small\normalsize
+%     \else %else new font selection scheme is invoked-MAR
+%     \@newbaseline %include new baselinestretch-MAR
+%     \fi %-MAR
+%     \boxmaxdepth\z@
+%     \hsize\columnwidth \@parboxrestore}
 \long\def\@footnotetext#1{\insert\footins{\def\baselinestretch{1}\footnotesize
-    \interlinepenalty\interfootnotelinepenalty 
+    \interlinepenalty\interfootnotelinepenalty
     \splittopskip\footnotesep
     \splitmaxdepth \dp\strutbox \floatingpenalty \@MM
     \hsize\columnwidth \@parboxrestore
@@ -189,4 +191,3 @@
    \belowdisplayskip \abovedisplayskip%
    \abovedisplayshortskip \baselinestretch\abovedisplayshortskip%
    \belowdisplayshortskip  \baselinestretch\belowdisplayshortskip}
-
