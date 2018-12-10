@@ -12,7 +12,10 @@ In the early days of computing, real-time rendering engines that powered games l
 The dream of real-time, photorealistic graphics was far, far away.
 However, even then the simple, blocky graphics, easily recognizable shapes, and maze-like environments were fantastic entertainment.
 Today the retro-style of low-resolution graphics, pixel art, and 8-bit color is abound in the gaming space.
-This proposal is one part of enabling that retro-aesthetic to grow into a new and unique style that, while similar to the old classics, can be more engaging and real than they ever were.
+\name\ is one part of enabling that retro-aesthetic to grow into a new and unique style that, while similar to the old classics, can be more engaging and real than they ever were.
+
+This thesis document describes a system that creates a moving image on a terminal screen.
+The system is called \name; it performs real-time updating of the displayed image, generating a window into a three-dimensional world, applicable for a wide variety of programs.
 With the current generation of powerful CPU and GPU chips, able to execute billions and trillions of calculations per second respectively, it is finally possible to do real-time, close to photorealistic rendering.
 While the goal of \name\ is not high-resolution photorealism, some approximation of photorealism will be obtained, albeit at a lower resolution.
 
@@ -21,8 +24,6 @@ While the goal of \name\ is not high-resolution photorealism, some approximation
 \section{Overview}
 \label{ch:intro:overview}
 
-This thesis document describes \name, a system that creates a moving image on a terminal screen.
-This rendering engine performs real-time updating of the displayed image, generating an animation.
 \name\ uses the recursive ray-tracing algorithm, simulating the path of light through the scene -- this is described in more detail in Section~\ref{ch:intro:overview:raytracing}.
 Rendered images are displayed in two different modes; the first uses single half-character pixels, and the second more complex Unicode block characters.
 The mechanics of this image composition method are discussed in Section~\ref{ch:intro:overview:unicode}.
