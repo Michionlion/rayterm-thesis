@@ -15,7 +15,7 @@ Today the retro-style of low-resolution graphics, pixel art, and 8-bit color is 
 \name\ is one part of enabling that retro-aesthetic to grow into a new and unique style that, while similar to the old classics, can be more engaging and real than they ever were.
 
 This thesis document describes a system that creates a moving image on a terminal screen.
-The system is called \name; it performs real-time updating of the displayed image, generating a window into a three-dimensional world, applicable for a wide variety of programs.
+The system is called \name; it performs real-time updating of the displayed image, generating a window into a three-dimensional (3D) world, applicable for a wide variety of programs.
 With the current generation of powerful CPU and GPU chips, able to execute billions and trillions of calculations per second respectively, it is finally possible to do real-time, close to photorealistic rendering.
 While the goal of \name\ is not high-resolution photorealism, some approximation of photorealism will be obtained, albeit at a lower resolution.
 
@@ -34,7 +34,7 @@ More details on this process are given in Section~\ref{ch:intro:overview:ncurses
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.8\textwidth]{resources/checker_metal}
-  \caption{Example of proposed terminal output}
+  \caption{Example of terminal output}
   \label{fig:checker_metal}
 \end{figure}
 
@@ -43,7 +43,7 @@ More details on this process are given in Section~\ref{ch:intro:overview:ncurses
 
 A rendering engine is an algorithm that takes a scene -- a description of some collection of objects -- and generates an image or visual representation of that scene.
 There are many different algorithms that accomplish this goal.
-In this proposal, the recursive ray-tracing algorithm first pioneered by Turner Whitted in his ground-breaking paper {\it An Improved Illumination Model for Shaded Display} \cite{whitted1980improved}, will be discussed and utilized.
+In this thesis the recursive ray-tracing algorithm first pioneered by Turner Whitted in his ground-breaking paper {\it An Improved Illumination Model for Shaded Display} \cite{whitted1980improved} was utilized.
 Ray-tracing was one of the first algorithms developed in the field of computer graphics, and although there have been some improvements since then, the idea behind the algorithm has maintained its original simplicity.
 
 Ray-tracing has been used as the renderer of choice for photorealistic images, because with only a few modifications to Whitted's original algorithm, it can generate fantastic images.
@@ -86,15 +86,15 @@ If solved for every point in the scene, the rendering equation could generate a 
 This is because the rendering equation contains an integral over all incoming light which must be solved through numerical analysis.
 Ray-tracing engines that do this are known as {\it path-tracers} and are the most photorealistic rendering engines invented.
 
-\name\ will not use a path-tracer -- such algorithms are still many times too slow for most real-time rendering situations.
-Instead, the rendering equation will be solved by sampling the incoming light with rays.
+\name\ does not use a path-tracer -- such algorithms are still many times too slow for most real-time rendering situations.
+Instead, the rendering equation is solved by sampling the incoming light with rays.
 This is known as recursive ray-tracing, since it starts with a single ray that splits every time it encounters a surface.
 The eventual goal of the recursive ray-tracing algorithm is to create a tree of rays for each {\it fragment} to render.
 A fragment is either a pixel or some sub-pixel -- many systems will use four or more fragments per pixel to get better anti-aliasing and more accurate results.
 Each ray contains some color that represents the color of the light in that ray.
 When a ray hits an object, it is {\it scattered} by the {\it material} of the object, splitting and generating new rays.
 These rays are biased towards directions that contain lots of incoming light -- such as towards a point light source.
-The specific implementation of recursive ray-tracing that \name\ will use will only scatter into a set number of rays at each intersection point: one ray toward each light source, along with reflection and refraction rays towards the relevant directions.
+The specific implementation of recursive ray-tracing that \name\ uses only scatters into a set number of rays at each intersection point: one ray toward each light source, along with reflection and refraction rays towards the relevant directions \inlinetodo{update with relevant scatter numbers}.
 
 The base of each generated tree is an {\it eye-ray} -- a ray with its origin at the fragment location on the camera plane.
 The eye-ray's color is the color that will be rendered for that fragment.
@@ -107,10 +107,9 @@ This is done recursively to fully render the scene.
 \label{ch:intro:overview:unicode}
 
 Unicode is a character standard that allows anyone to reference many thousands of characters to compose text, no matter the environment around the text \cite{unicode}.
-Some critical characters that \name\ will use are known as the {\it block characters} -- they are characters \texttt{U+2580} -- \texttt{U+259F}.
+Some critical characters that \name\ uses are known as the {\it block characters} -- they are characters \texttt{U+2580} -- \texttt{U+259F}.
 Relevant characters are shown in Figure~\ref{fig:unicode_characters}.
-Contingent on the quality of the output using only block characters, additional sets could be used, such as triangles and lines.
-The core of image composition using Unicode is an algorithm coloring the characters and the background -- \name\ will use this algorithm on every character of the output to both determine the character to display, and the foreground and background colors for that character.
+The core of image composition using Unicode is an algorithm coloring the characters and the background -- \name\ uses this algorithm on every character of the output to both determine the character to display, and the foreground and background colors for that character.
 The foreground colors the character itself, whereas the background provides a relief color.
 This allows each {\it character~pixel} to represent a hard gradient.
 
@@ -132,18 +131,19 @@ This allows each {\it character~pixel} to represent a hard gradient.
   \label{fig:unicode_characters}
 \end{figure}
 
-There are two image modes that will be available for use in \name.
+There are two image modes available for use in \name.
 The first is pure {\it pixel mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used.
 Since mono-spaced character output (such as in a terminal) is twice as tall as it is wide, the half-block can split a single character into two pixels that are colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
-This would mean that a typical 85 by 30 character terminal would result in a screen space of 85 by 60 pixels.
+This means that a typical 85 by 30 character terminal results in a screen space of 85 by 60 pixels.
 This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel is required.
 
 The second image mode is considerably more complicated and slower, as it uses significantly more rays per character in order to determine what Unicode block character most fits the desired output.
 On the other hand, it allows a much higher perceived resolution, since the characters used have smaller footprints of down to an eigth of a character in width or length.
-The differences between these two modes are highlighted in Figure~\ref{fig:unicode_mode_comparison1} and~\ref{fig:unicode_mode_comparison2}.
+The differences between these two modes are highlighted in Figure~\ref{fig:unicode_mode_comparison1} and~\ref{fig:unicode_mode_comparison2} \inlinetodo{update with actual output}.
 It can be seen that the first image mode, {\it pixel mode}, shows a rather fuzzy definition of the main large sphere.
 However, in the second image mode, {\it character mode}, the sphere and the reflections seen in it are much more defined.
-The performance impact of both modes is another factor that must be assessed when making implementation decisions for \name.
+The performance impact of both modes is another factor that was assessed when making implementation decisions for \name; it informed how much actual definition was added by the second rendering mode.
+With the current implementation, there is around a 4x decrease in performance \inlinetodo{what is the actual decrease in performance}.
 
 \begin{figure}[htb]
   \centering
@@ -165,26 +165,90 @@ The performance impact of both modes is another factor that must be assessed whe
 \subsection{Terminal Output using \texttt{ncurses}}
 \label{ch:intro:overview:ncurses}
 
-Once an image is generated, \name\ must somehow display that image in a terminal with no surrounding prompt or other formatting -- just a simple {\it character field}.
-To do this, we will use \texttt{ncurses}, a C library that abstracts implementation details of the terminal to enable full-window 24-bit color character output.
-Using \texttt{ncurses}, the terminal window will be divided into two ``panels'', a main panel for the actual image output -- updated 30 to 60 times per second -- and an info panel to render information such as frames per second and logging information.
-With this dependency, \name\ can be used on all terminals that support \texttt{ncurses} -- generally, any XTerm-like terminal will work, as long as it supports a terminal information database: either \texttt{termcap} or \texttt{terminfo} will work.
+Output in \name\ is shown in a terminal window.
+A terminal is a specific kind of interface for a computer that uses text-based commands and feedback, as opposed to a Graphical User Interface (GUI).
+It descends from the old days of mainframe computers, where the actual computer was not under a desk -- instead, users would connect over a network to the main computer, using an actual terminal machine.
+Today, the terminals most people use are actually ``terminal emulators'', because they simply emulate these old mainframe terminal machines.
+These terminal emulators are often simply programs that run in an existing graphical desktop environment, providing a text-based interface to the operating system.
 
-A possible limitation to \texttt{ncurses} is keyboard input handling -- there is no mechanism to get events on an up or down movement of a key, as is possible in some other libraries.
-Therefore, research will need to be done on possible alternatives for the input aspect of the engine.
-This is not a priority, however, since it is not related to the rendering nature of \name and instead only helps with demonstrations of its capabilities.
+Once an image is generated, \name\ must somehow display that image in a terminal with no surrounding prompt or other formatting -- as a simple {\it character field}.
+To do this, we use \texttt{ncurses} \cite{ncursesLibrary}, a C library that abstracts implementation details of the terminal to enable full-window 24-bit color character output.
+Using \texttt{ncurses}, the terminal window is divided into two ``panels'', a main panel for the actual image output -- updated 30 times or more per second -- and an info panel to render information such as frames per second and logging information.
+Additionally, extra terminal output such as the command prompt or other character output is disabled.
 
+The main problems that \texttt{ncurses} solves are ones which need to use terminal escape codes -- short character sequences that tell a terminal emulator to change some information or method of display.
+These escape codes will tell the terminal how to display text, changing the formatting, positioning, or color.
+\texttt{ncurses} also disables character ``echoing'', the display of characters that are typed by the user.
+Because of this dependency on \texttt{ncurses}, \name\ can be used only with terminals that support it -- generally, any XTerm-like terminal will work, as long as it supports a terminal information database: either \texttt{termcap} or \texttt{terminfo} \cite{ncursesLibrary}.
 
 \section{Background} \label{ch:intro:background}
 
-The background information for the algorithms and techniques used to implement \name\ are discussed in this section.
+The background information for the algorithms and techniques used to implement \name\ is discussed in this section.
 We introduce basic vector mathematics in Section~\ref{ch:intro:background:vector_math}.
-In Section~\ref{ch:intro:background:raytracing_math} we detail most of the mathematics involved.
+In Section~\ref{ch:intro:background:raytracing_math} we detail most of the specific mathematical algorithms involved.
 In \name, many of these algorithms are implemented behind the scene in APIs like OptiX and CUDA \inlinetodo{update with actual implementation location}.
 
 \subsection{Vector Mathematics}
 \label{ch:intro:background:vector_math}
 
+Vector mathematics is a way to represent operations on $n$-dimensional constructions.
+The main unit of computation is a vector -- essentially, a list of $n$ numbers.
+A vector is denoted with an arrow over its name: $\vec{v} = (-2, 3, 1)$ is a vector.
+A specific value in a vector is referenced by either its zero-based index, $\vec{v}_{0}$ is the first value in $\vec{v}$ (note the arrow is above $v$ only, and not the index), or its dimension -- $\vec{v}_x$ is the same value.
+The dimensions are by convention $x$, $y$, $z$, and $w$.
+In \name\ however, we generally work only with vectors where $n = 3$ (only in $x$, $y$, and $z$), and each vector represents either a direction or a position in three-dimensional space.
+Vectors are related to both multivariable calculus and linear algebra.
+
+\littlesection{Vector Operations}
+Each set of all possible $n$-dimensional vectors are closed under the basic arithmatic operations.
+Addition, subtraction, along with some specialized versions of multiplication, are all defined.
+Addition and subtraction are calculated on a component-wise basis -- for instance, in three dimensions addition and subtraction can be calculated using Formulas \ref{equation:vector_addition} and \ref{equation:vector_subtraction}.
+
+\begin{equation}
+  \label{equation:vector_addition}
+  \vec{u} + \vec{v} = (\vec{u}_x + \vec{v}_x, \vec{u}_y + \vec{v}_y, \vec{u}_z + \vec{v}_z)
+\end{equation}
+
+\begin{equation}
+  \label{equation:vector_subtraction}
+  \vec{u} - \vec{v} = (\vec{u}_x - \vec{v}_x, \vec{u}_y - \vec{v}_y, \vec{u}_z - \vec{v}_z)
+\end{equation}
+
+There are three other operations, each based on numerical multiplication.
+The first is simple scalar multiplication.
+A scalar in this context is just a regular number, such as $2$.
+Scalar multiplication is defined by Formula~\ref{equation:vector_scalar_multiplication}, and is also a closed operation for $n$-dimensional vectors.
+Then we have the cross product.
+This is a specialized multiplication operation only applicable with $n = 3$ that results in a vector that is perpendicular to the plane defined by its operands.
+The cross product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \times \vec{v}$, and can be calculated with Formula~\ref{equation:vector_cross_product}.
+Finally, the dot product is a third multiplication operation that is applicable to any $n$-dimensional vector.
+However, the result of the dot product operation is a simple scalar, not a new vector.
+The dot product only makes semantic sense when talking about direction vectors: it gives a sense of how much two vectors are ``aligned'' with each other.
+It is often used to determine if two vectors are at right angles with each other, since in that case the dot product would be $0$.
+The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \cdot \vec{v}$, and can be found using Formula~\ref{equation:vector_dot_product}.
+
+\begin{equation}
+  \label{equation:vector_scalar_multiplication}
+  k\vec{v} = (k\vec{v}_x, k\vec{v}_y, k\vec{v}_z)
+\end{equation}
+
+\begin{equation}
+  \label{equation:vector_cross_product}
+  \vec{u} \times \vec{v} = (\vec{u}_y\vec{v}_z - \vec{u}_z\vec{v}_y, \vec{u}_z\vec{v}_x - \vec{u}_x\vec{v}_z, \vec{u}_x\vec{v}_y - \vec{u}_y\vec{v}_x)
+\end{equation}
+
+\begin{equation}
+  \label{equation:vector_dot_product}
+  \vec{u} \cdot \vec{v} = \vec{u}_x\vec{v}_x + \vec{u}_y\vec{v}_y + \vec{u}_z\vec{v}_z
+\end{equation}
+
+\littlesection{Vector Equations}
+
+With the operations described above, we can write equations using vectors.
+This greatly simplifies the description of the mathematics in Section~\ref{ch:intro:background:raytracing_math}, since without vector mathematics every operation would need to be notated in cartesian coordinates.
+It should be noted that exponentiation for vectors is calculated on a component-wise basis -- for example, $\vec{(1, 4, 2)}$ squared is $\vec{(1, 16, 4)}$.
+This is by convention in graphics programming, since it provides an easy description of such an operation.
+This is not, however, always the case in other mathematical applications of vectors.
 
 \subsection{Raytracing Mathematics}
 \label{ch:intro:background:raytracing_math}
