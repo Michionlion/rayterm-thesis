@@ -8,7 +8,7 @@
 \chapter{Introduction}
 \label{ch:intro}
 
-In the early days of computing, real-time rendering engines that powered games like {\it Doom} or {\it NetHack} had to run on extremely underpowered hardware and render on low-resolution screens.
+In the early days of computing, real-time rendering engines that powered games like ``Doom'' or ``NetHack'' had to run on extremely underpowered hardware and render on low-resolution screens.
 The dream of real-time, photorealistic graphics was far, far away.
 However, even then the simple, blocky graphics, easily recognizable shapes, and maze-like environments were fantastic entertainment.
 Today the retro-style of low-resolution graphics, pixel art, and 8-bit color is abound in the gaming space.
@@ -52,7 +52,7 @@ The mechanics of these image composition methods are discussed in Section~\ref{c
 
 A rendering engine is an algorithm that takes a scene -- a description of some collection of objects -- and generates an image or visual representation of that scene.
 There are many different algorithms that accomplish this goal.
-\name\ utilizes the recursive ray-tracing algorithm first pioneered by Turner Whitted in his ground-breaking paper {\it An Improved Illumination Model for Shaded Display} \cite{whitted1980improved}.
+\name\ utilizes the recursive ray-tracing algorithm first pioneered by Turner Whitted in his ground-breaking paper ``An Improved Illumination Model for Shaded Display'' \cite{whitted1980improved}.
 Ray-tracing was one of the first algorithms developed in the field of computer graphics, and although there have been some improvements since then, the idea behind the algorithm has maintained its original simplicity.
 
 Ray-tracing has been used as the rendering algorithm of choice for photorealistic scenes, because with only a few modifications to Whitted's original algorithm, it can generate fantastic images.
@@ -189,13 +189,13 @@ In \name, many of these algorithms are implemented behind the scene in APIs like
 \subsection{Vector Mathematics}
 \label{ch:intro:background:vector_math}
 
-Vector mathematics is a way to represent operations on $n$-dimensional constructions.
+Vector mathematics are a way to represent operations on $n$-dimensional constructions.
 The main unit of computation is a vector -- essentially, a list of $n$ numbers.
 A vector is denoted with an arrow over its name: $\vec{v} = (-2, 3, 1)$ is a vector.
 A specific value in a vector is referenced by either its zero-based index, $\vec{v}_{0}$ is the first value in $\vec{v}$ (note the arrow is above $v$ only, and not the index), or its dimension -- $\vec{v}_x$ is the same value.
 The dimensions are by convention $x$, $y$, $z$, and $w$.
 In \name\ however, we generally work only with vectors where $n = 3$ (only in $x$, $y$, and $z$), and each vector represents either a direction or a position in three-dimensional space.
-Vectors are related to both multivariable calculus and linear algebra.
+Vectors are related to both multivariable calculus and linear algebra -- an expansion on this basic explanation can be found in virtually any textbook on those topics.
 
 \littlesection{Vector Operations}
 Each set of all possible $n$-dimensional vectors are closed under the basic arithmatic operations.
@@ -216,24 +216,26 @@ There are three other operations, each based on numerical multiplication.
 The first is simple scalar multiplication.
 A scalar in this context is just a regular number, such as $2$.
 Scalar multiplication is defined by Formula~\ref{equation:vector_scalar_multiplication}, and is also a closed operation for $n$-dimensional vectors.
-Then we have the cross product.
-This is a specialized multiplication operation only applicable with $n = 3$ that results in a vector that is perpendicular to the plane defined by its operands.
-The cross product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \times \vec{v}$, and can be calculated with Formula~\ref{equation:vector_cross_product}.
-Finally, the dot product is a third multiplication operation that is applicable to any $n$-dimensional vector.
-However, the result of the dot product operation is a simple scalar, not a new vector.
-The dot product only makes semantic sense when talking about direction vectors: it gives a sense of how much two vectors are ``aligned'' with each other.
-It is often used to determine if two vectors are at right angles with each other, since in that case the dot product would be $0$.
-The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \cdot \vec{v}$, and can be found using Formula~\ref{equation:vector_dot_product}.
 
 \begin{equation}
   \label{equation:vector_scalar_multiplication}
   k\vec{v} = (k\vec{v}_x, k\vec{v}_y, k\vec{v}_z)
 \end{equation}
 
+Then we have the cross product.
+This is a specialized multiplication operation only applicable when $n = 3$ that results in a vector that is perpendicular to the plane defined by its operands.
+The cross product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \times \vec{v}$, and can be calculated with Formula~\ref{equation:vector_cross_product}.
+
 \begin{equation}
   \label{equation:vector_cross_product}
   \vec{u} \times \vec{v} = (\vec{u}_y\vec{v}_z - \vec{u}_z\vec{v}_y, \vec{u}_z\vec{v}_x - \vec{u}_x\vec{v}_z, \vec{u}_x\vec{v}_y - \vec{u}_y\vec{v}_x)
 \end{equation}
+
+Finally, the dot product is a third multiplication operation that is applicable to any $n$-dimensional vector.
+However, the result of the dot product operation is a simple scalar, not a new vector.
+The dot product only makes semantic sense when talking about direction vectors: it gives a sense of how much two vectors are ``aligned'' with each other.
+It is often used to determine if two vectors are at right angles with each other, since in that case the dot product would be $0$.
+The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \cdot \vec{v}$, and can be found using Formula~\ref{equation:vector_dot_product}.
 
 \begin{equation}
   \label{equation:vector_dot_product}
@@ -265,7 +267,7 @@ This is called the {\it parametric~form} of a ray.
 
 With this concept, algorithms can be described to model the interaction between rays and other surfaces. The algorithms discussed below are run millions of times per second in a highly parallelized environment.
 In this context, parallelization is a technique for running two or more algorithms simultaneously; therefore even minor optimizations are extremely important since they reduce the overall time to render.
-All of the ray-tracing mathematics described here are synthesized from Peter Shirley's excellent {\it Ray Tracing in One Weekend} \cite{shirley2016ray} and the Morgan Kaufmann textbook {\it Physically Based Rendering: From Theory to Implementation} \cite{pharr2016physically}.
+All of the ray-tracing mathematics described here are synthesized from Peter Shirley's excellent ``Ray Tracing in One Weekend'' \cite{shirley2016ray} and the Morgan Kaufmann textbook ``Physically Based Rendering: From Theory to Implementation'' \cite{pharr2016physically}.
 
 Scenes that can be ray-traced must be a collection of surfaces that are mathematically intersectable with a ray.
 Any surface that can be defined by a implicit surface definition function, in the form of Function~\ref{equation:surface_equation}, is intersectable with a ray \cite{pharr2016physically}.
@@ -293,7 +295,7 @@ In fact, during feasibility testing much of the math described in this section w
 
 The surface definition function of a sphere is Function~\ref{equation:sphere_surface}, with $S$ representing the sphere.
 The intersection point between a ray and a sphere is given by solving Equation~\ref{equation:ray_sphere_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray}.
-Both of these equations are directly adapted from {\it Ray Tracing in One Weekend} \cite{shirley2016ray}.
+Both of these equations are directly adapted from ``Ray Tracing in One Weekend'' \cite{shirley2016ray}.
 Notice that Equation~\ref{equation:ray_sphere_intersection} is quadratic, and the number (and values) of the roots give us the $t$ we want to use.
 The smallest positive root corresponds to the point on the ray which first intersects the sphere.
 If there are no real roots, then the ray does not intersect the sphere.
@@ -315,7 +317,7 @@ Luckily, ray-plane intersection testing is fairly cheap and straight forward.
 The surface definition function of a plane is Function~\ref{equation:plane_surface}, with $P$ representing the plane.
 The plane's {\it offset} is a point on the plane, and the plane's {\it normal} is a vector perpendicular to the plane.
 The intersection point between a ray and a plane is given by solving Equation~\ref{equation:ray_plane_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray}.
-These equations were derived from basic vector math, along with guidance from {\it Physically Based Rendering} \cite{pharr2016physically}.
+These equations were derived from basic vector math, along with guidance from ``Physically Based Rendering'' \cite{pharr2016physically}.
 
 \begin{equation}
   \label{equation:plane_surface}
@@ -331,10 +333,10 @@ These equations were derived from basic vector math, along with guidance from {\
 
 The method for testing intersection with triangles is a bit more complicated than the other tests we've covered so far.
 The mathematics for this section are again derived from vector mathematics.
-However, Jean-Colas Prunier's {\it Scratchapixel}, an excellent and accessible online resource for 3D rendering \cite{prunier2017triangle}, was also an indispensable guide in facilitating understanding along the way.
+However, Jean-Colas Prunier's ``Scratchapixel,'' an excellent and accessible online resource for 3D rendering \cite{prunier2017triangle}, was also an indispensable guide in facilitating understanding along the way.
 First, intersection is tested with the plane the triangle lies in -- this results in a ray-plane intersection point $\vec{Q}$, or no intersection.
 Then, if there was an intersection, another test must be performed to detect if $\vec{Q}$ is inside the triangle.
-We do this using the ``inside-outside'' method (as suggested by {\it Scratchapixel}): test if $\vec{Q}$ is on the left side of each edge.
+We do this using the ``inside-outside'' method (as suggested by ``Scratchapixel''): test if $\vec{Q}$ is on the left side of each edge.
 
 To conduct the left-side test, we label each triangle vertex $\vec{V_i}$, with $i$ increasing in the counter-clockwise direction.
 We then have three triangle vertices: $\vec{V_0}$, $\vec{V_1}$, and $\vec{V_2}$.
