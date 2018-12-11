@@ -69,7 +69,6 @@ Section~\ref{ch:intro:background:hardware} provides more details on these advanc
   \label{fig:povray_render}
 \end{figure}
 
-
 Ray-tracing revolves around the idea of {\it rays}, a mathematical construct that represents an infinite line emanating in some direction from a starting point in three-dimensional space.
 In \name\, rays are used to simulate the path that light takes as it travels around the scene.
 When a ray intersects with an object in the scene various interactions take place that simulate how light may travel under different conditions.
@@ -179,7 +178,8 @@ With the current implementation, there is around a four fold decrease in perform
   \label{fig:unicode_mode_comparison}
 \end{figure}
 
-\section{Background} \label{ch:intro:background}
+\section{Background}
+\label{ch:intro:background}
 
 The background information for the algorithms and techniques used to implement \name\ is discussed in this section.
 We introduce basic vector mathematics in Section~\ref{ch:intro:background:vector_math}.
@@ -195,9 +195,10 @@ A vector is denoted with an arrow over its name: $\vec{v} = (-2, 3, 1)$ is a vec
 A specific value in a vector is referenced by either its zero-based index, $\vec{v}_{0}$ is the first value in $\vec{v}$ (note the arrow is above $v$ only, and not the index), or its dimension -- $\vec{v}_x$ is the same value.
 The dimensions are by convention $x$, $y$, $z$, and $w$.
 In \name\ however, we generally work only with vectors where $n = 3$ (only in $x$, $y$, and $z$), and each vector represents either a direction or a position in three-dimensional space.
-Vectors are related to both multivariable calculus and linear algebra -- an expansion on this basic explanation can be found in virtually any textbook on those topics.
+Vectors are related to both multivariable calculus and linear algebra -- an expansion on this basic explanation can be found in virtually any textbook on these topics.
 
 \littlesection{Vector Operations}
+
 Each set of all possible $n$-dimensional vectors are closed under the basic arithmatic operations.
 Addition, subtraction, along with some specialized versions of multiplication, are all defined.
 Addition and subtraction are calculated on a component-wise basis -- for instance, in three dimensions addition and subtraction can be calculated using Formulas \ref{equation:vector_addition} and \ref{equation:vector_subtraction}.
@@ -258,20 +259,20 @@ To use the right-hand rule, point your right hand's index finger in the directio
 Your thumb will point in the direction of the resulting cross product.
 Note that this causes the order of operands to matter -- a different order will produce the opposite direction.
 
-Second, {\it dotting} two vectors multiplies their lengths while keeping in mind their direction -- two vectors perfectly parrallel to each other would have a dot product that was simply their lengths multiplied.
-However, two vectors perfectly perpendicular to each other have a dot product of zero.
-There is actually a second definition of the dot product that can be a little easier to understand with this context.
-Formula~\ref{equation:vector_dot_product_cos} is this definition.
-In this formula, $\theta$ is the angle between the two operands, and $|\vec{w}|$ is the length of $\vec{w}$.
-
 \begin{equation}
   \label{equation:vector_dot_product_cos}
   \vec{u} \bullet \vec{v} = |\vec{u}| \cdot |\vec{v}| \cdot cos(\theta)
 \end{equation}
 
+Second, {\it dotting} two vectors multiplies their lengths while keeping in mind their direction -- two vectors perfectly parrallel to each other would have a dot product that was simply their lengths multiplied.
+However, two vectors perfectly perpendicular to each other have a dot product of zero.
+There is actually a second definition of the dot product (Formula~\ref{equation:vector_dot_product_cos}) that can be a little easier to understand with this context.
+In this formula, $\theta$ is the angle between the two operands, and $|\vec{w}|$ is the length of $\vec{w}$.
+
 \subsection{Ray-Tracing Mathematics}
 \label{ch:intro:background:raytracing_math}
-The mathematical basis for ray-tracing is heavily dependent on understanding vector mathematics -- Section~\ref{ch:intro:background:vector_math} is a short introduction to such mathematics.
+
+The mathematical basis for ray-tracing is heavily dependent on understanding vector mathematics -- Section~\ref{ch:intro:background:vector_math} is a short introduction.
 The basic mathematical construct used in ray-tracing is called a {\it ray}. Rays are defined by two vectors: an origin point, referred to as $\rayorg$ for some ray $R$, and a direction, referenced as $\raydir$.
 These two vectors together represent a line of infinite length that starts at the origin and projects along the direction.
 An important addition to the concept of rays is a point along a ray -- this can be defined by using a third variable, $t$, to represent how far along the ray the point is located.
@@ -283,16 +284,17 @@ Assuming $\raydir$ is a unit vector, this is the {\it parametric~form} of a ray.
   \vec{point} = \rayorg + t\raydir
 \end{equation}
 
-
-With this concept, algorithms can be described to model the interaction between rays and other surfaces. The algorithms discussed below are run millions of times per second in a highly parallelized environment.
-In this context, parallelization is a technique for running two or more algorithms simultaneously; therefore even minor optimizations are extremely important since they reduce the overall time to render.
+With this concept, algorithms can be described to model the interaction between rays and other surfaces. The algorithms discussed are run millions of times per second in a highly parallelized environment.
+Parallelization is a technique for running two or more algorithms simultaneously; therefore even minor optimizations are extremely important since they reduce the overall time to render.
 All of the ray-tracing mathematics described here are synthesized from Peter Shirley's excellent ``Ray Tracing in One Weekend'' \cite{shirley2016ray} and the Morgan Kaufmann textbook ``Physically Based Rendering: From Theory to Implementation'' \cite{pharr2016physically}.
+Some smaller sections also benefit from ideas in Jean-Colas Prunier's ``Scratchapixel'' \cite{prunier2017triangle}.
 
 Scenes that can be ray-traced must be a collection of surfaces that are mathematically intersectable with a ray.
 Any surface that can be defined by a implicit surface definition function, in the form of Function~\ref{equation:surface_equation}, is intersectable with a ray \cite{pharr2016physically}.
 In Function~\ref{equation:surface_equation} and for the rest of this section, $\vec{p}$ is a vector representing a point in three-dimensional space.
 The implicit surface definition function must have the property that if and only if $f(\vec{p})$ is $0$, then $\vec{p}$ is on the defined surface.
 The point of intersection between a ray and a surface defined in this way can be found by solving Equation~\ref{equation:ray_surface_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray} to calculate the coordinates of that point on the ray.
+We essentially ask, ``What points along this ray are on the defined surface?'' by passing in all possible points on the ray, parameterized by $t$.
 
 \begin{equation}
   \label{equation:surface_equation}
@@ -304,11 +306,9 @@ The point of intersection between a ray and a surface defined in this way can be
   f(\rayorg + t\raydir) = 0
 \end{equation}
 
-In \name, the only surfaces that are supported are spheres, triangles, and infinite planes, since their surface definition functions are mathematically simple.
-If there is additional development time and resources available, other shapes such as quads, arbitrary polygons, and cubes may be considered.
-This may not be a huge development effort, as the algorithm discussed for triangle intersection testing is applicable to any convex polygon.
-A sphere is the simplest three-dimensional object to calculate ray intersection with, and therefore will be the first implemented for \name.
-In fact, during feasibility testing much of the math described in this section was implemented in the Go programming language.
+In \name, the only surfaces that are supported are spheres, triangles, and infinite planes, since their surface definition functions are mathematically simple \inlinetodo{update for actual supported surfaces}.
+A sphere is the simplest three-dimensional object to calculate ray intersection with, and therefore was the first implemented for \name.
+In fact, during feasibility testing much of the math described in this section was implemented by hand in the Go programming language, instead of through existing APIs.
 
 \littlesection{Ray-Sphere Intersection}
 
@@ -357,7 +357,7 @@ First, intersection is tested with the plane the triangle lies in -- this result
 Then, if there was an intersection, another test must be performed to detect if $\vec{Q}$ is inside the triangle.
 We do this using the ``inside-outside'' method (as suggested by ``Scratchapixel''): test if $\vec{Q}$ is on the left side of each edge.
 
-To conduct the left-side test, we label each triangle vertex $\vec{V_i}$, with $i$ increasing in the counter-clockwise direction.
+To conduct the test, we label each triangle vertex $\vec{V_i}$, with $i$ increasing in the counter-clockwise direction.
 We then have three triangle vertices: $\vec{V_0}$, $\vec{V_1}$, and $\vec{V_2}$.
 We can now use Function~\ref{equation:left_edge_test}: if $f(i) > 0$ for each $i$, then $\vec{Q}$ is inside the triangle.
 Otherwise, $\vec{Q}$ is outside the triangle.
@@ -375,14 +375,15 @@ Thus, if we cross them, the vector produced will either be away from the plane i
 According to the right hand rule, if the crossed vector is in the same direction as $\vec{P_{normal}}$, then the vector pointing to $\vec{Q}$ is ``to the left'' of the vector pointing towards $\vec{V_{i+1}}$.
 We can then calculate the dot product between $\vec{P_{normal}}$ and the crossed vector -- if it is positive then the crossed vector is in the same direction as the normal, and therefore $\vec{Q}$ is to the left of the edge.
 One last addendum to this intersection test is the fact that it can be difficult to perform the counter-clockwise numbering of vertices.
-We will therefore simply expect vertices to be specified in counter-clockwise order.
-This is similar to what many other 3D rendering programs assume.
+We therefore simply expect vertices to be specified in counter-clockwise order.
+This is similar to what many other 3D rendering algorithms assume.
 
 
 \section{Development Ecosystem}
 \label{ch:intro:background:development_ecosystem}
 
-\name's development relied on many other systems -- the actual implementation code is hosted on Github, a public platform for projects using the Git version control system.
+\name's development relied on many other systems.
+The actual implementation code is hosted on Github, a public platform for projects using the Git version control system.
 A continuous integration system called Travis CI \cite{travisci} was used for testing and environment management.
 Documentation was handled by \texttt{doxygen} \cite{van2008doxygen} -- all external facing functions, methods, and classes have a minimum of a few sentences of documentation.
 More details about the implementation tools are given in Section~\ref{ch:intro:background:languages_and_libraries}; testing hardware and low-level APIs are discussed in Section~\ref{ch:intro:background:hardware}.
@@ -392,7 +393,7 @@ More details about the implementation tools are given in Section~\ref{ch:intro:b
 
 With a large project such as \name, there are certain choices that must be made from a software development perspective.
 These choices inform how the project is modified, built, and eventually executed.
-In the case of \name, we used the C++ language \cite{cpp14standard} for main development, and Gradle \cite{gradle} as the build system.
+In the case of \name, we used the C++ language \cite{cpp14standard} for main development, and Gradle \cite{gradle} as a build system.
 
 \littlesection{Implementation Language}
 
@@ -401,10 +402,10 @@ First, the language has a huge ecosystem of low-level tools, with interfaces to 
 This ensures that no matter the need, there was most likely a library out there that could fill that need.
 Secondly, C++ allows low-level C-like programming while keeping abstractions such as objects available.
 Lastly, C++ is a reasonably fast language: with no virtual machine, unlike Java or Kotlin, garbage collection is not a burden.
-Decades of work have gone into compiler toolchains such as \texttt{g++} and \texttt{clang}, enabling optimizations that would not be possible for newer languages.
+Decades of work have gone into compiler toolchains such as \texttt{g++} and \texttt{clang}, enabling automatic optimizations that would not be possible for newer languages.
 
 \name\ attempts to keep most of its implementation to a C-compatible level, using classes and greater abstractions only as necessary.
-This ensures that overhead is minimal, as well as guaranteeing readability for the eventual open source release.
+This ensures that overhead is minimal, as well as guaranteeing readability for the open source release.
 Advanced features of C++ such as templating are avoided so as to keep the knowledge entry barrier low.
 Finally, all code in \name's implementation conforms to the Google C++ style guide \cite{googleStyleGuide}.
 
@@ -412,38 +413,34 @@ Finally, all code in \name's implementation conforms to the Google C++ style gui
 
 Complex projects can be a nightmare to manage, especially when there are multiple contributors.
 Build systems are an important tool that simplify this headache.
-An opinionated build system such as Gradle also specifies sensible defaults for most situations, allowing minimal require configuration.
+An opinionated build system such as Gradle also specifies sensible defaults for most situations, requiring minimal starting configuration.
 This is why Gradle was chosen as the build system for \name.
 Gradle was used to compile C++ code into an executable for distribution or testing using its Software Model feature.
 This feature allows the specification of executables and interdependent components, with sensible default source code and binary locations.
 Gradle efficiently manages long linking or dependency lists, without resorting to macro-infested and variable-filled makefiles; it also handles header inclusions seamlessly, without dealing with relative path issues.
 Gradle can even automatically retrieve dependencies if they are published as a Maven artifact.
-All of these features make ongoing maintenance and development an easier proposition.
+All of these features make ongoing development and maintenance an easier proposition.
 
 \subsection{Hardware}
 \label{ch:intro:background:hardware}
 
 There are many implementation issues related to the performance aspects of \name, since high performance is a strict requirement for obtaining render times low enough for real-time display.
-For the purposes of testing, we used a machine with an Intel Core i7 4770k CPU and NVIDIA Geforce GTX 980Ti.
+For the purposes of testing, we use a machine with an Intel Core i7 4770k CPU and NVIDIA Geforce GTX 980Ti GPU.
 Only recently has ray-tracing even been able to achieve real-time levels of performance; much of this progress is thanks to advances in GPU technology.
 The largest innovator in this space, GPU chip design company NVIDIA, released its RTX series of GPUs that have hardware support for ray-tracing.
 RTX hardware spread is slow, however, due to its high early adoption cost.
 Therefore we do not focus on RTX hardware; instead we look to slightly older technologies to provide the implementation backbone; this works well with the existing test hardware, which is a few generations old.
 
-\todo{future section on what hardware API we actually use}
-\todo{future section on how we delt with GPU vs CPU}
+\todo{future subsection on what hardware API we actually used}
+\todo{future subsection on how we dealt with GPU vs CPU\\and how we built two different implementations}
 
-\section{Current State of the Art}\label{ch:intro:stateofart}
+\section{Thesis Outline}
+\label{ch:intro:outline}
 
-\section{Goals of the Project}\label{ch:intro:goals}
-% This section could also be entitled ``Thesis'' or something similar.
-
-% For an applied programming project, it is usually a statement about
-% the feasibility and correctness of the approach used and the advantages it
-%has over other approaches, using suitable metrics.
-
-\section{Thesis Outline}\label{ch:intro:outline}
-Chapter \ref{ch:relatedwork} reviews a number of past approaches
-to the problem and summarizes their strengths and weaknesses. Chapter
-\ref{ch:method} outlines the method of approach used to establish the
-results.
+In the remaining chapters of this thesis document, we will describe the features of \name, detail more advanced background information, and discuss implementation.
+Chapter~\ref{ch:relatedwork} reviews a number of past approaches
+to ray-tracing, and provides background for some more advanced ray-tracing algorithms and data structures.
+It also describes some tools that we used for \name's initial proposal and testing.
+Chapter~\ref{ch:methods} outlines the high-level conceptual algorithms used in \name.
+It is complimented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including class diagrams and organizational information.
+Finally, Chapter~\ref{ch:conclusion} completes this document, describing the future work left to complete, a hope for open-source contributions, and a look back at what the author learned through the experience of developing this project.
