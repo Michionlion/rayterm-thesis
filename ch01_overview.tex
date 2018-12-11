@@ -223,7 +223,7 @@ Scalar multiplication is defined by Formula~\ref{equation:vector_scalar_multipli
 \end{equation}
 
 Then we have the cross product.
-This is a specialized multiplication operation only applicable when $n = 3$ that results in a vector that is perpendicular to the plane defined by its operands.
+This is a specialized multiplication operation only applicable when $n = 3$ that results in a vector that is perpendicular to both of its operands.
 The cross product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \times \vec{v}$, and can be calculated with Formula~\ref{equation:vector_cross_product}.
 
 \begin{equation}
@@ -235,11 +235,11 @@ Finally, the dot product is a third multiplication operation that is applicable 
 However, the result of the dot product operation is a simple scalar, not a new vector.
 The dot product only makes semantic sense when talking about direction vectors: it gives a sense of how much two vectors are ``aligned'' with each other.
 It is often used to determine if two vectors are at right angles with each other, since in that case the dot product would be $0$.
-The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \cdot \vec{v}$, and can be found using Formula~\ref{equation:vector_dot_product}.
+The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \bullet \vec{v}$, and can be found using Formula~\ref{equation:vector_dot_product}.
 
 \begin{equation}
   \label{equation:vector_dot_product}
-  \vec{u} \cdot \vec{v} = \vec{u}_x\vec{v}_x + \vec{u}_y\vec{v}_y + \vec{u}_z\vec{v}_z
+  \vec{u} \bullet \vec{v} = \vec{u}_x\vec{v}_x + \vec{u}_y\vec{v}_y + \vec{u}_z\vec{v}_z
 \end{equation}
 
 \littlesection{Vector Equations}
@@ -250,14 +250,33 @@ It should be noted that exponentiation for vectors is calculated on a component-
 This is by convention in graphics programming, since it provides an easy description of such an operation.
 This is not, however, always the case in other mathematical applications of vectors.
 
+When thinking about the meaning and algorithms behind equations, it is extremely helpful to keep two main facts in mind.
+First, {\it crossing} two vectors gives a vector that is at a right angle to each; that is, it gives a normal to the plane in which both original vectors lie.
+We should note here that according to only this definition, there are actually two possible answers for each set of operands.
+However, only one of these answers is correct; to determine the right one, the ``right-hand rule'' is used.
+To use the right-hand rule, point your right hand's index finger in the direction of the first vector, and your middle finger in the direction of the second.
+Your thumb will point in the direction of the resulting cross product.
+Note that this causes the order of operands to matter -- a different order will produce the opposite direction.
+
+Second, {\it dotting} two vectors multiplies their lengths while keeping in mind their direction -- two vectors perfectly parrallel to each other would have a dot product that was simply their lengths multiplied.
+However, two vectors perfectly perpendicular to each other have a dot product of zero.
+There is actually a second definition of the dot product that can be a little easier to understand with this context.
+Formula~\ref{equation:vector_dot_product_cos} is this definition.
+In this formula, $\theta$ is the angle between the two operands, and $|\vec{w}|$ is the length of $\vec{w}$.
+
+\begin{equation}
+  \label{equation:vector_dot_product_cos}
+  \vec{u} \bullet \vec{v} = |\vec{u}| \cdot |\vec{v}| \cdot cos(\theta)
+\end{equation}
+
 \subsection{Ray-Tracing Mathematics}
 \label{ch:intro:background:raytracing_math}
 The mathematical basis for ray-tracing is heavily dependent on understanding vector mathematics -- Section~\ref{ch:intro:background:vector_math} is a short introduction to such mathematics.
 The basic mathematical construct used in ray-tracing is called a {\it ray}. Rays are defined by two vectors: an origin point, referred to as $\rayorg$ for some ray $R$, and a direction, referenced as $\raydir$.
-These two vectors together represent a ray of infinite length that starts at the origin and projects along the direction.
+These two vectors together represent a line of infinite length that starts at the origin and projects along the direction.
 An important addition to the concept of rays is a point along a ray -- this can be defined by using a third variable, $t$, to represent how far along the ray the point is located.
-Therefore, Formula~\ref{equation:point_on_ray} can be used to get the coordinates of a point in three-dimensional space (assuming $\raydir$ is a unit vector).
-This is called the {\it parametric~form} of a ray.
+Therefore, Formula~\ref{equation:point_on_ray} can be used to get the coordinates of such a point in three-dimensional space.
+Assuming $\raydir$ is a unit vector, this is the {\it parametric~form} of a ray.
 
 \begin{equation}
   \label{equation:point_on_ray}
@@ -307,7 +326,7 @@ If there are no real roots, then the ray does not intersect the sphere.
 
 \begin{equation}
   \label{equation:ray_sphere_intersection}
-  (\raydir^2)t^2 + 2(\raydir \cdot (\rayorg - \vec{S_{center}}))t + (\rayorg - \vec{S_{center}})^2 - {S_{radius}}^2 = 0
+  (\raydir^2)t^2 + 2(\raydir \bullet (\rayorg - \vec{S_{center}}))t + (\rayorg - \vec{S_{center}})^2 - {S_{radius}}^2 = 0
 \end{equation}
 
 \littlesection{Ray-Plane Intersection}
@@ -321,12 +340,12 @@ These equations were derived from basic vector math, along with guidance from ``
 
 \begin{equation}
   \label{equation:plane_surface}
-  f(\vec{p}) = (\vec{p} - \vec{P_{offset}}) \cdot \vec{P_{normal}}
+  f(\vec{p}) = (\vec{p} - \vec{P_{offset}}) \bullet \vec{P_{normal}}
 \end{equation}
 
 \begin{equation}
   \label{equation:ray_plane_intersection}
-  (\vec{P_{normal}} \cdot \raydir)t + \vec{P_{normal}} \cdot (\rayorg - \vec{P_{offset}}) = 0
+  (\vec{P_{normal}} \bullet \raydir)t + \vec{P_{normal}} \bullet (\rayorg - \vec{P_{offset}}) = 0
 \end{equation}
 
 \littlesection{Ray-Triangle Intersection}
@@ -346,7 +365,7 @@ Note that in Function~\ref{equation:left_edge_test}, if $i = 3$, then $i = 0$ ($
 
 \begin{equation}
   \label{equation:left_edge_test}
-  f(i) = P_{normal} \cdot ((\vec{V_{i+1}} - \vec{V_i}) \times (\vec{Q} - \vec{V_i}))
+  f(i) = P_{normal} \bullet ((\vec{V_{i+1}} - \vec{V_i}) \times (\vec{Q} - \vec{V_i}))
 \end{equation}
 
 Function~\ref{equation:left_edge_test} can be complicated to visualize, so imagine this: we first form two vectors, both with $\rayorg = \vec{V_i}$.
