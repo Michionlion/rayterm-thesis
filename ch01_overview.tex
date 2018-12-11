@@ -11,7 +11,7 @@
 In the early days of computing, real-time rendering engines that powered games like ``Doom'' or ``NetHack'' had to run on extremely underpowered hardware and render on low-resolution screens.
 The dream of real-time, photorealistic graphics was far, far away.
 However, even then the simple, blocky graphics, easily recognizable shapes, and maze-like environments were fantastic entertainment.
-Today the retro-style of low-resolution graphics, pixel art, and 8-bit color is abound in the gaming space.
+Today the retro-style of low-resolution graphics, pixel art, and 8-bit color abounds in the gaming space.
 \name\ is one part of enabling that retro-aesthetic to grow into a new and unique style that, while similar to the old classics, can be more engaging and real than they ever were.
 
 This thesis document describes a system that creates a moving image on a terminal screen.
@@ -55,7 +55,7 @@ There are many different algorithms that accomplish this goal.
 \name\ utilizes the recursive ray-tracing algorithm first pioneered by Turner Whitted in his ground-breaking paper ``An Improved Illumination Model for Shaded Display'' \cite{whitted1980improved}.
 Ray-tracing was one of the first algorithms developed in the field of computer graphics, and although there have been some improvements since then, the idea behind the algorithm has maintained its original simplicity.
 
-Ray-tracing has been used as the rendering algorithm of choice for photorealistic scenes, because with only a few modifications to Whitted's original algorithm, it can generate fantastic images.
+Ray-tracing has been used as the rendering algorithm of choice for photorealistic scenes because with only a few modifications to Whitted's original algorithm, it can generate fantastic images.
 In the past, however, render times have been so slow that it was impossible to generate images fast enough for real-time use.
 For example, Figure~\ref{fig:povray_render} is a render created by the POV-Ray engine \cite{povray}.
 POV-Ray can take between a few minutes to several hours to complete one single image depending on the processing power involved.
@@ -85,7 +85,7 @@ Ray-tracing algorithms that do this are known as {\it path-tracers} and are the 
 
 \name\ does not use a path-tracer -- such algorithms are still many times too slow for most real-time rendering situations.
 Instead, the rendering equation is solved by sampling the incoming light at each point with rays.
-This is known as recursive ray-tracing, since it starts with a single ray that splits every time it encounters a surface.
+This is known as recursive ray-tracing since it starts with a single ray that splits every time it encounters a surface.
 The eventual goal of the recursive ray-tracing algorithm is to create a tree of rays for each {\it fragment} to render.
 A fragment is either a pixel or some sub-pixel -- many systems will use four or more fragments per pixel to get better anti-aliasing and more accurate results.
 Each ray contains some color that represents the color of the light in that ray.
@@ -109,7 +109,7 @@ Today, the terminals most people use are actually ``terminal emulators'', becaus
 These terminal emulators are often simply programs that run in an existing graphical desktop environment, providing a text-based interface to the operating system.
 
 Once an image is generated, \name\ must somehow display that image in a terminal with no surrounding prompt or other formatting -- as a simple {\it character field}.
-To do this, we use a two step approach: first, we represent the image using Unicode characters (see Section~\ref{ch:intro:overview:unicode}), then we print those characters to the terminal using a C library called \texttt{ncurses} \cite{ncursesLibrary}.
+To do this, we use a two-step approach: first, we represent the image using Unicode characters (see Section~\ref{ch:intro:overview:unicode}), then we print those characters to the terminal using a C library called \texttt{ncurses} \cite{ncursesLibrary}.
 This library abstracts implementation details of the terminal to enable full-window 24-bit color character output.
 % TODO: update with actual fps
 In \name, the terminal window is divided into two ``panels'', a main panel for the actual image output -- updated 30 times or more per second -- and an info panel to render information such as frames per second and logging text.
@@ -154,12 +154,12 @@ This means that a typical 85 by 30 character terminal results in a screen space 
 This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel is required.
 
 The second image mode is considerably more complicated and slower, as it uses significantly more rays per character in order to determine what Unicode block character most fits the desired output.
-On the other hand, it allows a much higher perceived resolution, since the characters used have smaller footprints of down to an eigth of a character in width or length.
+On the other hand, it allows a much higher perceived resolution, since the characters used have smaller footprints of down to an eighth of a character in width or length.
 The differences between these two modes are highlighted in Figure~\ref{fig:unicode_mode_comparison1} and~\ref{fig:unicode_mode_comparison2} \inlinetodo{update with actual output}.
 It can be seen that the first image mode, {\it pixel mode}, shows a rather fuzzy definition of the main large sphere.
 However, in the second image mode, {\it character mode}, the sphere and the reflections seen in it are much more defined.
 The performance impact of both modes is another factor that was assessed when making implementation decisions for \name; it informed how much actual definition was added by the second rendering mode.
-With the current implementation, there is around a four fold decrease in performance \inlinetodo{update with actual decrease in performance}.
+With the current implementation, there is around a four-fold decrease in performance \inlinetodo{update with actual decrease in performance}.
 
 \begin{figure}[htb]
   \centering
@@ -189,7 +189,7 @@ In \name, many of these algorithms are implemented behind the scene in APIs like
 \subsection{Vector Mathematics}
 \label{ch:intro:background:vector_math}
 
-Vector mathematics are a way to represent operations on $n$-dimensional constructions.
+Vector mathematics is a way to represent operations on $n$-dimensional constructions.
 The main unit of computation is a vector -- essentially, a list of $n$ numbers.
 A vector is denoted with an arrow over its name: $\vec{v} = (-2, 3, 1)$ is a vector.
 A specific value in a vector is referenced by either its zero-based index, $\vec{v}_{0}$ is the first value in $\vec{v}$ (note the arrow is above $v$ only, and not the index), or its dimension -- $\vec{v}_x$ is the same value.
@@ -199,7 +199,7 @@ Vectors are related to both multivariable calculus and linear algebra -- an expa
 
 \littlesection{Vector Operations}
 
-Each set of all possible $n$-dimensional vectors are closed under the basic arithmatic operations.
+Each set of all possible $n$-dimensional vectors are closed under the basic arithmetic operations.
 Addition, subtraction, along with some specialized versions of multiplication, are all defined.
 Addition and subtraction are calculated on a component-wise basis -- for instance, in three dimensions addition and subtraction can be calculated using Formulas \ref{equation:vector_addition} and \ref{equation:vector_subtraction}.
 
@@ -248,11 +248,11 @@ The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \bullet \vec{v
 With the operations described above, we can write equations using vectors.
 This greatly simplifies the description of the mathematics in Section~\ref{ch:intro:background:raytracing_math}, since without vector mathematics every operation would need to be notated in cartesian coordinates.
 It should be noted that exponentiation for vectors is calculated on a component-wise basis -- for example, $\vec{(1, 4, 2)}$ squared is $\vec{(1, 16, 4)}$.
-This is by convention in graphics programming, since it provides an easy description of such an operation.
+This is by convention in graphics programming since it provides an easy description of such an operation.
 This is not, however, always the case in other mathematical applications of vectors.
 
 When thinking about the meaning and algorithms behind equations, it is extremely helpful to keep two main facts in mind.
-First, {\it crossing} two vectors gives a vector that is at a right angle to each; that is, it gives a normal to the plane in which both original vectors lie.
+First, {\it crossing} two vectors results in a vector that is at a right angle to each; that is, it gives a normal to the plane in which both original vectors lie.
 We should note here that according to only this definition, there are actually two possible answers for each set of operands.
 However, only one of these answers is correct; to determine the right one, the ``right-hand rule'' is used.
 To use the right-hand rule, point your right hand's index finger in the direction of the first vector, and your middle finger in the direction of the second.
@@ -290,7 +290,7 @@ All of the ray-tracing mathematics described here are synthesized from Peter Shi
 Some smaller sections also benefit from ideas in Jean-Colas Prunier's ``Scratchapixel'' \cite{prunier2017triangle}.
 
 Scenes that can be ray-traced must be a collection of surfaces that are mathematically intersectable with a ray.
-Any surface that can be defined by a implicit surface definition function, in the form of Function~\ref{equation:surface_equation}, is intersectable with a ray \cite{pharr2016physically}.
+Any surface that can be defined by an implicit surface definition function, in the form of Function~\ref{equation:surface_equation}, is intersectable with a ray \cite{pharr2016physically}.
 In Function~\ref{equation:surface_equation} and for the rest of this section, $\vec{p}$ is a vector representing a point in three-dimensional space.
 The implicit surface definition function must have the property that if and only if $f(\vec{p})$ is $0$, then $\vec{p}$ is on the defined surface.
 The point of intersection between a ray and a surface defined in this way can be found by solving Equation~\ref{equation:ray_surface_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray} to calculate the coordinates of that point on the ray.
@@ -308,7 +308,7 @@ We essentially ask, ``What points along this ray are on the defined surface?'' b
 
 In \name, the only surfaces that are supported are spheres, triangles, and infinite planes, since their surface definition functions are mathematically simple \inlinetodo{update for actual supported surfaces}.
 A sphere is the simplest three-dimensional object to calculate ray intersection with, and therefore was the first implemented for \name.
-In fact, during feasibility testing much of the math described in this section was implemented by hand in the Go programming language, instead of through existing APIs.
+In fact, during feasibility testing, much of the math described in this section was implemented by hand in the Go programming language, instead of through existing APIs.
 
 \littlesection{Ray-Sphere Intersection}
 
@@ -332,7 +332,7 @@ If there are no real roots, then the ray does not intersect the sphere.
 \littlesection{Ray-Plane Intersection}
 
 For any two-dimensional object, the plane it lies in is the first shape tested for intersection.
-Luckily, ray-plane intersection testing is fairly cheap and straight forward.
+Luckily, ray-plane intersection testing is fairly cheap and straightforward.
 The surface definition function of a plane is Function~\ref{equation:plane_surface}, with $P$ representing the plane.
 The plane's {\it offset} is a point on the plane, and the plane's {\it normal} is a vector perpendicular to the plane.
 The intersection point between a ray and a plane is given by solving Equation~\ref{equation:ray_plane_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray}.
@@ -369,10 +369,10 @@ Note that in Function~\ref{equation:left_edge_test}, if $i = 3$, then $i = 0$ ($
 \end{equation}
 
 Function~\ref{equation:left_edge_test} can be complicated to visualize, so imagine this: we first form two vectors, both with $\rayorg = \vec{V_i}$.
-One points along the triangle's edge, while the other points to $\vec{Q}$.
+The first points along the triangle's edge, while the other points towards $\vec{Q}$.
 Both of these vectors will be in the plane of the triangle.
 Thus, if we cross them, the vector produced will either be away from the plane in the same direction as $\vec{P_{normal}}$, or away from the plane in the opposite direction.
-According to the right hand rule, if the crossed vector is in the same direction as $\vec{P_{normal}}$, then the vector pointing to $\vec{Q}$ is ``to the left'' of the vector pointing towards $\vec{V_{i+1}}$.
+According to the right-hand rule, if the crossed vector is in the same direction as $\vec{P_{normal}}$, then the vector pointing to $\vec{Q}$ is ``to the left'' of the vector pointing towards $\vec{V_{i+1}}$.
 We can then calculate the dot product between $\vec{P_{normal}}$ and the crossed vector -- if it is positive then the crossed vector is in the same direction as the normal, and therefore $\vec{Q}$ is to the left of the edge.
 One last addendum to this intersection test is the fact that it can be difficult to perform the counter-clockwise numbering of vertices.
 We therefore simply expect vertices to be specified in counter-clockwise order.
@@ -382,10 +382,10 @@ This is similar to what many other 3D rendering algorithms assume.
 \section{Development Ecosystem}
 \label{ch:intro:background:development_ecosystem}
 
-\name's development relied on many other systems.
+\name's development relies on many other systems.
 The actual implementation code is hosted on Github, a public platform for projects using the Git version control system.
-A continuous integration system called Travis CI \cite{travisci} was used for testing and environment management.
-Documentation was handled by \texttt{doxygen} \cite{van2008doxygen} -- all external facing functions, methods, and classes have a minimum of a few sentences of documentation.
+A continuous integration system called Travis CI \cite{travisci} is used for testing and environment management.
+Documentation is handled by \texttt{doxygen} \cite{van2008doxygen} -- all external facing functions, methods, and classes have a minimum of a few sentences of documentation.
 More details about the implementation tools are given in Section~\ref{ch:intro:background:languages_and_libraries}; testing hardware and low-level APIs are discussed in Section~\ref{ch:intro:background:hardware}.
 
 \subsection{Programming Languages and Tools}
@@ -424,12 +424,12 @@ All of these features make ongoing development and maintenance an easier proposi
 \subsection{Hardware}
 \label{ch:intro:background:hardware}
 
-There are many implementation issues related to the performance aspects of \name, since high performance is a strict requirement for obtaining render times low enough for real-time display.
+There are many implementation issues related to the performance aspects of \name since high performance is a strict requirement for obtaining render times low enough for real-time display.
 For the purposes of testing, we use a machine with an Intel Core i7 4770k CPU and NVIDIA Geforce GTX 980Ti GPU.
 Only recently has ray-tracing even been able to achieve real-time levels of performance; much of this progress is thanks to advances in GPU technology.
 The largest innovator in this space, GPU chip design company NVIDIA, released its RTX series of GPUs that have hardware support for ray-tracing.
 RTX hardware spread is slow, however, due to its high early adoption cost.
-Therefore we do not focus on RTX hardware; instead we look to slightly older technologies to provide the implementation backbone; this works well with the existing test hardware, which is a few generations old.
+Therefore we do not focus on RTX hardware; instead, we look to slightly older technologies to provide the implementation backbone; this works well with the existing test hardware, which is a few generations old.
 
 \todo{future subsection on what hardware API we actually used}
 \todo{future subsection on how we dealt with GPU vs CPU\\and how we built two different implementations}
@@ -441,6 +441,6 @@ In the remaining chapters of this thesis document, we will describe the features
 Chapter~\ref{ch:relatedwork} reviews a number of past approaches
 to ray-tracing, and provides background for some more advanced ray-tracing algorithms and data structures.
 It also describes some tools that we used for \name's initial proposal and testing.
-Chapter~\ref{ch:methods} outlines the high-level conceptual algorithms used in \name.
-It is complimented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including class diagrams and organizational information.
+Chapter~\ref{ch:methods} outlines the high-level conceptual algorithms, test tooling, and methods used in this project.
+It is complemented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including class and function diagrams and organizational information.
 Finally, Chapter~\ref{ch:conclusion} completes this document, describing the future work left to complete, a hope for open-source contributions, and a look back at what the author learned through the experience of developing this project.
