@@ -6,37 +6,53 @@
 %   *******************************************************************
 \chapter{Related Work}\label{ch:relatedwork}
 
-In this chapter, we will discuss related research papers, detail how they inform \name's development, and show the improvements of \name\ over similar systems.
+In this chapter, we will discuss a few related research papers, detail how they informed \name's development, and show the improvements of \name\ over other systems.
 First, we will conduct a high-level discussion of the first ray-tracing paper through to basic details on modern-day optimizations.
-Following that, we will discuss two Github projects, one of which has already been utilized to create some of the figures in this document, such as Figure \ref{fig:unicode_mode_comparison}.
+Following that, we will discuss two Github projects, one of which was a major inspiration for Unicode image composition and the algorithms involved (see Section~\ref{ch:intro:overview:unicode}).
 
-\section{Primary Sources}
-% Seminal papers
+\section{Discovery of Ray-Tracing}
 
-\littlesection{The First Ray-Tracer}
+\subsection{The First Ray-Tracer}
 
-The very first ray-tracing algorithm was developed by Arthur Appel in his 1968 paper {\it Some techniques for shading machine renderings of solids} \cite{appel1968some}.
-His algorithm is now known as a ray casting algorithm -- it does not follow the approach we have seen so far.
+The very first ray-tracing algorithm was developed by Arthur Appel in his 1968 paper ``Some techniques for shading machine renderings of solids'' \cite{appel1968some}.
+His algorithm is now known as a ray casting algorithm -- it does not follow the approach we described in Section~\ref{ch:intro:overview:raytracing}.
 Instead, rays are traced from a point light source to the object being shaded, and a plus symbol of varying size is rendered at that location, depending on the intensity of light at that point.
 When a photographic negative is taken, light spots that were not hit by the rays (thereby darkening them) are now ``in shadow'', as the color levels were inverted.
 Today, Appel's work is not normally considered a real ray-tracing algorithm.
 However, his work informed much of the following research, especially his ideas and mathematics on light intensity.
+After Appel's work, there were some commercial applications of ray-tracing in the field of radiosity; ray-tracing was used to track radiation inside tanks at Mathematical Applications Group, Inc (MAGI) \cite{whitted2018explains}.
 
-\littlesection{The Breakthrough}
+\subsection{The Breakthrough}
 
-The next big entry to the ray-tracing field was Turner Whitted's 1980 paper {\it An Improved Illumination Model for Shaded Display} \cite{whitted1980improved}.
-In this groundbreaking work, Whitted introduced the recursive ray-tracing algorithm we covered in Section~\ref{sec:introduction:raytracing}.
-Whitted was not the first to use ray-tracing -- Arthur Appel had first pioneered the field over a decade ago, and some commercial applications were also emerging in the field of radiosity.
+The next big entry to the ray-tracing field was Turner Whitted's 1980 paper ``An Improved Illumination Model for Shaded Display'' \cite{whitted1980improved}.
+In this groundbreaking work, Whitted introduced the recursive ray-tracing algorithm we covered in Section~\ref{ch:intro:overview:raytracing}.
+Whitted was not the first to use ray-tracing -- Arthur Appel had first pioneered the field over a decade ago, and there were also emerging commercial applications.
 Whitted's real contribution was the idea for how to improve ray-tracing so that it could solve the problem of {\it global illumination}.
 Global illumination was not yet formalized, but the idea was to somehow gather the effect of all light in the scene on every single point.
-Recursive ray-tracing approximates this very well, and thus Whitted-style ray-tracing was born.
-Even today, any simple recursive ray-tracing algorithms (like the one proposed for \name) are known as Whitted-style ray-tracers.
+This can easily be categorized as taking into account both direct lighting, light coming directly from a source, and indirect lighting, light coming from reflections, refractions, or other non-direct travel methods.
 
-\littlesection{Formalization}
+Recursive ray-tracing approximates direct lighting easily, as each encountered point sends a ray to each light in the scene.
+Indirect lighting is slightly more difficult -- pure reflection and refraction is easy, but as soon as reflections become more diffuse, and there are many, many directions a point gets lit from, recursive ray-tracing breaks down and path-tracing must take over.
+Despite this, ray-tracing was able to achieve remarkably good images, and thus Whitted-style ray-tracing was born.
+Even today, any simple recursive ray-tracing algorithms are known as Whitted-style ray-tracers. Indeed, \name\ uses a Whitted-style ray-tracer, with only some small enhancements, such as heuristic emissive sampling.
+Essentially, this sampling adds a new generation method for rays so that when a ray encounters a diffuse reflective surface, we attempt to sample the possible locations for other emissive (light-producing or light-reflecting) objects.
+This adds some rudimentary support for area lights and diffuse reflections, although it is still not photorealistic.
+
+One element that is not mentioned in ``An Improved Illumination Model for Shaded Display'', but is in Whitted's retrospective on the paper \cite{whitted2018explains}, is adaptive super-sampling.
+This method generates more eye-rays, and therefore more definition, only in fragments that do not have sufficient detail.
+This is a relatively simple algorithm: the corners of each pixel provide four sample points creating a ``sample square''.
+Then, if each of the four points are sampled relatively close in value, and there isn't a small object visible through the pixel, the average sample is taken from each of the four points.
+If the points are not close in value, or there is a small object, then the sample square is subdivided and the process starts again, reusing some old values and calculating new ones.
+This method is inheirently sequential, and adds additional complexity to the ray-tracing algorithm.
+Therefore, it is not implemented in the current version of \name; however it could be a future optimization.
+This optimization could in fact treat the entire starting canvas as a single sample square, and then refine sample points from there.
+Depending on the complexity of the small object test, this could be an improvement.
+
+\subsection{Formalization}
 
 The path to fully photorealistic rendering was blazed soon after Whitted's paper.
 The mathematical basis for all of ray-tracing and photorealistic rendering in general was published by James Kajiya in 1986 \cite{kajiya1986rendering}.
-In his paper {\it The Rendering Equation}, he articulated a generalization for many different rendering algorithms; this generalization is shown as Equation~\ref{equation:the_rendering_equation} below.
+In his paper ``The Rendering Equation'', he articulated a generalization for many different rendering algorithms; this generalization is shown as Equation~\ref{equation:the_rendering_equation} below.
 Although the idea behind the rendering equation was not completely new, Kajiya presented it in a form especially suited for computer graphics using vector mathematics.
 The equation also gives direction for more advanced and photorealistic rendering techniques, leading up to path-tracing.
 
@@ -52,23 +68,25 @@ In the common case, all light will be from the direction of nearby light sources
 However, we can also bias newly generated rays towards areas where refracted light may exist, such as around glass materials.
 Keeping this mathematical basis in mind as our implementation is built is critical, so that \name\ does not stray too far from photorealism.
 
-\littlesection{Accelerated Intersections}
+\section{Optimizations}
+
+\subsection{Accelerated Intersections}
 
 Ray-tracing requires intersection tests with every object in the scene.
 If it were possible to drastically reduce the number of tests computed for each ray, perhaps by only testing the ray against objects in its general vicinity, massive speed increases would emerge.
 As it turns out, this was first explored right after Whitted's original paper.
-The Bounding Volume Hierarchy (BVH) acceleration structure was proposed in Steven Rubin and Turner Whitted's 1980 paper {\it A 3-dimensional representation for fast rendering of complex scenes} \cite{rubin1980}.
+The Bounding Volume Hierarchy (BVH) acceleration structure was proposed in Steven Rubin and Turner Whitted's 1980 paper ``A 3-dimensional representation for fast rendering of complex scenes'' \cite{rubin1980}.
 
 A BVH essentially groups objects into hierarchical organizations, with each group covering a larger area than the groups inside it.
 Each group has a {\it bounding volume}, a geometric primitive that encloses all members of that group.
 Ray-tracing intersections are done with the root group's bounding volume first, then progress down the hierarchy and potentially skip the vast majority of geometry in the scene, thereby speeding up computation.
 There have been numerous improvements to this idea; however, BVHs continue to be an easy-to-implement and efficient acceleration structure \cite{prunier2017bvh}, and if there is development time, some form of BVH will be implemented in \name.
 
-\littlesection{Parallelization}
+\subsection{Parallelization}
 
 Ray-tracing is inherently parallelizable, because each ray-tree is independent -- rays cannot collide, and one fragment's ray-tree does not affect another fragment's ray-tree.
 Thus, there have been many opimizations that target enhanced hardware acceleration to enable massively parrallel ray-tracing.
-The first example of this was {\it Design and Analysis of a Parallel Ray Tracing Computer}, a 1983 paper by John Cleary and others \cite{cleary1983design}.
+The first example of this was ``Design and Analysis of a Parallel Ray Tracing Computer'' \cite{cleary1983design}, a 1983 paper by John Cleary and others.
 In it, Cleary describes a computing system that is functionally similar to the Grapics Processing Units (GPUs) available today.
 They were even able to build small prototypes, but calculated that a full blown system would cost \$50 million and be able to generate 1000 by 1000 pixel images in 0.15 seconds.
 Sadly, 1983 chip technology had not yet progressed to the point where such a large multi-core processor was feasible.
@@ -77,9 +95,9 @@ However, all was not lost.
 Much of the research done in this area led to the design of systems such as OptiX \cite{parker2010optix} (which we describe in Section~\ref{sec:method:hardware}), enabling projects like \name\ to benefit from the massive speed increases estimated by early papers.
 Instead of a \$50 million monstrosity, relatively small GPU chips capable of the same performance are now available for only hundreds of dollars.
 
-\section{Recent Results}
+\section{Related Applications}
 
-\littlesection{Terminal Images}
+\subsection{Terminal Images}
 
 A small program available on Github was the original inspiration for some details of \name.
 Called TerminalImageViewer (\texttt{tiv}) \cite{tivGithub}, it uses RGB ANSI escape codes and Unicode block characters to display images in a terminal window.
@@ -89,7 +107,7 @@ The algorithm behind \texttt{tiv} is a direct inspiration for the ray-to-charact
 \name, however, improves upon TerminalImageViewer in a single, incredibly impactful way: the graphics produced are animated.
 Fundamentally, \texttt{tiv} and \name\ are similar only in output format, while the purpose and internal workings are generally dissimilar.
 
-\littlesection{Gaming with Termloop}
+\subsection{Gaming with Termloop}
 
 A stated goal of \name\ is to support future games that might use the terminal as a graphical display.
 Games have utilized the terminal as a display mechanism for a long time -- text based adventure games were built with a terminal in mind, and RPGs also got their start with randomly generated levels displayed in 2D in a terminal window.
