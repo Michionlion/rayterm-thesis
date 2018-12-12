@@ -14,6 +14,11 @@ Following that, we will discuss two Github projects, one of which was a major in
 \section{Discovery of Ray-Tracing}
 \label{ch:relatedwork:discovery}
 
+Here we describe the first ray-tracing paper, as well as two seminal works that brought ray-tracing to the forefront of photorealistic computer rendering.
+It is important to note here that many of these papers are relatively old, since the algorithms being used in \name\ are correspondingly dated.
+This is because most recent advances in ray-tracing concern more advanced methods of photorealistic rendering, such as path-tracing \cite{lafortune1993bi}, low-level optimizations \cite{wald2001interactive}, dynamic scene rendering \cite{wald2007ray}, and volumetric ray-tracing hardware acceleration \cite{kruger2003acceleration}, to name just a few.
+All of these topics, while interesting and tangentially related, are too advanced; comparison with the algorithms used in \name\ would be unrealistic and meaningless, beyond showing how much more development \name\ needs to be truly state of the art when compared to modern ray-tracers.
+
 \subsection{The First Ray-Tracer}
 \label{ch:relatedwork:discovery:first}
 
@@ -94,11 +99,14 @@ If it were possible to drastically reduce the number of tests computed for each 
 As it turns out, this was first explored right after Whitted's original paper.
 The Bounding Volume Hierarchy (BVH) acceleration structure was proposed in Steven Rubin and Turner Whitted's 1980 paper ``A 3-dimensional representation for fast rendering of complex scenes'' \cite{rubin1980}.
 
-A BVH essentially groups objects into hierarchical organizations, with each group covering a larger area than the groups inside it.
+A BVH groups objects into hierarchical organizations, with each group covering a larger area than the groups inside it.
 Each group has a {\it bounding volume}, a geometric primitive that encloses all members of that group.
-Ray-tracing intersections are done with the root group's bounding volume first, then progress down the hierarchy and potentially skip the vast majority of geometry in the scene, thereby speeding up computation.
+In most common implementations of a BVH, this bounding box is a cube, since it is easy to determine the required box from a list of vertices inside it.
+Ray-tracing intersections are then done with the root group's bounding volume first.
+Once an intersection is found, instead of evaluating the rendering equation, we progress down the hierarchy from the bounding box we hit, and try more intersections.
+This can potentially skip the vast majority of geometry in the scene, thereby speeding up computation.
 There have been numerous improvements to this idea; however, BVHs continue to be an easy-to-implement and efficient acceleration structure \cite{prunier2017bvh}.
-A simple BVH was implemented in \name\ \inlinetodo{update with actual structure used}.
+A simple cube-based BVH was implemented in \name\ \inlinetodo{update with actual structure used}.
 
 \subsection{Parallelization}
 
@@ -141,3 +149,19 @@ This also allows for existing games to be rewritten or ``ported'' to \name; perh
 While \name\ doesn't have the other niceties such as collision detection, the ultimate goal of \name, beyond this initial implementation and development, is to grow to provide the same level of support for 3D games that Termloop has for 2D games.
 
 \subsection{Modern Ray-Tracing}
+
+Although we have described older methods for ray-tracing, and some modern optimizations, we have yet to mention a modern ray-tracer.
+OctaneRender is a professional real-time 3D renderer \cite{octane}.
+It is based on a GPU path-tracing algorithm, boasting physically correct shading while denoising its output using sophisticated machine learning algorithms.
+OctaneRender is far beyond \name\ in terms of raw optimization, power, and photorealism.
+It implements a full path-tracing algorithm, along with volumetric rendering support.
+Another big advantage OctaneRender has is the ability to render models and textures that do not fit into a GPU's memory.
+This is very impactful for large scenes, but luckily the benefits would not be very great for \name, since the low resolution prevents the details that take up that large memory space, like high-resolution textures, from making a difference.
+
+In comparing OctaneRender to \name, it is important to keep in mind that although \name\ is neither as performant nor as photorealistic, it does provide a somewhat similar experience.
+This is because \name\ renders to a much lower resolution screen: the terminal.
+This introduces many advantages that OctaneRender does not have; first and foremost is the ability to run on slightly less powerful machines.
+The very latest GPU is not require to utilize \name, whereas OctaneRender will use all the compute power it can get and more.
+\name\ is also very forgiving when rendering 3D assets such as models -- after all, the resolution is incredibly low.
+This makes development of visuals for \name-based game engines much, much easier and faster.
+Finally, \name\ has an aesthetic that can't be created through photorealism -- it evokes memories of old, nostalgic video games and 90s movie CGI; \name\ fully embraces the retro theme, and benefits from doing so.
