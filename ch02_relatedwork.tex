@@ -36,7 +36,7 @@ Global illumination was not yet formalized, but the idea was to somehow gather t
 This can easily be categorized as taking into account both direct lighting, light coming directly from a source, and indirect lighting, light coming from reflections, refractions, or other non-direct travel methods.
 
 Recursive ray-tracing approximates direct lighting easily, as each encountered point sends a ray to each light in the scene.
-Indirect lighting is slightly more difficult -- pure reflection and refraction is easy, but as soon as reflections become more diffuse, and there are many, many directions a point gets lit from, recursive ray-tracing breaks down and path-tracing must take over.
+Indirect lighting is slightly more difficult -- pure reflection and refraction are easy, but as soon as reflections become more diffuse, and there are many, many directions a point gets lit from, recursive ray-tracing breaks down and path-tracing must take over.
 Despite this, ray-tracing was able to achieve remarkably good images, and thus Whitted-style ray-tracing was born.
 Even today, any simple recursive ray-tracing algorithms are known as Whitted-style ray-tracers. Indeed, \name\ uses a Whitted-style ray-tracer, with only some small enhancements, such as {\it heuristic emissive sampling}.
 Essentially, this sampling adds a new generation method for rays so that when a ray encounters a diffuse reflective surface, we attempt to sample the possible locations for other emissive (light-producing or light-reflecting) objects.
@@ -47,16 +47,16 @@ This method generates more eye-rays, and therefore more definition, only in frag
 This is a relatively simple algorithm: the corners of each pixel provide four sample points creating a ``sample square''.
 Then, if each of the four points are sampled relatively close in value, and there isn't a small object visible through the pixel, the average sample is taken from each of the four points.
 If the points are not close in value, or there is a small object, then the sample square is subdivided and the process starts again, reusing some old values and calculating new ones.
-This method is inheirently sequential, and adds additional complexity to the ray-tracing algorithm.
-Therefore, it is not implemented in the current version of \name; however it could be a future optimization.
-This optimization could in fact treat the entire starting canvas as a single sample square, and then refine sample points from there.
+This method is inherently sequential and adds additional complexity to the ray-tracing algorithm.
+Therefore, it is not implemented in the current version of \name; however, it could be a future optimization.
+This optimization could, in fact, treat the entire starting canvas as a single sample square, and then refine sample points from there.
 Depending on the complexity of the small object test, this could be an improvement.
 
 \subsection{Formalization}
 \label{ch:relatedwork:discovery:formalization}
 
 The path to fully photorealistic rendering was blazed soon after Whitted's paper.
-The mathematical basis for all of ray-tracing and photorealistic rendering in general was published by James Kajiya in 1986 \cite{kajiya1986rendering}.
+The mathematical basis for all of ray-tracing and photorealistic rendering was published by James Kajiya in 1986 \cite{kajiya1986rendering}.
 In his paper ``The Rendering Equation'', he articulated a generalization for many different rendering algorithms; this generalization is shown as Equation~\ref{equation:the_rendering_equation} below.
 Although the idea behind the rendering equation was not completely new, Kajiya presented it in a form using vector mathematics, especially suited for computer graphics.
 The equation also gives direction for more advanced and photorealistic rendering techniques, leading up to path-tracing.
@@ -75,7 +75,7 @@ The $\epsilon$ term is the amount of light emitted from $x'$.
 Finally, the $g$ term is included in Kajiya's original paper, but most other formulations remove it in favor of attenuation terms inside the integral.
 Essentially, it controls how the geometry around $x'$ affects the outgoing light.
 
-Since, for practical purposes we can't infinitely recurse, we will eventually hit a recursion level when evaluating the rendering equation.
+Since for practical purposes we can't infinitely recurse, we will eventually hit a recursion level when evaluating the rendering equation.
 In this case, the incoming light is simply set to the ambient light level and no additional recursive calculations take place.
 This takes care of all reflection, refraction, and light travel; notice, however, that we must solve the integral over an entire sphere of directions, and we must do this for every single point we sample, for every single direction we sample from.
 This is {\it horrendously} inefficient. The significant part of this equation for \name\ is the integral, since if we can approximate that, \name\ would be photorealistic.
@@ -102,11 +102,11 @@ A simple BVH was implemented in \name\ \inlinetodo{update with actual structure 
 
 \subsection{Parallelization}
 
-Ray-tracing is inherently parallelizable, because each eye-ray and its descendents are independent -- rays cannot collide, and one fragment's eye-ray does not affect another fragment's eye-ray.
-Thus, there have been many opimizations that target enhanced hardware acceleration to enable massively parrallel ray-tracing.
+Ray-tracing is inherently parallelizable because each eye-ray and its descendants are independent -- rays cannot collide, and one fragment's eye-ray does not affect another fragment's eye-ray.
+Thus, there have been many optimizations that target enhanced hardware acceleration to enable massively parallel ray-tracing.
 The first example of this was ``Design and Analysis of a Parallel Ray Tracing Computer'' \cite{cleary1983design}, a 1983 paper by John Cleary and others.
-In it, Cleary describes a computing system that is functionally similar to the Grapics Processing Units (GPUs) available today.
-They were even able to build small prototypes, but calculated that a full blown system would cost \$50 million and be able to generate 1000 by 1000 pixel images in 0.15 seconds.
+In it, Cleary describes a computing system that is functionally similar to the Graphics Processing Units (GPUs) available today.
+They were even able to build small prototypes, but calculated that a full-blown system would cost \$50 million and be able to generate 1000 by 1000 pixel images in 0.15 seconds.
 Sadly, 1983 chip technology had not yet progressed to the point where such a large multi-core processor was feasible.
 
 However, all is not lost.
@@ -127,7 +127,7 @@ Fundamentally, \texttt{tiv} and \name\ are similar only in output style, while t
 \subsection{Gaming with Termloop}
 
 A goal of \name\ is to support future games that might use the terminal as a graphical display.
-Games have utilized the terminal as a display mechanism for a long time -- text based adventure games were built with a terminal in mind, and RPGs also got their start with randomly generated levels displayed in 2D in a terminal window.
+Games have utilized the terminal as a display mechanism for a long time -- text-based adventure games were built with a terminal in mind, and RPGs also got their start with randomly generated levels displayed in 2D in a terminal window.
 Termloop is a game engine built to display games in a terminal \cite{termloop}.
 It has support for collision detection, keyboard and mouse input, ASCII art, camera movement, and more.
 Its purpose is similar to \name's -- namely, to facilitate game creation in the terminal.
@@ -139,3 +139,5 @@ This one differentiating factor is huge; it means that no games can ever be made
 \name\ changes this, enabling huge possibilities for future programs and applications built on top of \name.
 This also allows for existing games to be rewritten or ``ported'' to \name; perhaps in the future, ``Skyrim'' or ``Doom'' will be running in a terminal!
 While \name\ doesn't have the other niceties such as collision detection, the ultimate goal of \name, beyond this initial implementation and development, is to grow to provide the same level of support for 3D games that Termloop has for 2D games.
+
+\subsection{Modern Ray-Tracing}
