@@ -18,31 +18,38 @@ This thesis document describes a system that creates a moving image on a termina
 This system is called \name; it performs real-time updating of the displayed image, thus generating a window into a three-dimensional (3D) world.
 \name\ is available for a wide variety of other programs to use as a rendering engine.
 With the current generation of powerful computers, able to execute billions or even trillions of calculations per second, it is finally possible to do real-time, close-to-photorealistic rendering.
-While the goal of \name\ is not high-resolution photorealism, some approximation of photorealism will be obtained.
+While the goal of \name\ is not high-resolution photorealism, some approximation is achieved.
 
 In this introduction to \name, we will first cover the motivations behind creating this system in Section~\ref{ch:intro:motivation}.
 Then, we will give an overview of the project in Section~\ref{ch:intro:overview}.
 Section~\ref{ch:intro:background} expands on the overview to provide some mathematical grounding for some of the algorithms used in \name.
-In Section~\ref{ch:intro:background:development_ecosystem} we cover the development tools used in this project, such as the implementation language.
+In Section~\ref{ch:intro:background:development_ecosystem} we cover the main development tools used in this project, such as the implementation language.
 Finally, Section~\ref{ch:intro:outline} outlines the rest of this thesis document, introducing the major topics of discussion for the remaining chapters.
 
 \section{Motivation}
 \label{ch:intro:motivation}
 
 I have always been fascinated with rendering algorithms, especially ray-tracing.
-This fascination fueled an interest in game engine development, 3D modelling, and other computer graphics topics.
+This fascination fueled an interest in game engine development, 3D modeling, and other computer graphics topics.
 The idea for \name\ came out of a disappointment -- I was working on a project that made a virtual space seem larger than it was when the user was wearing a virtual reality headset.
-Sadly, someone had already developed a toolkit that did exactly what I wanted to acheive.
+Sadly, someone had already developed a toolkit that did exactly what I wanted to achieve.
 
-Throughout my search for a replacement project, I discovered that one of the biggest draws to an idea was the ability for that idea to effect other people.
-Whether it was something that many others could use, or an idea that people could contribute to, I wanted to make something other people saw.
-That is where the draw of open-source software comes from for me, and why \name\ is open-source.
-Additionally, I discovered that there are many niches in software -- places where there just isn't a lot of people making things.
+Through my search for a replacement project, I discovered that, for me, one of the biggest draws to an idea was the ability for that idea to affect other people.
+Whether it was something that many others could use or an idea that people could contribute to, I wanted to make something other people saw.
+That is where the draw of open-source software came from for me, and why \name\ is open-source.
+Additionally, I discovered that there are many niches in software -- places where there just is not a lot of people making things.
 Computer graphics in a terminal emulator (see Section~\ref{ch:intro:overview:ncurses}) is one of those corners.
-The only real application many people saw for this corner was the rendering of images to the terminal -- in fact, some of the initial inspiration for \name\ came from TerminalImageViewer \cite{tivGithub}, a program to accomplish that very task.
+The only real application many people saw for this niche was the rendering of images to the terminal -- in fact, some of the initial inspiration for \name\ came from TerminalImageViewer \cite{tivGithub}, a program to accomplish that very task.
 
-I saw more possibility, however.
-There is no need to keep the terminal in a by-gone era, stuck with only mono-colored text 
+I saw more possibilities, however.
+There is no need to keep the terminal in a by-gone era, stuck with only colored characters and still graphics.
+The terminal is, after all, only a window into some text.
+Why does this text have to be stationary?
+Why does it need to be text at all?
+The answer, of course, is that it does not.
+There is a huge amount of potential in a 3D rendering engine that outputs to the terminal -- there are so many applications, from rendering 3D model files to playing video games to visualizing music.
+All that these programs need is an infrastructure around the terminal for 3D rendering.
+\name\ aims to create that infrastructure through a completely novel combination of ray-traced 3D rendering and Unicode-based image composition.
 
 \section{Overview}
 \label{ch:intro:overview}
@@ -52,7 +59,8 @@ Many images are generated, or rendered, each second; once an image is rendered t
 Multiple images are displayed in quick succession, creating the illusion of movement.
 More details on this process are given in Section~\ref{ch:intro:overview:ncurses}.
 Rendered images are displayed in two different modes; the first uses single half-character pixels, and the second more complex Unicode block characters.
-The mechanics of these image composition methods are discussed in Section~\ref{ch:intro:overview:unicode}. Finally, Figure~\ref{fig:checker_metal} is a still image of the final terminal output \inlinetodo{update with actual output image}.
+The mechanics of these image composition methods are discussed in Section~\ref{ch:intro:overview:unicode}.
+Finally, Figure~\ref{fig:checker_metal} is a still image of the final terminal output \inlinetodo{update with actual output image}.
 
 \begin{figure}[htb]
   \centering
@@ -287,7 +295,8 @@ In this formula, $\theta$ is the angle between the two operands, and $|\vec{w}|$
 \label{ch:intro:background:raytracing_math}
 
 The mathematical basis for ray-tracing is heavily dependent on understanding vector mathematics -- Section~\ref{ch:intro:background:vector_math} is a short introduction.
-The basic mathematical construct used in ray-tracing is called a {\it ray}. Rays are defined by two vectors: an origin point, referred to as $\rayorg$ for some ray $R$, and a direction, referenced as $\raydir$.
+The basic mathematical construct used in ray-tracing is called a {\it ray}.
+Rays are defined by two vectors: an origin point, referred to as $\rayorg$ for some ray $R$, and a direction, referenced as $\raydir$.
 These two vectors together represent a line of infinite length that starts at the origin and projects along the direction.
 An important addition to the concept of rays is a point along a ray -- this can be defined by using a third variable, $t$, to represent how far along the ray the point is located.
 Therefore, Formula~\ref{equation:point_on_ray} can be used to get the coordinates of such a point in three-dimensional space.
@@ -298,7 +307,8 @@ Assuming $\raydir$ is a unit vector, this is the {\it parametric~form} of a ray.
   \vec{point} = \rayorg + t\raydir
 \end{equation}
 
-With this concept, algorithms can be described to model the interaction between rays and other surfaces. The algorithms discussed are run millions of times per second in a highly parallelized environment.
+With this concept, algorithms can be described to model the interaction between rays and other surfaces.
+The algorithms discussed are run millions of times per second in a highly parallelized environment.
 Parallelization is a technique for running two or more algorithms simultaneously; therefore even minor optimizations are extremely important since they reduce the overall time to render.
 All of the ray-tracing mathematics described here are synthesized from Peter Shirley's excellent ``Ray Tracing in One Weekend'' \cite{shirley2016ray} and the Morgan Kaufmann textbook ``Physically Based Rendering: From Theory to Implementation'' \cite{pharr2016physically}.
 Some smaller sections also benefit from ideas in Jean-Colas Prunier's ``Scratchapixel'' \cite{prunier2017triangle}.
