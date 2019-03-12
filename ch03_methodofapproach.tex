@@ -7,36 +7,40 @@
 %
 \chapter{Method of Approach} \label{ch:methods}
 
-\section{Renderer Implementation}
+While building \name, two separate render engine prototypes were implemented.
+The first, which we describe in Section~\ref{ch:methods:renderer:sequential}, was a simple, single core sequential renderer.
+The second, described in Section~\ref{ch:methods:renderer:parallel}, uses CUDA \cite{nvidia2011cuda} and OptiX \cite{parker2010optix} to leverage GPU compute power in parallel.
+In this chapter, we also describe the implementation of the \texttt{ncurses} interface in Section~\ref{ch:methods:interface}.
+Finally, in Section~\ref{ch:methods:threats}, we discuss drawbacks and failures in development, and room for future improvement as an open source project.
 
-\subsection{Sequential}
 
-\subsubsection{Motivation}
+\section{Renderer Implementation} \label{ch:methods:renderer}
 
-\subsubsection{Dependencies}
+\subsection{Sequential} \label{ch:methods:renderer:sequential}
 
-\subsubsection{Design}
+\littlesection{Motivation} \label{ch:methods:renderer:sequential:motivation}
 
-\subsubsection{Prototype}
+\littlesection{Libraries} \label{ch:methods:renderer:sequential:libraries}
+
+\littlesection{Design} \label{ch:methods:renderer:sequential:design}
+
+\littlesection{Prototype} \label{ch:methods:renderer:sequential:proto}
 
 % TODO: change this name to be better
-\subsubsection{Takeaways}
+\littlesection{Takeaways} \label{ch:methods:renderer:sequential:takeaway}
 
-\subsection{Parallel}
+\subsection{Parallel} \label{ch:methods:renderer:parallel}
 
-\subsubsection{Motivation}
+\littlesection{Motivation} \label{ch:methods:renderer:parallel:motivation}
 
-\subsubsection{Libraries}
+\littlesection{Libraries} \label{ch:methods:renderer:parallel:libraries}
 
-\subsubsection{Design}
+\littlesection{Design} \label{ch:methods:renderer:parallel:design}
 
-\subsubsection{Demonstration}
+\littlesection{Demonstration} \label{ch:methods:renderer:parallel:demo}
 
-\section{Interface Implementation}
+\section{Interface Implementation} \label{ch:methods:interface}
 
-\subsection{Design}
+\subsection{Design} \label{ch:methods:interface:design}
 
-\section{Threats to Validity}
-
-
-
+\section{Threats to Validity} \label{ch:methods:threats}
