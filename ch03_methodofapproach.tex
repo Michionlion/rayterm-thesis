@@ -7,14 +7,17 @@
 %
 \chapter{Method of Approach} \label{ch:methods}
 
-While building \name, two separate render engine prototypes were implemented.
-The first, which we describe in Section~\ref{ch:methods:renderer:sequential}, was a simple, single core sequential renderer.
-The second, described in Section~\ref{ch:methods:renderer:parallel}, uses CUDA \cite{nvidia2011cuda} and OptiX \cite{parker2010optix} to leverage GPU compute power in parallel.
+\name\ was developed using a modified agile approach; short development ``sprints'' were executed for key system development.
+We describe the product of some of those sprints in Section~\ref{ch:methods:renderer}, primarily on the implementation of the ray-tracing engine.
 In this chapter, we also describe the implementation of the \texttt{ncurses} interface in Section~\ref{ch:methods:interface}.
 Finally, in Section~\ref{ch:methods:threats}, we discuss drawbacks and failures in development, and room for future improvement as an open source project.
 
 
 \section{Renderer Implementation} \label{ch:methods:renderer}
+While building \name, two separate render engine prototypes were implemented.
+The first, which we describe in Section~\ref{ch:methods:renderer:sequential}, was a simple, single core sequential renderer.
+The second, described in Section~\ref{ch:methods:renderer:parallel}, uses CUDA \cite{nvidia2011cuda} and OptiX \cite{parker2010optix} to leverage GPU compute power in parallel.
+
 
 \subsection{Sequential} \label{ch:methods:renderer:sequential}
 
@@ -44,3 +47,20 @@ Finally, in Section~\ref{ch:methods:threats}, we discuss drawbacks and failures 
 \subsection{Design} \label{ch:methods:interface:design}
 
 \section{Threats to Validity} \label{ch:methods:threats}
+
+CPU:
+\begin{enumerate}
+  \item metal bug
+  \item blender comparisons
+  \item space differential
+  \item coordinate systems
+  \item research difficulty (can't read a physics textbook for each material)
+\end{enumerate}
+
+GPU:
+\begin{enumerate}
+  \item Travis testing
+  \item library management
+  \item gradle integration
+  \item [...]
+\end{enumerate}
