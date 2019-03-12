@@ -21,26 +21,55 @@ The second, described in Section~\ref{ch:methods:renderer:parallel}, uses CUDA \
 
 \subsection{Sequential} \label{ch:methods:renderer:sequential}
 
+Introduction to sequential renderer, description of sequential, single core, etc.
+
 \littlesection{Motivation} \label{ch:methods:renderer:sequential:motivation}
+
+This section is about the reasoning behind starting with a sequential renderer, and how it can be better than alternatives.
 
 \littlesection{Libraries} \label{ch:methods:renderer:sequential:libraries}
 
+This section is about Eigen primarily, and developing \texttt{raymath} as well.
+
 \littlesection{Design} \label{ch:methods:renderer:sequential:design}
 
+This section is about the code structure and organization in the \texttt{rayterm-cpu} implementation.
+
+\begin{enumerate}
+  \item geometry defs
+  \item material defs
+  \item world defs
+  \item renderer structure
+\end{enumerate}
+
 \littlesection{Prototype} \label{ch:methods:renderer:sequential:proto}
+
+This is a demonstration section on what the current cpu implementation is capable of; images and the like will be included.
 
 % TODO: change this name to be better
 \littlesection{Takeaways} \label{ch:methods:renderer:sequential:takeaway}
 
+This section describes the lessons learned from CPU implementation, and how the GPU implementation will differ and improve because of this step. It will also briefly reflect on challenges, and reference Section~\ref{ch:methods:threats}.
+
 \subsection{Parallel} \label{ch:methods:renderer:parallel}
+
+Introduction to parallel GPU renderer, description of parallel, short GPU intro (reference introduction).
 
 \littlesection{Motivation} \label{ch:methods:renderer:parallel:motivation}
 
+This section is about the reasoning behind finishing with a GPU renderer, describing speed benefits, etc.
+
 \littlesection{Libraries} \label{ch:methods:renderer:parallel:libraries}
+
+This section talks about OptiX and CUDA.
 
 \littlesection{Design} \label{ch:methods:renderer:parallel:design}
 
+This section is about the code structure and organization in the \texttt{rayterm} implementation.
+
 \littlesection{Demonstration} \label{ch:methods:renderer:parallel:demo}
+
+This is a demonstration section on final renderer is capabable of -- this section uses only \texttt{ppm} output.
 
 \section{Interface Implementation} \label{ch:methods:interface}
 
