@@ -43,7 +43,8 @@ This can easily be categorized as taking into account both direct lighting, ligh
 Recursive ray-tracing approximates direct lighting easily, as each encountered point sends a ray to each light in the scene.
 Indirect lighting is slightly more difficult -- pure reflection and refraction are easy, but as soon as reflections become more diffuse, and there are many, many directions a point gets lit from, recursive ray-tracing breaks down and path-tracing must take over.
 Despite this, ray-tracing was able to achieve remarkably good images, and thus Whitted-style ray-tracing was born.
-Even today, any simple recursive ray-tracing algorithms are known as Whitted-style ray-tracers. Indeed, \name\ uses a Whitted-style ray-tracer, with only some small enhancements, such as {\it heuristic emissive sampling}.
+Even today, any simple recursive ray-tracing algorithms are known as Whitted-style ray-tracers.
+Indeed, \name\ uses a Whitted-style ray-tracer, with only some small enhancements, such as {\it heuristic emissive sampling}.
 Essentially, this sampling adds a new generation method for rays so that when a ray encounters a diffuse reflective surface, we attempt to sample the possible locations for other emissive (light-producing or light-reflecting) objects.
 This adds some rudimentary support for area lights and diffuse reflections, although it is still not photorealistic.
 
@@ -83,7 +84,8 @@ Essentially, it controls how the geometry around $x'$ affects the outgoing light
 Since for practical purposes we can't infinitely recurse, we will eventually hit a recursion level when evaluating the rendering equation.
 In this case, the incoming light is simply set to the ambient light level and no additional recursive calculations take place.
 This takes care of all reflection, refraction, and light travel; notice, however, that we must solve the integral over an entire sphere of directions, and we must do this for every single point we sample, for every single direction we sample from.
-This is {\it horrendously} inefficient. The significant part of this equation for \name\ is the integral, since if we can approximate that, \name\ would be photorealistic.
+This is {\it horrendously} inefficient.
+The significant part of this equation for \name\ is the integral, since if we can approximate that, \name\ would be photorealistic.
 
 In \name, we use the rendering equation to inform the recursive ray generation, attempting to find areas of the integral where most of the light is incoming; this method we name {\it heuristic emissive sampling} (also mentioned above in Section~\ref{ch:relatedwork:discovery:breakthrough}).
 In the common case, all light will be from the direction of nearby light sources.
