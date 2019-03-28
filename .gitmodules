@@ -1,0 +1,3 @@
+[submodule "impl-images"]
+	path = impl-images
+	url = https://github.com/Michionlion/compdoc.git
