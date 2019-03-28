@@ -38,7 +38,7 @@ Through my search for a replacement project, I discovered that, for me, one of t
 Whether it was something that many others could use or an idea that people could contribute to, I wanted to make something other people saw.
 That is where the draw of open-source software came from for me, and why \name\ is open-source.
 Additionally, I discovered that there are many niches in software -- places where there just is not a lot of people making things.
-Computer graphics in a terminal emulator (see Section~\ref{ch:intro:overview:ncurses}) is one of those corners.
+Computer graphics in a terminal emulator (see Section~\ref{ch:intro:overview:libtickit}) is one of those corners.
 The only real application many people saw for this niche was the rendering of images to the terminal -- in fact, some of the initial inspiration for \name\ came from TerminalImageViewer \cite{tivGithub}, a program to accomplish that very task.
 
 I saw more possibilities, however.
@@ -55,9 +55,9 @@ All that these programs need is an infrastructure around the terminal for 3D ren
 \label{ch:intro:overview}
 
 \name\ uses the recursive ray-tracing algorithm, simulating the path of light through the scene -- this is described in more detail in Section~\ref{ch:intro:overview:raytracing}.
-Many images are generated, or rendered, each second; once an image is rendered the \texttt{ncurses} library \cite{ncursesLibrary} is used to display it in a terminal.
+Many images are generated, or rendered, each second; once an image is rendered the Tickit library \cite{libtickitLibrary} is used to display it in a terminal.
 Multiple images are displayed in quick succession, creating the illusion of movement.
-More details on this process are given in Section~\ref{ch:intro:overview:ncurses}.
+More details on this process are given in Section~\ref{ch:intro:overview:libtickit}.
 Rendered images are displayed in two different modes; the first uses single half-character pixels, and the second more complex Unicode block characters.
 The mechanics of these image composition methods are discussed in Section~\ref{ch:intro:overview:unicode}.
 Finally, Figure~\ref{fig:checker_metal} is a still image of the final terminal output \inlinetodo{update with actual output image}.
@@ -121,8 +121,8 @@ As the eye-ray projects forward, away from the eye, it is tested for intersectio
 When an intersection happens and the generated rays scattered, the eventual color values of the scattered rays are combined to produce the color of the original eye-ray.
 This is done recursively to fully render the scene.
 
-\subsection{Terminal Output using \texttt{ncurses}}
-\label{ch:intro:overview:ncurses}
+\subsection{Terminal Output using Tickit}
+\label{ch:intro:overview:libtickit}
 
 Output in \name\ is shown in a terminal window.
 A terminal is a specific kind of interface for a computer that uses text-based commands and feedback, as opposed to a Graphical User Interface (GUI).
@@ -131,16 +131,16 @@ Today, the terminals most people use are actually ``terminal emulators'', becaus
 These terminal emulators are often simply programs that run in an existing graphical desktop environment, providing a text-based interface to the operating system.
 
 Once an image is generated, \name\ must somehow display that image in a terminal with no surrounding prompt or other formatting -- as a simple {\it character field}.
-To do this, we use a two-step approach: first, we represent the image using Unicode characters (see Section~\ref{ch:intro:overview:unicode}), then we print those characters to the terminal using a C library called \texttt{ncurses} \cite{ncursesLibrary}.
+To do this, we use a two-step approach: first, we represent the image using Unicode characters (see Section~\ref{ch:intro:overview:unicode}), then we print those characters to the terminal using the Tickit (Terminal Interface Construction Kit) library \cite{libtickitLibrary}.
 This library abstracts implementation details of the terminal to enable full-window 24-bit color character output.
-% TODO: update with actual fps
 In \name, the terminal window is divided into two ``panels'', a main panel for the actual image output -- updated 30 times or more per second -- and an info panel to render information such as frames per second and logging text.
 Additionally, extra terminal output such as the command prompt or other character output is disabled.
 
-The main problems that \texttt{ncurses} solves are ones which need to use terminal escape codes -- short character sequences that tell a terminal emulator to change some specific data or use a different display method.
-These escape codes will tell the terminal how to display text by changing the formatting, positioning, or color.
-The library can also disable character ``echoing'', the display of characters that are typed by the user.
-Because of this dependency on \texttt{ncurses}, \name\ can be used only with terminals that support it -- generally, any XTerm-like terminal will work, as long as it supports a terminal information database: either \texttt{termcap} or \texttt{terminfo} \cite{ncursesLibrary}.
+The main problems that Tickit solves are ones which need to use terminal escape codes -- short character sequences that tell a terminal emulator to change some specific data or use a different display method.
+These escape codes tell the terminal how to display text by changing the formatting, positioning, or color.
+The library also disables character ``echoing'', the display of characters that are typed by the user.
+Because of this dependency on Tickit, \name\ can be used only with terminals that support it -- generally, any XTerm-like terminal will work, as long as it supports \texttt{terminfo} \cite{libtickitLibrary}.
+Additionally, full RGB direct color support is required for accurate color information.
 
 \subsection{Image Composition using Unicode Characters}
 \label{ch:intro:overview:unicode}
@@ -173,7 +173,7 @@ There are two image modes available for use in \name.
 The first is pure {\it pixel mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used.
 Since monospaced character output (such as in a terminal) is twice as tall as it is wide, the half-block can split a single character into two pixels that are colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
 This means that a typical 85 by 30 character terminal results in a screen space of 85 by 60 pixels.
-This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel is required.
+This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel per sample is required.
 
 The second image mode is considerably more complicated and slower, as it uses significantly more rays per character in order to determine what Unicode block character most fits the desired output.
 On the other hand, it allows a much higher perceived resolution, since the characters used have smaller footprints of down to an eighth of a character in width or length.
@@ -466,5 +466,5 @@ Chapter~\ref{ch:relatedwork} reviews a number of past approaches
 to ray-tracing, and provides background for some more advanced ray-tracing algorithms and data structures.
 It also describes some tools that we used for \name's initial proposal and testing.
 Chapter~\ref{ch:methods} outlines the high-level conceptual algorithms, test tooling, and methods used in this project.
-It is complemented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including class and function diagrams and organizational information.
+It is complemented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including example output at many different stages of the project.
 Finally, Chapter~\ref{ch:conclusion} completes this document, describing the future work left to complete, a hope for open-source contributions, and a look back at what the author learned through the experience of developing this project.
