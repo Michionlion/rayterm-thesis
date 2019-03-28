@@ -23,11 +23,25 @@ This engine was developed over two sprints, in a little under a month.
 
 \subsection{Sequential} \label{ch:methods:renderer:sequential}
 
-Introduction to sequential renderer, description of sequential, single core, etc.
+The sequential renderer, or as its implementation calls it, \texttt{rayterm-cpu}, is a CPU-only ray-tracer.
+It supports three different types of materials: diffuse, metallic, and dielectric.
+These materials are complemented with two geometric primitives: disks, and spheres.
+Figure~\ref{fig:rayterm-cpu-ppm} shows an image of the \texttt{ppm} output of \texttt{rayterm-cpu} near the end of its development.
+The Tickit interface was never integrated into the CPU implementation, as this implementation is not performant enough for even simple scenes at low resolution.
+For example, Figure~\ref{fig:rayterm-cpu-ppm} was rendered in about 20 seconds on a modern CPU.
 
-\littlesection{Motivation} \label{ch:methods:renderer:sequential:motivation}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{impl-images/first_positionable_camera}
+  \caption{\texttt{rayterm-cpu} example \texttt{ppm} output}
+  \label{fig:rayterm-cpu-ppm}
+\end{figure}
 
-This section is about the reasoning behind starting with a sequential renderer, and how it can be better than alternatives.
+The main advantage of a sequential renderer is the lower development overhead, since there is no need to interface with a complex device such as a GPU.
+This means that there is no need for handling parallel execution, and each ray is computed one after the other.
+Because of this simplicity, this engine's development was perfectly suited the goal of gaining knowledge  and experience in ray-tracing.
+The development also explored many fundamentals so that future contributions would be well-founded.
+With 219 commits and over a thousand lines of code in the final product, along with many thousands of additions and deletions, \texttt{rayterm-cpu} accomplished its goals.
 
 \littlesection{Libraries} \label{ch:methods:renderer:sequential:libraries}
 
@@ -51,7 +65,8 @@ This is a demonstration section on what the current cpu implementation is capabl
 % TODO: change this name to be better
 \littlesection{Takeaways} \label{ch:methods:renderer:sequential:takeaway}
 
-This section describes the lessons learned from CPU implementation, and how the GPU implementation will differ and improve because of this step. It will also briefly reflect on challenges, and reference Section~\ref{ch:methods:threats}.
+This section describes the lessons learned from CPU implementation, and how the GPU implementation will differ and improve because of this step.
+It will also briefly reflect on challenges, and reference Section~\ref{ch:methods:threats}.
 
 \subsection{Parallel} \label{ch:methods:renderer:parallel}
 
