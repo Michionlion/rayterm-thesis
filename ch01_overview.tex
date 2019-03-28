@@ -55,7 +55,7 @@ All that these programs need is an infrastructure around the terminal for 3D ren
 \label{ch:intro:overview}
 
 \name\ uses the recursive ray-tracing algorithm, simulating the path of light through the scene -- this is described in more detail in Section~\ref{ch:intro:overview:raytracing}.
-Many images are generated, or rendered, each second; once an image is rendered the \texttt{libtickit} library \cite{libtickitLibrary} is used to display it in a terminal.
+Many images are generated, or rendered, each second; once an image is rendered the Tickit library \cite{libtickitLibrary} is used to display it in a terminal.
 Multiple images are displayed in quick succession, creating the illusion of movement.
 More details on this process are given in Section~\ref{ch:intro:overview:libtickit}.
 Rendered images are displayed in two different modes; the first uses single half-character pixels, and the second more complex Unicode block characters.
@@ -121,7 +121,7 @@ As the eye-ray projects forward, away from the eye, it is tested for intersectio
 When an intersection happens and the generated rays scattered, the eventual color values of the scattered rays are combined to produce the color of the original eye-ray.
 This is done recursively to fully render the scene.
 
-\subsection{Terminal Output using \texttt{libtickit}}
+\subsection{Terminal Output using Tickit}
 \label{ch:intro:overview:libtickit}
 
 Output in \name\ is shown in a terminal window.
@@ -131,16 +131,16 @@ Today, the terminals most people use are actually ``terminal emulators'', becaus
 These terminal emulators are often simply programs that run in an existing graphical desktop environment, providing a text-based interface to the operating system.
 
 Once an image is generated, \name\ must somehow display that image in a terminal with no surrounding prompt or other formatting -- as a simple {\it character field}.
-To do this, we use a two-step approach: first, we represent the image using Unicode characters (see Section~\ref{ch:intro:overview:unicode}), then we print those characters to the terminal using a library called \texttt{libtickit} \cite{libtickitLibrary}.
+To do this, we use a two-step approach: first, we represent the image using Unicode characters (see Section~\ref{ch:intro:overview:unicode}), then we print those characters to the terminal using the Tickit (Terminal Interface Construction Kit) library \cite{libtickitLibrary}.
 This library abstracts implementation details of the terminal to enable full-window 24-bit color character output.
 In \name, the terminal window is divided into two ``panels'', a main panel for the actual image output -- updated 30 times or more per second -- and an info panel to render information such as frames per second and logging text.
 Additionally, extra terminal output such as the command prompt or other character output is disabled.
 
-The main problems that \texttt{libtickit} solves are ones which need to use terminal escape codes -- short character sequences that tell a terminal emulator to change some specific data or use a different display method.
+The main problems that Tickit solves are ones which need to use terminal escape codes -- short character sequences that tell a terminal emulator to change some specific data or use a different display method.
 These escape codes tell the terminal how to display text by changing the formatting, positioning, or color.
 The library also disables character ``echoing'', the display of characters that are typed by the user.
-Because of this dependency on \texttt{libtickit}, \name\ can be used only with terminals that support it -- generally, any XTerm-like terminal will work, as long as it supports \texttt{terminfo} \cite{libtickitLibrary}.
-Additionally, full RGB direct color support is required for accurate color information. 
+Because of this dependency on Tickit, \name\ can be used only with terminals that support it -- generally, any XTerm-like terminal will work, as long as it supports \texttt{terminfo} \cite{libtickitLibrary}.
+Additionally, full RGB direct color support is required for accurate color information.
 
 \subsection{Image Composition using Unicode Characters}
 \label{ch:intro:overview:unicode}
@@ -466,5 +466,5 @@ Chapter~\ref{ch:relatedwork} reviews a number of past approaches
 to ray-tracing, and provides background for some more advanced ray-tracing algorithms and data structures.
 It also describes some tools that we used for \name's initial proposal and testing.
 Chapter~\ref{ch:methods} outlines the high-level conceptual algorithms, test tooling, and methods used in this project.
-It is complemented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including class and function diagrams and organizational information.
+It is complemented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including example output at many different stages of the project.
 Finally, Chapter~\ref{ch:conclusion} completes this document, describing the future work left to complete, a hope for open-source contributions, and a look back at what the author learned through the experience of developing this project.
