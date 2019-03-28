@@ -2,9 +2,8 @@ language: generic
 sudo: required
 
 before_install:
-- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends latexmk
-  texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra
-  texlive-latex-recommended texlive-pictures texlive-science
+- sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends latexmk texlive-fonts-extra texlive-fonts-recommended texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-pictures texlive-science
+- git submodule update --init --recursive
 script:
 - mkdir _build
 - latexmk -pdf -outdir=_build thesis.tex
