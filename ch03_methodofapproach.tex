@@ -8,9 +8,9 @@
 \chapter{Method of Approach} \label{ch:methods}
 
 \name\ was developed using a modified agile approach; short development ``sprints'' were executed for key system development.
-We describe the product of some of those sprints in Section~\ref{ch:methods:renderer}, primarily on the implementation of the ray-tracing engine.
-In this chapter, we also describe the implementation of the Tickit interface in Section~\ref{ch:methods:interface}.
-Finally, in Section~\ref{ch:methods:threats}, we discuss drawbacks and failures in development, and room for future improvement as an open source project.
+We describe the product of some of those sprints in Section~\ref{ch:methods:renderer}, primarily the ray-tracing engines.
+In Section~\ref{ch:methods:interface} we also describe the Tickit interface and its algorithms.
+Finally, in Section~\ref{ch:methods:threats}, we discuss drawbacks, challenges, and failures in development, as well as directions for future improvement as an open source project.
 
 
 \section{Renderer Implementation} \label{ch:methods:renderer}
@@ -32,7 +32,7 @@ For example, Figure~\ref{fig:rayterm-cpu-ppm} was rendered in about 20 seconds o
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.5\textwidth]{impl-images/first_positionable_camera}
+  \includegraphics[width=0.75\textwidth]{impl-images/first_positionable_camera}
   \caption{\texttt{rayterm-cpu} example \texttt{ppm} output}
   \label{fig:rayterm-cpu-ppm}
 \end{figure}
@@ -72,9 +72,9 @@ It will also briefly reflect on challenges, and reference Section~\ref{ch:method
 
 Introduction to parallel GPU renderer, description of parallel, short GPU intro (reference introduction).
 
-\littlesection{Motivation} \label{ch:methods:renderer:parallel:motivation}
-
-This section is about the reasoning behind finishing with a GPU renderer, describing speed benefits, etc.
+With 227 commits and over 1.5 thousand lines of code in the renderer alone, along with many thousands of additions and deletions, \texttt{rayterm} has a good start on its life.
+There are many, many more improvements possible, however.
+We detail some of them, in the context of the larger \name\ implementation, in Section~\ref{ch:methods:threats}.
 
 \littlesection{Libraries} \label{ch:methods:renderer:parallel:libraries}
 
@@ -92,7 +92,7 @@ This is a demonstration section on final renderer is capabable of -- this sectio
 
 \subsection{Design} \label{ch:methods:interface:design}
 
-\section{Threats to Validity} \label{ch:methods:threats}
+\section{Threats and the Future} \label{ch:methods:threats}
 
 CPU:
 \begin{enumerate}
