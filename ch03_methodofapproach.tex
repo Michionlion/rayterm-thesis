@@ -43,9 +43,44 @@ Because of this simplicity, this engine's development was perfectly suited the g
 The development also explored many fundamentals so that future contributions would be well-founded.
 With 219 commits and over a thousand lines of code in the final product, along with many thousands of additions and deletions, \texttt{rayterm-cpu} accomplished its goals.
 
-\littlesection{Libraries} \label{ch:methods:renderer:sequential:libraries}
+\littlesection{Components} \label{ch:methods:renderer:sequential:components}
 
-This section is about Eigen primarily, and developing \texttt{raymath} as well.
+The sequential renderer's implementation relies on two main components, as well as the Eigen linear algebra library \cite{eigenweb}.
+These components have a linear relationship, as can be seen in Figure~\ref{fig:rayterm-cpu-components}; \texttt{raytrace} deals with tracing rays, \texttt{raymath} with intersection logic, and Eigen with linear algebra.
+
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.4\textwidth}
+  \hspace{0.25\textwidth}
+  \begin{tikzpicture}
+      \node[shape=rectangle,draw=black] (e) at (0,1.5) {Eigen};
+      \node[shape=rectangle,draw=black] (rm) at (0,0) {\texttt{raymath}};
+      \node[shape=rectangle,draw=black] (rt) at (0,-1.5) {\texttt{raytrace}};
+
+      \path [<-](e) edge node[midway, fill=white] {\tiny depends on} (rm);
+      \path [<-](rm) edge node[midway, fill=white] {\tiny depends on} (rt);
+  \end{tikzpicture}
+  \caption{Component and dependency relationships in \texttt{rayterm-cpu}}
+  \label{fig:rayterm-cpu-components}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.4\textwidth}
+    \hspace{0.25\textwidth}
+    \begin{tikzpicture}
+      \node[shape=rectangle,draw=black] (g) at (0,1.5) {\texttt{geometry}};
+        \node[shape=rectangle,draw=black] (s) at (1,0) {\texttt{sphere}};
+        \node[shape=rectangle,draw=black] (d) at (-1,0) {\texttt{disk}};
+
+        \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (s);
+        \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (d);
+    \end{tikzpicture}
+    \caption{Geometric structures in \texttt{raymath}}
+    \label{fig:rayterm-cpu-raymath}
+  \end{subfigure}
+  % \caption{}
+  \label{fig:rayterm-cpu-first-diagrams}
+\end{figure}
+
+
 
 \littlesection{Design} \label{ch:methods:renderer:sequential:design}
 
@@ -58,12 +93,11 @@ This section is about the code structure and organization in the \texttt{rayterm
   \item renderer structure
 \end{enumerate}
 
-\littlesection{Prototype} \label{ch:methods:renderer:sequential:proto}
+\littlesection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
 
 This is a demonstration section on what the current cpu implementation is capable of; images and the like will be included.
 
-% TODO: change this name to be better
-\littlesection{Takeaways} \label{ch:methods:renderer:sequential:takeaway}
+\littlesection{Prototype} \label{ch:methods:renderer:sequential:prototype}
 
 This section describes the lessons learned from CPU implementation, and how the GPU implementation will differ and improve because of this step.
 It will also briefly reflect on challenges, and reference Section~\ref{ch:methods:threats}.
@@ -74,7 +108,7 @@ Introduction to parallel GPU renderer, description of parallel, short GPU intro 
 
 With 227 commits and over 1.5 thousand lines of code in the renderer alone, along with many thousands of additions and deletions, \texttt{rayterm} has a good start on its life.
 There are many, many more improvements possible, however.
-We detail some of them, in the context of the larger \name\ implementation, in Section~\ref{ch:methods:threats}.
+We detail some of them in the context of the larger \name\ implementation in Section~\ref{ch:methods:threats}.
 
 \littlesection{Libraries} \label{ch:methods:renderer:parallel:libraries}
 
