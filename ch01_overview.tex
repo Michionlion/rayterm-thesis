@@ -74,7 +74,7 @@ Finally, Figure~\ref{fig:checker_metal} is a still image of the final terminal o
 
 A rendering engine is an algorithm that takes a scene -- a description of some collection of objects -- and generates an image or visual representation of that scene.
 There are many different algorithms that accomplish this goal.
-\name\ utilizes the recursive ray-tracing algorithm first pioneered by Turner Whitted in his ground-breaking paper ``An Improved Illumination Model for Shaded Display'' \cite{whitted1980improved}.
+\name\ utilizes a variant of the recursive ray-tracing algorithm first pioneered by Turner Whitted in his ground-breaking paper ``An Improved Illumination Model for Shaded Display'' \cite{whitted1980improved}.
 Ray-tracing was one of the first algorithms developed in the field of computer graphics, and although there have been some improvements since then, the idea behind the algorithm has maintained its original simplicity.
 
 Ray-tracing has been used as the rendering algorithm of choice for photorealistic scenes because with only a few modifications to Whitted's original algorithm, it can generate fantastic images.
@@ -105,15 +105,14 @@ If solved for every point in the scene, the rendering equation could generate a 
 This is because the rendering equation contains an integral over all incoming light which must be solved through numerical analysis.
 Ray-tracing algorithms that do this are known as {\it path-tracers} and are the most photorealistic rendering algorithms invented.
 
-\name\ does not use a path-tracer -- such algorithms are still many times too slow for most real-time rendering situations.
-Instead, the rendering equation is solved by sampling the incoming light at each point with rays.
-This is known as recursive ray-tracing since it starts with a single ray that splits every time it encounters a surface.
+\name\ does not use a full path-tracer -- such algorithms are still many times too slow for most real-time rendering situations; however, a Monte-Carlo method that can approximate a full path-tracer is used.
+In \name, the rendering equation is solved by sampling the incoming light at each point with rays.
+This is known as recursive ray-tracing since it starts with a single ray that ``recurses'' when it encounters a surface.
 The eventual goal of the recursive ray-tracing algorithm is to create a tree of rays for each {\it fragment} to render.
-A fragment is either a pixel or some sub-pixel -- many systems will use four or more fragments per pixel to get better anti-aliasing and more accurate results.
+A fragment is either a pixel or some sub-pixel -- many systems will use many fragments per pixel to get better anti-aliasing and more accurate results.
 Each ray contains some color that represents the color of the light in that ray.
-When a ray hits an object, it is {\it scattered} by the {\it material} of the object, splitting and generating new rays.
-These rays are biased towards directions that contain lots of incoming light -- such as towards a point light source.
-The specific implementation of recursive ray-tracing that \name\ uses only scatters into a set number of rays at each intersection point: one ray toward each light source, along with reflection and refraction rays towards the relevant directions \inlinetodo{update with relevant scatter numbers}.
+When a ray hits an object, it is {\it scattered} by the {\it material} of the object, generating a new ray.
+This ray's trajectory is modified randomly based on probability and the specific material hit; for instance, if the material is reflective then the ray will be biased towards the reflection direction.
 
 The base of each generated tree is an {\it eye-ray} -- a ray with its origin at the fragment location on the camera plane.
 The eye-ray's color is the color that will be rendered for that fragment.
