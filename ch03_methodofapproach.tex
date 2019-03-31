@@ -87,8 +87,13 @@ The implementations behind these are covered in Section~\ref{ch:implementation:r
 The main component in \texttt{rayterm-cpu} is \texttt{raytrace}; it handles world representation, materials, and raytracing.
 \texttt{rayterm-cpu} only renders in \texttt{ppm} mode, since the Tickit interface was only integrated in the \texttt{rayterm-gpu} implementation, since that was the final prototype.
 \texttt{raytrace} represents objects with a \texttt{WorldObject} class, a list of which is stored in a \texttt{World}.
-The main entry point is \texttt{raytrace\_ppm}, which creates rays with a \texttt{Camera} class, and then traces those rays inside a \texttt{World}.
-This produces a \texttt{color}, which is then written to a \texttt{ppm} image.
+
+Figure~\ref{fig:rayterm-cpu-raytrace-journey-of-a-ray} shows the function call path that is used when rendering a single ray.
+The main entry point is \texttt{raytrace\_ppm}, which creates rays with a \texttt{Camera} class instance.
+This instance contains specific parameters to control the position and orientation of the virtual camera, and thus controls where the \texttt{ray} originates from. and its direction.
+Then, that \texttt{ray} is sent on to the \texttt{World} class, where an \texttt{intersection} is retrieved, and then used to generate a \texttt{color} from the given \texttt{ray}.
+This color is then finally returned to \texttt{raytrace\_ppm}, which writes it to a \texttt{ppm} file.
+Unmentioned in this diagram are the recursive calls to \texttt{World::trace} from from \texttt{WorldObject::colorize}, which use the transformed ``scatter'' \texttt{ray} from \texttt{Material::scatter}.
 The implementation behind all of these structures and functions are covered in Section~\ref{ch:implementation:rayterm-cpu:raytrace}.
 
 \begin{figure}[htb]
@@ -98,9 +103,10 @@ The implementation behind all of these structures and functions are covered in S
     \node[shape=rectangle, draw=black, right = 2.5em of a ] (b) {Generation in \texttt{Camera::get\_screen\_ray}};
     \node[shape=rectangle, draw=black, below = 1.75em of a] (c) {World tracing in \texttt{World::trace}};
     \node[shape=rectangle, draw=black, right = 2.5em of c] (e) {Ray coloring in \texttt{WorldObject::colorize}};
+    \node[shape=rectangle, draw=black, below = 1.75em of e] (s) {Ray scattering in \texttt{Material::scatter}};
+    \node[shape=rectangle, draw=black, below = 1.75em of c] (d) {World intersection in \texttt{World::intersects}};
     \begin{scope}[xshift=1cm]
-      \node[shape=rectangle, draw=black] (d) at (3.25, -2.77) {World intersection in \texttt{World::intersects}};
-      \node[shape=rectangle, draw=black, below = 1.75em of d] (f) {Object intersection in \texttt{WorldObject::intersects}};
+      \node[shape=rectangle, draw=black] (f) at (2.75, -4.15) {Object intersection in \texttt{WorldObject::intersects}};
       \node[shape=rectangle, draw=black, below = 1.75em of f] (g) {Geometry intersection in \texttt{geometry::intersects}};
       \path [->](d) edge node[midway, fill=white] {\tiny calls} (f);
       \path [->](f) edge node[midway, fill=white] {\tiny calls} (g);
@@ -110,21 +116,58 @@ The implementation behind all of these structures and functions are covered in S
       \path [->](a) edge node[midway, fill=white] {\tiny calls} (c);
       \path [->](c) edge node[midway, fill=white] {\tiny calls} (d);
       \path [->](c) edge node[midway, fill=white] {\tiny calls} (e);
+      \path [->](e) edge node[midway, fill=white] {\tiny calls} (s);
   \end{tikzpicture}
   \caption{The journey of a \texttt{ray} and its \texttt{intersection}}
   \label{fig:rayterm-cpu-raytrace-journey-of-a-ray}
 \end{figure}
 
-
-
 \littlesection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
 
-This is a demonstration section on what the current cpu implementation is capable of; images and the like will be included.
+The sequential renderer implements single-branch Monte Carlo ray-tracing, a type of rendering that can produce physically accurate images with little development effort.
+The algorithm is largely based on randomness, only modifying the path of a single ray as it bounces around the scene.
+When encountering objects, a particular Probability Distribution Function (PDF) is used to calculate where the ray will bounce.
+These PDFs vary based on the material, and are hardcoded in the \texttt{Material} implementation.
+The result of this algorithm is extremely noisy because of this randomness (see Figure~\ref{fig:rayterm-cpu-ppm-noisy}), so many samples must be taken and then averaged to gain a true value for a single pixel; this simulates the many millions of photons that would have traveled to that pixel in a real camera.
+The number of samples per pixel, sometimes termed ``spp,'' is the number of rays generated from a random origin within the pixel.
+An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu-ppm-noisy}.
+
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_1}
+    \caption{1 sample per pixel}
+    \label{fig:rayterm-cpu-ppm-noisy-1}
+  \end{subfigure}
+  \hspace{1em}
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_4}
+    \caption{4 samples per pixel}
+    \label{fig:rayterm-cpu-ppm-noisy-4}
+  \end{subfigure}
+  \vspace{1em}
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_32}
+    \caption{32 samples per pixel}
+    \label{fig:rayterm-cpu-ppm-noisy-32}
+  \end{subfigure}
+  \hspace{1em}
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_1024}
+    \caption{1024 samples per pixel}
+    \label{fig:rayterm-cpu-ppm-noisy-1024}
+  \end{subfigure}
+  \caption{Sample per pixel differentiated output from \texttt{rayterm-cpu}}
+  \label{fig:rayterm-cpu-ppm-noisy}
+\end{figure}
 
 \littlesection{Prototype} \label{ch:methods:renderer:sequential:prototype}
 
 This section describes the lessons learned from CPU implementation, and how the GPU implementation will differ and improve because of this step.
-It will also briefly reflect on challenges, and reference Section~\ref{ch:methods:threats}.
+
+The final implementation of \texttt{rayterm-cpu} only renders images through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or \texttt{gradle test}.
+This generates a \texttt{test\_image.ppm} file, examples of which we show from various stages of development in Section~\ref{ch:implementation:rayterm-cpu:raytrace}.
+Because of this, \texttt{rayterm-cpu} is very much a proof-of-concept and learning example, rather than a fully-fledged library.
 
 \subsection{Parallel} \label{ch:methods:renderer:parallel}
 
@@ -156,22 +199,3 @@ This is a demonstration section on final renderer is capabable of -- this sectio
 \section{Interface Implementation} \label{ch:methods:interface}
 
 \subsection{Design} \label{ch:methods:interface:design}
-
-\section{Threats and the Future} \label{ch:methods:threats}
-
-CPU:
-\begin{enumerate}
-  \item metal bug
-  \item blender comparisons
-  \item space differential
-  \item coordinate systems
-  \item research difficulty (can't read a physics textbook for each material)
-\end{enumerate}
-
-GPU:
-\begin{enumerate}
-  \item Travis testing
-  \item library management
-  \item gradle integration
-  \item [...]
-\end{enumerate}
