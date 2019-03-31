@@ -30,6 +30,7 @@ Figure~\ref{fig:rayterm-cpu-ppm} shows an image of the \texttt{ppm} output of \t
 The Tickit interface was never integrated into the CPU implementation, as this implementation is not performant enough for even simple scenes at low resolution.
 For example, Figure~\ref{fig:rayterm-cpu-ppm} was rendered in about twenty seconds on a modern CPU.
 
+\vspace{0.3em}
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.75\textwidth]{impl-images/first_positionable_camera}
@@ -48,6 +49,7 @@ With 219 commits and over a thousand lines of code in the final product, along w
 The sequential renderer's implementation relies on two main components, as well as the Eigen linear algebra library \cite{eigenweb}.
 These components have a linear relationship, as can be seen in Figure~\ref{fig:rayterm-cpu-components}; \texttt{raytrace} deals with tracing rays, \texttt{raymath} with intersection logic, and Eigen with linear algebra.
 
+\vspace{0.3em}
 \begin{figure}[htb]
   \centering
   \begin{tikzpicture}
@@ -70,6 +72,7 @@ The base component in \texttt{rayterm-cpu} -- \texttt{raymath} -- provides suppo
 \texttt{raymath} also handles random number and vector generation, color handling, and intersection representation.
 The implementations behind these are covered in Section~\ref{ch:implementation:rayterm-cpu:raymath}.
 
+\vspace{0.3em}
 \begin{figure}[htb]
   \centering
   \begin{tikzpicture}
@@ -96,6 +99,7 @@ This color is then finally returned to \texttt{raytrace\_ppm}, which writes it t
 Unmentioned in this diagram are the recursive calls to \texttt{World::trace} from from \texttt{WorldObject::colorize}, which use the transformed ``scatter'' \texttt{ray} from \texttt{Material::scatter}.
 The implementation behind all of these structures and functions are covered in Section~\ref{ch:implementation:rayterm-cpu:raytrace}.
 
+\vspace{0.3em}
 \begin{figure}[htb]
   \centering
   \begin{tikzpicture}
@@ -132,6 +136,7 @@ The result of this algorithm is extremely noisy because of this randomness (see 
 The number of samples per pixel, sometimes termed ``spp,'' is the number of rays generated from a random origin within the pixel.
 An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu-ppm-noisy}.
 
+\vspace{0.3em}
 \begin{figure}[htb]
   \centering
   \begin{subfigure}[htb]{0.45\textwidth}
