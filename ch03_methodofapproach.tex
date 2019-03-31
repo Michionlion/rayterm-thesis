@@ -26,28 +26,28 @@ This engine was developed over two sprints, in a little under a month.
 The sequential renderer, or \texttt{rayterm-cpu}, is a CPU-only ray-tracer.
 It supports three different types of materials: diffuse, metallic, and dielectric.
 These materials are complemented with two geometric primitives: disks, and spheres.
-Figure~\ref{fig:rayterm-cpu-ppm} shows an image of the \texttt{ppm} output of \texttt{rayterm-cpu} near the end of its development.
+Figure~\ref{fig:rayterm-cpu_ppm} shows an image of the \texttt{ppm} output of \texttt{rayterm-cpu} near the end of its development.
 The Tickit interface was never integrated into the CPU implementation, as this implementation is not performant enough for even simple scenes at low resolution.
-For example, Figure~\ref{fig:rayterm-cpu-ppm} was rendered in about twenty seconds on a modern CPU.
+For example, Figure~\ref{fig:rayterm-cpu_ppm} was rendered in about twenty seconds on a modern CPU.
 
 \vspace{0.3em}
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.75\textwidth]{impl-images/first_positionable_camera}
   \caption{\texttt{rayterm-cpu} example \texttt{ppm} output}
-  \label{fig:rayterm-cpu-ppm}
+  \label{fig:rayterm-cpu_ppm}
 \end{figure}
 
 The main advantage of a sequential renderer is the lower development overhead, since there is no need to interface with a complex device such as a GPU.
 This means that there is no need for handling parallel execution, and each ray is computed one after the other.
-Because of this simplicity, this engine's development was perfectly suited the goal of gaining knowledge  and experience in ray-tracing.
+Because of this simplicity, this engine's development was perfectly suited for the goal of gaining knowledge and experience in ray-tracing.
 The development also explored many fundamentals so that future contributions would be well-founded.
 With 219 commits and over a thousand lines of code in the final product, along with many thousands of additions and deletions, \texttt{rayterm-cpu} accomplished its goals.
 
 \littlesection{Components} \label{ch:methods:renderer:sequential:components}
 
 The sequential renderer's implementation relies on two main components, as well as the Eigen linear algebra library \cite{eigenweb}.
-These components have a linear relationship, as can be seen in Figure~\ref{fig:rayterm-cpu-components}; \texttt{raytrace} deals with tracing rays, \texttt{raymath} with intersection logic, and Eigen with linear algebra.
+These components have a linear relationship, as can be seen in Figure~\ref{fig:rayterm-cpu_components}; \texttt{raytrace} deals with tracing rays, \texttt{raymath} with intersection logic, and Eigen with linear algebra.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -61,14 +61,14 @@ These components have a linear relationship, as can be seen in Figure~\ref{fig:r
       \path [<-](rm) edge node[midway, fill=white] {\tiny depends on} (rt);
   \end{tikzpicture}
   \caption{Component and dependency relationships in \texttt{rayterm-cpu}}
-  \label{fig:rayterm-cpu-components}
+  \label{fig:rayterm-cpu_components}
 \end{figure}
 
 Eigen \cite{eigenweb} is a linear algebra for C++ that supports matrix and vector manupulations, various matrix decompositions and geometry features, and has many extensions for numerous other numerical operations.
 Eigen is also extremely well-optimized and uses SSE vectorized code, vastly improving performance on supported CPUs.
 In \texttt{raymath}, Eigen is used primarily for easy, tested representations and calculations involving vectors; all of the algorithms implemented use equations derived from the ones in Section~\ref{ch:intro:background:raytracing_math}, and so benefit from easy implementation.
 
-The base component in \texttt{rayterm-cpu} -- \texttt{raymath} -- provides support for various geometries and intersection routines. The geometries supported can be seen in Figure~\ref{fig:rayterm-cpu-raymath-geometry}, and use Eigen structures to represent their geometric data.
+The base component in \texttt{rayterm-cpu} -- \texttt{raymath} -- provides support for various geometries and intersection routines. The geometries supported can be seen in Figure~\ref{fig:rayterm-cpu_raymath_geometry}, and use Eigen structures to represent their geometric data.
 \texttt{raymath} also handles random number and vector generation, color handling, and intersection representation.
 The implementations behind these are covered in Section~\ref{ch:implementation:rayterm-cpu:raymath}.
 
@@ -84,14 +84,14 @@ The implementations behind these are covered in Section~\ref{ch:implementation:r
       \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (d);
   \end{tikzpicture}
   \caption{Geometric structures in \texttt{raymath}}
-  \label{fig:rayterm-cpu-raymath-geometry}
+  \label{fig:rayterm-cpu_raymath_geometry}
 \end{figure}
 
 The main component in \texttt{rayterm-cpu} is \texttt{raytrace}; it handles world representation, materials, and raytracing.
 \texttt{rayterm-cpu} only renders in \texttt{ppm} mode, since the Tickit interface was only integrated in the \texttt{rayterm-gpu} implementation, since that was the final prototype.
 \texttt{raytrace} represents objects with a \texttt{WorldObject} class, a list of which is stored in a \texttt{World}.
 
-Figure~\ref{fig:rayterm-cpu-raytrace-journey-of-a-ray} shows the function call path that is used when rendering a single ray.
+Figure~\ref{fig:rayterm-cpu_raytrace_journey_of_a_ray} shows the function call path that is used when rendering a single ray.
 The main entry point is \texttt{raytrace\_ppm}, which creates rays with a \texttt{Camera} class instance.
 This instance contains specific parameters to control the position and orientation of the virtual camera, and thus controls where the \texttt{ray} originates from. and its direction.
 Then, that \texttt{ray} is sent on to the \texttt{World} class, where an \texttt{intersection} is retrieved, and then used to generate a \texttt{color} from the given \texttt{ray}.
@@ -123,7 +123,7 @@ The implementation behind all of these structures and functions are covered in S
       \path [->](e) edge node[midway, fill=white] {\tiny calls} (s);
   \end{tikzpicture}
   \caption{The journey of a \texttt{ray} and its \texttt{intersection}}
-  \label{fig:rayterm-cpu-raytrace-journey-of-a-ray}
+  \label{fig:rayterm-cpu_raytrace_journey_of_a_ray}
 \end{figure}
 
 \littlesection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
@@ -132,9 +132,9 @@ The sequential renderer implements single-branch Monte Carlo ray-tracing, a type
 The algorithm is largely based on randomness, only modifying the path of a single ray as it bounces around the scene.
 When encountering objects, a particular Probability Distribution Function (PDF) is used to calculate where the ray will bounce.
 These PDFs vary based on the material, and are hardcoded in the \texttt{Material} implementation.
-The result of this algorithm is extremely noisy because of this randomness (see Figure~\ref{fig:rayterm-cpu-ppm-noisy}), so many samples must be taken and then averaged to gain a true value for a single pixel; this simulates the many millions of photons that would have traveled to that pixel in a real camera.
+The result of this algorithm is extremely noisy because of this randomness (see Figure~\ref{fig:rayterm_cpu_ppm_noisy}), so many samples must be taken and then averaged to gain a true value for a single pixel; this simulates the many millions of photons that would have traveled to that pixel in a real camera.
 The number of samples per pixel, sometimes termed ``spp,'' is the number of rays generated from a random origin within the pixel.
-An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu-ppm-noisy}.
+An example of various spp values is shown in Figure~\ref{fig:rayterm_cpu_ppm_noisy}.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -142,28 +142,28 @@ An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu-ppm-noi
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_1}
     \caption{1 sample per pixel}
-    \label{fig:rayterm-cpu-ppm-noisy-1}
+    \label{fig:rayterm-cpu_ppm_noisy_1}
   \end{subfigure}
   \hspace{1em}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_4}
     \caption{4 samples per pixel}
-    \label{fig:rayterm-cpu-ppm-noisy-4}
+    \label{fig:rayterm-cpu_ppm_noisy_4}
   \end{subfigure}
   \vspace{1em}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_32}
     \caption{32 samples per pixel}
-    \label{fig:rayterm-cpu-ppm-noisy-32}
+    \label{fig:rayterm-cpu_ppm_noisy_32}
   \end{subfigure}
   \hspace{1em}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_1024}
     \caption{1024 samples per pixel}
-    \label{fig:rayterm-cpu-ppm-noisy-1024}
+    \label{fig:rayterm-cpu_ppm_noisy_1024}
   \end{subfigure}
   \caption{Sample per pixel differentiated output from \texttt{rayterm-cpu}}
-  \label{fig:rayterm-cpu-ppm-noisy}
+  \label{fig:rayterm-cpu_ppm_noisy}
 \end{figure}
 
 \littlesection{Prototype} \label{ch:methods:renderer:sequential:prototype}
