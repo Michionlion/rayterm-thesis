@@ -129,12 +129,12 @@ The implementation behind all of these structures and functions are covered in S
 \littlesection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
 
 The sequential renderer implements single-branch Monte Carlo ray-tracing, a type of rendering that can produce physically accurate images with little development effort.
-The algorithm is largely based on randomness, only modifying the path of a single ray as it bounces around the scene.
+The algorithm is largely based on randomness, only modifying the path of a single ray at a time as it bounces around the scene.
 When encountering objects, a particular Probability Distribution Function (PDF) is used to calculate where the ray will bounce.
 These PDFs vary based on the material, and are hardcoded in the \texttt{Material} implementation.
-The result of this algorithm is extremely noisy because of this randomness (see Figure~\ref{fig:rayterm_cpu_ppm_noisy}), so many samples must be taken and then averaged to gain a true value for a single pixel; this simulates the many millions of photons that would have traveled to that pixel in a real camera.
+The result of this algorithm is extremely noisy because of this randomness (see Figure~\ref{fig:rayterm-cpu_ppm_noisy}), so many samples must be taken and then averaged to gain a true value for a single pixel; this simulates the many millions of photons that would have traveled to that pixel in a real camera.
 The number of samples per pixel, sometimes termed ``spp,'' is the number of rays generated from a random origin within the pixel.
-An example of various spp values is shown in Figure~\ref{fig:rayterm_cpu_ppm_noisy}.
+An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu_ppm_noisy}.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -165,6 +165,17 @@ An example of various spp values is shown in Figure~\ref{fig:rayterm_cpu_ppm_noi
   \caption{Sample per pixel differentiated output from \texttt{rayterm-cpu}}
   \label{fig:rayterm-cpu_ppm_noisy}
 \end{figure}
+
+For an spp value of four, there are four rays generated for each pixel; thus, the rendering equation \cite{kajiya1986rendering} is approximated at the first intersection by four random direction samplings (keep in mind the integration is over the sphere or hemisphere around the point of intersection for each ray).
+Thus, the more rays generated, the more accurate that sampling becomes.
+This is still not really solving the rendering equation, and is a large simplification.
+Rather, the different eye-rays generated because of the spp value sample slightly different intersection points.
+These rays then also sample different directions out of those intersection points, and so are a kind of ``fuzzy'' approximation.
+An area for future work is implementing a kind of ``stratification'' of these samples, so that they are not randomly spread, but instead fully sample the sphere or hemisphere at a certain resolution;
+This would likely be combined with branched Monte Carlo rendering, which involves generating multiple rays for each intersection hit, thereby actually sampling the same integral.
+This would reduce the noise at low spp values significantly better than simply increasing the spp value, although at the slight cost of performance (more rays to calculate).
+
+
 
 \littlesection{Prototype} \label{ch:methods:renderer:sequential:prototype}
 
