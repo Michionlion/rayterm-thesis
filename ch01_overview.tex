@@ -168,19 +168,19 @@ This allows each {\it character~pixel} to represent a hard gradient.
   \label{fig:unicode_characters}
 \end{figure}
 
-There are two image modes available for use in \name.
-The first is pure {\it pixel mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used.
+There are two main image modes possible for use in \name.
+The first is pure {\it pixel mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used; this is the current default.
 Since monospaced character output (such as in a terminal) is twice as tall as it is wide, the half-block can split a single character into two pixels that are colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
 This means that a typical 85 by 30 character terminal results in a screen space of 85 by 60 pixels.
 This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel per sample is required.
 
 The second image mode is considerably more complicated and slower, as it uses significantly more rays per character in order to determine what Unicode block character most fits the desired output.
 On the other hand, it allows a much higher perceived resolution, since the characters used have smaller footprints of down to an eighth of a character in width or length.
-The differences between these two modes are highlighted in Figure~\ref{fig:unicode_mode_comparison1} and~\ref{fig:unicode_mode_comparison2} \inlinetodo{update with actual output}.
+The differences between these two modes are highlighted in Figure~\ref{fig:unicode_mode_comparison1} and~\ref{fig:unicode_mode_comparison2}.
 It can be seen that the first image mode, {\it pixel mode}, shows a rather fuzzy definition of the main large sphere.
-However, in the second image mode, {\it character mode}, the sphere and the reflections seen in it are much more defined.
-The performance impact of both modes is another factor that was assessed when making implementation decisions for \name; it informed how much actual definition was added by the second rendering mode.
-With the current implementation, there is around a four-fold decrease in performance \inlinetodo{update with actual decrease in performance}.
+However, in the second image mode, {\it character mode}, the sphere and the reflections seen in it are more defined.
+The performance impact of both modes is another factor that is assessed when making implementation decisions for \name; it informed how much actual definition was added by the second rendering mode.
+The current implementation does not fully implement character mode; instead, this is considered a well-defined area for future work.
 
 \begin{figure}[htb]
   \centering
