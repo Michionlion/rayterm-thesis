@@ -23,12 +23,12 @@ This engine was developed over two sprints, in a little under a month.
 
 \subsection{Sequential} \label{ch:methods:renderer:sequential}
 
-The sequential renderer, or as its implementation calls it, \texttt{rayterm-cpu}, is a CPU-only ray-tracer.
+The sequential renderer, or \texttt{rayterm-cpu}, is a CPU-only ray-tracer.
 It supports three different types of materials: diffuse, metallic, and dielectric.
 These materials are complemented with two geometric primitives: disks, and spheres.
 Figure~\ref{fig:rayterm-cpu-ppm} shows an image of the \texttt{ppm} output of \texttt{rayterm-cpu} near the end of its development.
 The Tickit interface was never integrated into the CPU implementation, as this implementation is not performant enough for even simple scenes at low resolution.
-For example, Figure~\ref{fig:rayterm-cpu-ppm} was rendered in about 20 seconds on a modern CPU.
+For example, Figure~\ref{fig:rayterm-cpu-ppm} was rendered in about twenty seconds on a modern CPU.
 
 \begin{figure}[htb]
   \centering
@@ -50,48 +50,72 @@ These components have a linear relationship, as can be seen in Figure~\ref{fig:r
 
 \begin{figure}[htb]
   \centering
-  \begin{subfigure}[htb]{0.4\textwidth}
-  \hspace{0.25\textwidth}
   \begin{tikzpicture}
-      \node[shape=rectangle,draw=black] (e) at (0,1.5) {Eigen};
+      \node[shape=rectangle,draw=black] (e) at (-3.125,0) {Eigen};
       \node[shape=rectangle,draw=black] (rm) at (0,0) {\texttt{raymath}};
-      \node[shape=rectangle,draw=black] (rt) at (0,-1.5) {\texttt{raytrace}};
+      \node[shape=rectangle,draw=black] (rt) at (3.5,0) {\texttt{raytrace}};
 
       \path [<-](e) edge node[midway, fill=white] {\tiny depends on} (rm);
       \path [<-](rm) edge node[midway, fill=white] {\tiny depends on} (rt);
   \end{tikzpicture}
   \caption{Component and dependency relationships in \texttt{rayterm-cpu}}
   \label{fig:rayterm-cpu-components}
-  \end{subfigure}
-  \begin{subfigure}[htb]{0.4\textwidth}
-    \hspace{0.25\textwidth}
-    \begin{tikzpicture}
-      \node[shape=rectangle,draw=black] (g) at (0,1.5) {\texttt{geometry}};
-        \node[shape=rectangle,draw=black] (s) at (1,0) {\texttt{sphere}};
-        \node[shape=rectangle,draw=black] (d) at (-1,0) {\texttt{disk}};
+\end{figure}
 
-        \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (s);
-        \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (d);
-    \end{tikzpicture}
-    \caption{Geometric structures in \texttt{raymath}}
-    \label{fig:rayterm-cpu-raymath}
-  \end{subfigure}
-  % \caption{}
-  \label{fig:rayterm-cpu-first-diagrams}
+Eigen \cite{eigenweb} is a linear algebra for C++ that supports matrix and vector manupulations, various matrix decompositions and geometry features, and has many extensions for numerous other numerical operations.
+Eigen is also extremely well-optimized and uses SSE vectorized code, vastly improving performance on supported CPUs.
+In \texttt{raymath}, Eigen is used primarily for easy, tested representations and calculations involving vectors; all of the algorithms implemented use equations derived from the ones in Section~\ref{ch:intro:background:raytracing_math}, and so benefit from easy implementation.
+
+The base component in \texttt{rayterm-cpu} -- \texttt{raymath} -- provides support for various geometries and intersection routines. The geometries supported can be seen in Figure~\ref{fig:rayterm-cpu-raymath-geometry}, and use Eigen structures to represent their geometric data.
+\texttt{raymath} also handles random number and vector generation, color handling, and intersection representation.
+The implementations behind these are covered in Section~\ref{ch:implementation:rayterm-cpu:raymath}.
+
+\begin{figure}[htb]
+  \centering
+  \begin{tikzpicture}
+    \node[shape=rectangle,draw=black] (g) at (0,1.5) {\texttt{geometry}};
+      \node[shape=rectangle,draw=black] (s) at (1.3,0) {\texttt{sphere}};
+      \node[shape=rectangle,draw=black] (d) at (-1.3,0) {\texttt{disk}};
+
+      \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (s);
+      \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (d);
+  \end{tikzpicture}
+  \caption{Geometric structures in \texttt{raymath}}
+  \label{fig:rayterm-cpu-raymath-geometry}
+\end{figure}
+
+The main component in \texttt{rayterm-cpu} is \texttt{raytrace}; it handles world representation, materials, and raytracing.
+\texttt{rayterm-cpu} only renders in \texttt{ppm} mode, since the Tickit interface was only integrated in the \texttt{rayterm-gpu} implementation, since that was the final prototype.
+\texttt{raytrace} represents objects with a \texttt{WorldObject} class, a list of which is stored in a \texttt{World}.
+The main entry point is \texttt{raytrace\_ppm}, which creates rays with a \texttt{Camera} class, and then traces those rays inside a \texttt{World}.
+This produces a \texttt{color}, which is then written to a \texttt{ppm} image.
+The implementation behind all of these structures and functions are covered in Section~\ref{ch:implementation:rayterm-cpu:raytrace}.
+
+\begin{figure}[htb]
+  \centering
+  \begin{tikzpicture}
+    \node[shape=rectangle, draw=black] (a) at (0,0) {Ray collection in \texttt{raytrace\_ppm}};
+    \node[shape=rectangle, draw=black, right = 2.5em of a ] (b) {Generation in \texttt{Camera::get\_screen\_ray}};
+    \node[shape=rectangle, draw=black, below = 1.75em of a] (c) {World tracing in \texttt{World::trace}};
+    \node[shape=rectangle, draw=black, right = 2.5em of c] (e) {Ray coloring in \texttt{WorldObject::colorize}};
+    \begin{scope}[xshift=1cm]
+      \node[shape=rectangle, draw=black] (d) at (3.25, -2.77) {World intersection in \texttt{World::intersects}};
+      \node[shape=rectangle, draw=black, below = 1.75em of d] (f) {Object intersection in \texttt{WorldObject::intersects}};
+      \node[shape=rectangle, draw=black, below = 1.75em of f] (g) {Geometry intersection in \texttt{geometry::intersects}};
+      \path [->](d) edge node[midway, fill=white] {\tiny calls} (f);
+      \path [->](f) edge node[midway, fill=white] {\tiny calls} (g);
+    \end{scope}
+
+      \path [->](a) edge node[midway, fill=white] {\tiny calls} (b);
+      \path [->](a) edge node[midway, fill=white] {\tiny calls} (c);
+      \path [->](c) edge node[midway, fill=white] {\tiny calls} (d);
+      \path [->](c) edge node[midway, fill=white] {\tiny calls} (e);
+  \end{tikzpicture}
+  \caption{The journey of a \texttt{ray} and its \texttt{intersection}}
+  \label{fig:rayterm-cpu-raytrace-journey-of-a-ray}
 \end{figure}
 
 
-
-\littlesection{Design} \label{ch:methods:renderer:sequential:design}
-
-This section is about the code structure and organization in the \texttt{rayterm-cpu} implementation.
-
-\begin{enumerate}
-  \item geometry defs
-  \item material defs
-  \item world defs
-  \item renderer structure
-\end{enumerate}
 
 \littlesection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
 
@@ -104,9 +128,16 @@ It will also briefly reflect on challenges, and reference Section~\ref{ch:method
 
 \subsection{Parallel} \label{ch:methods:renderer:parallel}
 
-Introduction to parallel GPU renderer, description of parallel, short GPU intro (reference introduction).
+After the implementation of \texttt{rayterm-cpu}, more performance was needed for the final \name\ implementation.
+The solution to this problem was to use a Graphics Processing Unit (GPU) to drastically parallellize the raytracing algorithm.
+This improves performance dramatically, because each eye-ray's children (the result of a collision between an object and a ray) are dependant on only their parent eye-ray.
+Thus, the computation of a single pixel's color is completely independent of every other pixel.
 
-With 227 commits and over 1.5 thousand lines of code in the renderer alone, along with many thousands of additions and deletions, \texttt{rayterm} has a good start on its life.
+A short introduction to GPUs may be useful here; they consist primarily of small units of computation circuitry called ``multiprocessors'' which themselves are controllers for several CUDA cores \cite{fermi2009nvidia}, distributing workloads.
+These CUDA cores execute individual threads on the GPU, and act somewhat like advanced floating point arithmatic computation units.
+A discussion on the specific hardware used for development and testing is available in Section~\ref{ch:intro:background:hardware}.
+
+With 227 commits and over 1.5 thousand lines of code, along with many thousands of additions and deletions, \texttt{rayterm-gpu} has a good start on its life.
 There are many, many more improvements possible, however.
 We detail some of them in the context of the larger \name\ implementation in Section~\ref{ch:methods:threats}.
 
