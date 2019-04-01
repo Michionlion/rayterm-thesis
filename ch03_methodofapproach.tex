@@ -133,7 +133,7 @@ The algorithm is largely based on randomness, only modifying the path of a singl
 When encountering objects, a particular Probability Distribution Function (PDF) is used to calculate where the ray will bounce.
 These PDFs vary based on the material, and are hardcoded in the \texttt{Material} implementation.
 The result of this algorithm is extremely noisy because of this randomness (see Figure~\ref{fig:rayterm-cpu_ppm_noisy}), so many samples must be taken and then averaged to gain a true value for a single pixel; this simulates the many millions of photons that would have traveled to that pixel in a real camera.
-The number of samples per pixel, sometimes termed ``spp,'' is the number of rays generated from a random origin within the pixel.
+The number of samples per pixel, sometimes termed ``spp,'' is the number of rays generated from a random origin within the pixel; this is done for every pixel in the image.
 An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu_ppm_noisy}.
 
 \vspace{0.3em}
@@ -174,6 +174,37 @@ These rays then also sample different directions out of those intersection point
 An area for future work is implementing a kind of ``stratification'' of these samples, so that they are not randomly spread, but instead fully sample the sphere or hemisphere at a certain resolution;
 This would likely be combined with branched Monte Carlo rendering, which involves generating multiple rays for each intersection hit, thereby actually sampling the same integral.
 This would reduce the noise at low spp values significantly better than simply increasing the spp value, although at the slight cost of performance (more rays to calculate).
+
+\begin{equation}
+  \label{equation:raytracing_ops}
+  N_{ops} = R \cdot S \cdot D \cdot N
+\end{equation}
+
+In discussing the complexity of this implementation, there are four main variables to keep in mind: first, the number of pixels to render, $R$; second, the number of samples per pixel, $S$; third, the maximum number of recursions per sample, $D$; and fourth, the number of intersectable objects in the scene, $N$.
+The number of pixels to render varies with the resolution of the desired image.
+The number of samples per pixel and the maximum number of recursions are both user-specified configurable values.
+The number of objects in the scene can vary wildly, but most test scenes in \texttt{rayterm-cpu} have less than $10$ objects.
+This gives us Formula~\ref{equation:raytracing_ops} to calculate the number of base ``ray tracing operations,'' which we call $N_{ops}$.
+These operations consist of a single ray-tracing intersection operation, which involves testing a ray against a single parametric equation for intersection.
+As long as that operation can be considered constant, $O(R \cdot S \cdot D \cdot N)$ is the time complexity of the Monte Carlo algorithm used in \texttt{rayterm-cpu}.
+For spheres and disks, the only geometry supported, the intersection routine depends on both $sqrt()$ and $dot()$.
+However, the time complexities of these functions probably do not vary with respect to the value given to them.
+For taking the square root, there is likely system support for fast calculation independent of input value; for vector dot products, the size is always constant at three entries.
+Because of this, we can consider the time complexity of a single intersection test to be constant.
+Thus, the time to complete a render varies proportional to the number of objects in the scene, the resolution of the image, the number of samples per pixel, and the ray-tracing depth.
+
+As an example, take a scene with $3$ spheres and a disk.
+Let us render an $80$ by $52$ pixel image;
+we will choose to use $32$ samples per pixel to get a reasonable image quality.
+For maximum recursion depth a value of $5$ should be plenty for the simple scene we have -- a more complex scene could probably benefit from a few more, but since attenuation reduces the impact each successive ray has on a fragment, it is very unlikely to matter past a few tens.
+Thus, we have all the information we need: $R = 4160,\ S = 32,\ D = 5,\ N = 4$.
+We can calculate the final number of basic ray-tracing intersections by simply multiplying these variables together: we get $2662400$.
+Since this kind of image can usually be rendered in around 200 milliseconds by \texttt{rayterm-cpu}, we can get a sense of how fast the existing intersection is already: one test takes about $75$ nanoseconds.
+There's not much hope of drastically improving this time.
+Even to get render time down to $33$ milliseconds, which is needed for a $30$ frame per second playback, we would need an intersection test to take no more than $12.4$ nanoseconds.
+This is nigh impossible with modern CPUs -- for comparison, basic multiplication takes an average 19 nanoseconds on an i7-4770k, a relatively modern processor -- the code to calculate this value on any computer can be seen in Appendix~\ref{appendix:timemul}.
+
+Therefore any further major performance improvement needs to break out of the sequential world this algorithm was written in.
 
 The algorithms used for intersection are already covered in Section~\ref{ch:intro:background:raytracing_math}; however the scattering algorithms are discussed here.
 There are three materials supported in \texttt{rayterm-cpu}: Lambertian, metallic, and dielectric.
