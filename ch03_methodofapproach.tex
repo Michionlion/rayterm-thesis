@@ -14,7 +14,7 @@ The overall structure of the project is twofold: there is an unfinished research
 We will describe the development process of these implementations further in Chapter~\ref{ch:implementation}; this chapter focuses on the algorithms, design, and overall structure of the project.
 
 
-\section{Renderer Implementation} \label{ch:methods:renderer}
+\section{Render Engines} \label{ch:methods:renderer}
 While building \name, two separate render engine prototypes were implemented.
 The first, which we describe in Section~\ref{ch:methods:renderer:sequential}, was a simple, single core sequential renderer \cite{raytermCpuImpl}.
 This engine was developed in three main development sprints, over a period of about two months.
@@ -274,41 +274,69 @@ This formula is derived from the excellent ``Scratchapixel'' \cite{prunier2017sh
   \vec{R_{refract}} = \eta\vec{R_{in}} + (\eta I - \sqrt{1 - \eta^2 \cdot (1 - I^2)})\vec{S_{normal}}
 \end{equation}
 
-\littlesection{Prototype} \label{ch:methods:renderer:sequential:prototype}
+\littlesection{Outcome} \label{ch:methods:renderer:sequential:outcome}
 
-This section describes the lessons learned from CPU implementation, and how the GPU implementation will differ and improve because of this step.
-
-The final implementation of \texttt{rayterm-cpu} only renders images through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or \texttt{gradle test}.
+The sequential renderer is only a research prototype, and was never finished. This is primarily because more performance was needed for the final \name\ implementation; the parallel renderer fulfills that need.
+Because of the prototype nature of \texttt{rayterm-cpu}, the final implementation only renders images through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or with \texttt{gradle test}.
 This generates a \texttt{test\_image.ppm} file, examples of which we show from various stages of development in Section~\ref{ch:implementation:rayterm-cpu:raytrace}.
 Because of this, \texttt{rayterm-cpu} is very much a proof-of-concept and learning example, rather than a fully-fledged library.
 
+That is not to say that \texttt{rayterm-cpu} was not a useful system.
+Many of the algorithms implemented carry over to the parallel renderer, and so the development of that version was aided by existing work.
+An excellent example of this is the random generation in \texttt{raymath} and the material scatter functions in \texttt{raytrace}; these algorithms are core to ray-tracing and having a prior implementation simplified further development.
+
 \subsection{Parallel} \label{ch:methods:renderer:parallel}
 
-After the implementation of \texttt{rayterm-cpu}, more performance was needed for the final \name\ implementation.
-The solution to this problem was to use a Graphics Processing Unit (GPU) to drastically parallellize the raytracing algorithm.
+The parallel render engine, \texttt{rayterm-gpu}, uses a Graphics Processing Unit (GPU) to massively parallellize the raytracing algorithm.
 This improves performance dramatically, because each eye-ray's children (the result of a collision between an object and a ray) are dependant on only their parent eye-ray.
 Thus, the computation of a single pixel's color is completely independent of every other pixel.
 
-A short introduction to GPUs may be useful here; they consist primarily of small units of computation circuitry called ``multiprocessors'' which themselves are controllers for several CUDA cores \cite{fermi2009nvidia}, distributing workloads.
-These CUDA cores execute individual threads on the GPU, and act somewhat like advanced floating point arithmatic computation units.
+A short introduction to NVIDIA GPUs may be useful here; they consist primarily of small units of computation circuitry called ``multiprocessors'' which themselves are controllers for several CUDA cores \cite{fermi2009nvidia}, distributing workloads.
+Multiprocessors, sometimes called ``stream processors'' as well, work on data and code called ``thread blocks.''
+Each individual CUDA core in a multiprocessor executes an individual thread in a thread block.
+These CUDA cores execute individual threads on the GPU; they can each handle an individual intersection test, and with thousands of them per GPU, we can easily cut the render time down.
+There are many restrictions to code that can run in a CUDA thread; CUDA cores act somewhat like advanced floating point arithmatic computation units.
+However, OptiX takes care of much of the device handling and thus can perform some advanced optimizations for the individual cores.
 A discussion on the specific hardware used for development and testing is available in Section~\ref{ch:intro:background:hardware}.
 
 With 227 commits and over 1.5 thousand lines of code, along with many thousands of additions and deletions, \texttt{rayterm-gpu} has a good start on its life.
 There are many, many more improvements possible, however.
 We detail some of them in the context of the larger \name\ implementation in Section~\ref{ch:conclusion:future}.
+The implementation repository for \texttt{rayterm-gpu} \cite{raytermGpuImpl} is also the same used for \name\ as a whole; thus, while we only describe \texttt{rayterm-gpu} in this section, our discussion here also applies to the final \name\ library.
 
 \littlesection{Libraries} \label{ch:methods:renderer:parallel:libraries}
 
-This section talks about OptiX and CUDA.
+Utilizing the massive parallel computation power of a GPU can be difficult -- in fact, before CUDA's release in 2007, there was no well-defined way to do so programmatically.
+CUDA is an API and computing platform that enables massively parallel computations.
+A special extension of C++, known as CUDA C/C++, can be compiled with \texttt{nvcc}, a custom LLVM-based C/C++ compiler.
+This extension enables library support for GPU accelerated multi-threading, physics, and linear algebra, along with many implementations of common data transformation algorithms.
+A significant limitation, especially in the field of ray-tracing, is that performance can be significantly affected for inherently divergent tasks -- tasks which do not consistently follow the same control flow -- such as traversing an acceleration structure.
 
-\littlesection{Design} \label{ch:methods:renderer:parallel:design}
+OptiX is an API interface developed for current generation NVIDIA GPUs that enables GPU accelerated ray-object intersection calculations in a programmable graphics pipeline \cite{parker2010optix}.
+It does this by building on top of the CUDA platform, adding abstract and algorithm implementations for common ray-tracing tasks.
+OptiX allows user-defined single-ray programs to be compiled into a single program, called a ``kernal,'' that runs on the GPU.
+These user programs are written in C++ and then transpiled to PTX, an instruction set for general purpose parallel programming.
+Other useful algorithms are also included in the OptiX library, such as BVH and similar acceleration structure implementations.
+
+
+\littlesection{Components} \label{ch:methods:renderer:parallel:components}
 
 This section is about the code structure and organization in the \texttt{rayterm-gpu} implementation.
 
-\littlesection{Demonstration} \label{ch:methods:renderer:parallel:demo}
+\littlesection{Programmability} \label{ch:methods:renderer:parallel:program}
+
+\littlesection{Configurability} \label{ch:methods:renderer:parallel:program}
+
+% TODO: explain scene description language here (after it is implemented)
+
+\littlesection{Outcome} \label{ch:methods:renderer:parallel:outcome}
 
 This is a demonstration section on final renderer is capabable of -- this section uses only \texttt{ppm} output.
 
-\section{Interface Implementation} \label{ch:methods:interface}
+\section{Tickit Interface} \label{ch:methods:interface}
 
-\subsection{Design} \label{ch:methods:interface:design}
+\subsection{Implementation} \label{ch:methods:interface:design}
+\littlesection{Design} \label{ch:methods:interface:design}
+\littlesection{Algorithms} \label{ch:methods:interface:design}
+
+\subsection{Demonstration} \label{ch:methods:interface}
