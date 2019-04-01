@@ -10,7 +10,8 @@
 \name\ was developed using a modified agile approach; short development ``sprints'' were executed for key system development.
 We describe the product of some of those sprints in Section~\ref{ch:methods:renderer}, primarily the ray-tracing engines.
 In Section~\ref{ch:methods:interface} we also describe the Tickit interface and its algorithms.
-Finally, in Section~\ref{ch:methods:threats}, we discuss drawbacks, challenges, and failures in development, as well as directions for future improvement as an open source project.
+The overall structure of the project is twofold: there is an unfinished research prototype, called \texttt{rayterm-cpu}, as well as a finished prototype called \texttt{rayterm-gpu}, or simply \name.
+We will describe the development process of these implementations further in Chapter~\ref{ch:implementation}; this chapter focuses on the algorithms, design, and overall structure of the project.
 
 
 \section{Renderer Implementation} \label{ch:methods:renderer}
@@ -201,7 +202,7 @@ Thus, we have all the information we need: $R = 4160,\ S = 32,\ D = 5,\ N = 4$.
 We can calculate the final number of basic ray-tracing intersections by simply multiplying these variables together: we get $2662400$.
 Since this kind of image can usually be rendered in around 200 milliseconds by \texttt{rayterm-cpu}, we can get a sense of how fast the existing intersection is already: one test takes about $75$ nanoseconds.
 There's not much hope of drastically improving this time.
-Even to get render time down to $33$ milliseconds, which is needed for a $30$ frame per second playback, we would need an intersection test to take no more than $12.4$ nanoseconds.
+Even to get render time down to $33$ milliseconds, which is needed for $30$ frames per second playback, we would need an intersection test to take no more than $12.4$ nanoseconds.
 This is nigh impossible with modern CPUs -- for comparison, basic multiplication takes an average 19 nanoseconds on an i7-4770k, a relatively modern processor -- the code to calculate this value on any computer can be seen in Appendix~\ref{appendix:timemul}.
 
 Therefore any further major performance improvement needs to break out of the sequential world this algorithm was written in.
@@ -294,7 +295,7 @@ A discussion on the specific hardware used for development and testing is availa
 
 With 227 commits and over 1.5 thousand lines of code, along with many thousands of additions and deletions, \texttt{rayterm-gpu} has a good start on its life.
 There are many, many more improvements possible, however.
-We detail some of them in the context of the larger \name\ implementation in Section~\ref{ch:methods:threats}.
+We detail some of them in the context of the larger \name\ implementation in Section~\ref{ch:conclusion:future}.
 
 \littlesection{Libraries} \label{ch:methods:renderer:parallel:libraries}
 
@@ -302,7 +303,7 @@ This section talks about OptiX and CUDA.
 
 \littlesection{Design} \label{ch:methods:renderer:parallel:design}
 
-This section is about the code structure and organization in the \texttt{rayterm} implementation.
+This section is about the code structure and organization in the \texttt{rayterm-gpu} implementation.
 
 \littlesection{Demonstration} \label{ch:methods:renderer:parallel:demo}
 
