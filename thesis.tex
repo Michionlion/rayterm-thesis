@@ -36,6 +36,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
+\usepackage{listings}
 \usepackage{tikz}
 
 \usetikzlibrary{arrows, positioning}
@@ -45,6 +46,16 @@
 
 % Use elastic spacing around the headers
 \usepackage{titlesec}
+
+\lstset{
+  columns=fixed,
+  keywordstyle=\color{black}\bfseries, % bold black keywords
+  basicstyle=\small, % print whole listing small
+  identifierstyle=, % nothing happens
+  commentstyle=\color{white}, % white comments
+  showstringspaces=false,
+  basewidth=0.46em
+}
 
 % set it so that subsubsections have numbers and they
 % are displayed in the TOC (maybe hard to read, might want to disable)
