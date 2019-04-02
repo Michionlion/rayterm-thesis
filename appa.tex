@@ -19,6 +19,14 @@ This appendix shows larger images for some figures.
 \vspace{0.3em}
 \begin{figure}[htb]
   \centering
+  \includegraphics[width=\textwidth]{impl-images/gpu/final_lambert_scene}
+  \caption{Final test scene render}
+  \label{fig:rayterm-gpu_final_render_large}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
   \begin{subfigure}[htb]{\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/before_smooth_normals}
     \caption{Geometric normals (unsmoothed)}
@@ -31,6 +39,23 @@ This appendix shows larger images for some figures.
   \end{subfigure}
   \caption{Comparison of geometric and interpolated normals}
   \label{fig:rayterm-gpu_smooth_normal_comparison_large}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/before_naive_sampling_change_64spp}
+    \caption{Before uniform hemispherical sampling}
+    \label{fig:rayterm-gpu_hemispherical_sampling_before_large}
+  \end{subfigure}
+  \begin{subfigure}[htb]{\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/after_naive_sample_change_64spp}
+    \caption{After uniform hemispherical sampling}
+    \label{fig:rayterm-gpu_hemispherical_sampling_after_large}
+  \end{subfigure}
+  \caption{Uniform hemispherical sampling}
+  \label{fig:rayterm-gpu_hemispherical_sampling_large}
 \end{figure}
 
 %   *******************************************************************
