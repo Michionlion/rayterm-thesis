@@ -21,6 +21,166 @@
 
 \subsection{\texttt{raytrace}}\label{ch:implementation:prototype:raytrace}
 
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.25\textwidth]{impl-images/first_test_image_no_raytracing}
+  \caption{First image output}
+  \label{fig:rayterm-cpu_ppm_output_first}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.6\textwidth]{impl-images/first_real_raytraced_sphere_shows_normals_fov_72}
+  \caption{First raytraced image}
+  \label{fig:rayterm-cpu_first_raytraced_image}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.6\textwidth]{impl-images/first_raytraced_world_normals_fov_78}
+  \caption{First multi-object raytraced image}
+  \label{fig:rayterm-cpu_first_multiobject_raytraced_image}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/multiple_samples_per_pixel_difficulties}
+    \caption{Difficulties}
+    \label{fig:rayterm-cpu_multisample_problems}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/more_multiple_samples_per_pixel_difficulties}
+    \caption{More difficulties}
+    \label{fig:rayterm-cpu_multisample_more_problems}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/multiple_samples_antialiasing_working_normals}
+    \caption{Finally working}
+    \label{fig:rayterm-cpu_multisample_working}
+  \end{subfigure}
+  \caption{Multiple samples per pixel}
+  \label{fig:rayterm-cpu_multisampling}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/first_semi_lambert_sphere_render}
+    \caption{First Lambert-like material}
+    \label{fig:rayterm-cpu_lambert}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/first_multi_sample_diffuse_sphere}
+    \caption{Refined Lambertian}
+    \label{fig:rayterm-cpu_lambert_refined}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/colored_lambertian_32spp}
+    \caption{Attenuated Lambertian}
+    \label{fig:rayterm-cpu_lambert_colored}
+  \end{subfigure}
+  \caption{Lambertian Development}
+  \label{fig:rayterm-cpu_lambert_development}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.8\textwidth]{impl-images/hq_141s_1600spp_32d_diffuse_example}
+  \caption{Bugged intersection cutoff}
+  \label{fig:rayterm-cpu_intersection_bug}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.65\textwidth]{impl-images/hq_diffuse_metal_mirror_512spp}
+  \caption{Metallic materials}
+  \label{fig:rayterm-cpu_metallic}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/hq_glass_pure_refraction_with_metal_and_lambert}
+    \caption{Dielectric Refraction only}
+    \label{fig:rayterm-cpu_dielectric_pure_refraction}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/problems_with_refraction_and_dielectrics}
+    \caption{Fresnel difficulties}
+    \label{fig:rayterm-cpu_dielectric_frensel_difficulties}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/hq_1024spp_glass_lambert_metal_bugged}
+    \caption{Dielectric ``bubble''}
+    \label{fig:rayterm-cpu_dielectric_metallic_bug}
+  \end{subfigure}
+  \caption{Dielectric Development}
+  \label{fig:rayterm-cpu_dielectric_development}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.6\textwidth]{impl-images/hq_768spp_glass_metal_mirror_lambert_materials}
+  \caption{Glass material and metal halo bug}
+  \label{fig:rayterm-cpu_glass_metal_bug}
+\end{figure}
+
+Figure~\ref{} shows a bug that appeared after first implementing metals, where metals with a high roughness value were seemingly not shading correctly in shadow.
+Another manifestation was found when glass materials did not correctly internally refract/reflect.
+
+This bug was solved by adding tests to check for internal intersection capability, and then passing those tests by searching for the smallest non-negative $t$ when testing intersections.
+Before this change, the $t$ found for intersections was always the result of $\frac{-b - \sqrt{discriminant}}{2 \cdot a}$.
+This bug fix exposed the metallic material halo bug, which we talk about next.
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/bugfixes/before_fix_smallest_t_intersect}
+    \caption{Before fix}
+    \label{fig:rayterm-cpu_t_intersection_before}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/bugfixes/after_fix_smallest_t_intersect}
+    \caption{After fix}
+    \label{fig:rayterm-cpu_t_intersection_after}
+  \end{subfigure}
+  \caption{Smallest $t$ intersection bug}
+  \label{fig:rayterm-cpu_t_intersection_bug}
+\end{figure}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/bugfixes/before_fix_metal_halo}
+    \caption{Before fix}
+    \label{fig:rayterm-cpu_halo_before}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/bugfixes/after_fix_metal_halo}
+    \caption{After fix}
+    \label{fig:rayterm-cpu_halo_after}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.65\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/bugfixes/reference_fix_metal_halo}
+    \caption{Blender reference image}
+    \label{fig:rayterm-cpu_halo_reference}
+  \end{subfigure}
+  \caption{Metallic halo bug}
+  \label{fig:rayterm-cpu_halo_bug}
+\end{figure}
+
 \section{Final Implementation}\label{ch:implementation:final}
 
 \begin{enumerate}
