@@ -484,16 +484,86 @@ Much of this is due to the massively parallel architecture of OptiX and CUDA.
 
 Just as with \texttt{rayterm-cpu}, a \texttt{ppm} test image can be generated through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or with \texttt{gradle test}.
 This generates a \texttt{test\_image.ppm} file, examples of which we show from various stages of development in Section~\ref{ch:implementation:final:raytrace}.
-However, because \texttt{rayterm-gpu} integrates with the larger \name\ system, rendered images can also be seen with the \texttt{rtexplore} sample application, which we discuss in more detail in Section~\ref{ch:methods:interface:demo}.
+However, because \texttt{rayterm-gpu} integrates with the larger \name\ system, rendered images can also be seen with the \texttt{rtexplore} sample application, which we discuss in more detail in Section~\ref{ch:methods:interface:sample}.
 
 \section{Terminal Interface} \label{ch:methods:interface}
 
-\subsection{RayTerm Library} \label{ch:methods:interface:rayterm}
+The \name\ library depends on two main components: the render engine, and the terminal interface.
+This terminal interface uses the render engine to generate images for display in the terminal; it also converts those images from raw pixel colors to unicode characters.
+This interface is defined in the actual library, which we discuss in Section~\ref{ch:methods:interface:rayterm}, as well as the user application.
+We provide and discuss a sample user application in Section~\ref{ch:methods:interface:sample}.
+
+\subsection{RayTerm} \label{ch:methods:interface:rayterm}
+
+\name\ is distinct from \texttt{rayterm} -- \name\ is the entire system, and the name of the project, whereas \texttt{rayterm} is the name of the terminal interface component in the larger implementation.
+The interface depends on the \texttt{raytrace} component discussed in Section~\ref{ch:methods:renderer:parallel} to provide a render engine.
+Another dependency is \texttt{libtickit} \cite{libtickitLibrary}, a library that supports ANSI escape code detection and subsequent usage.
+Because of the relative obscurity of Tickit, we adapted the main codebase to our needs \cite{libtickitCustom}; some of these fixes and changes have made their way upstream.
+
+Because of the \texttt{libtickit} usage, \name\ works best in a real xterm terminal; color output should additionally be enabled by setting the \texttt{COLORTERM} environment variable to \texttt{truecolor}.
+These settings are only supported on relatively recent versions of xterm.
+More information of direct color compatability and the relevant ANSI escape codes can be found in Anton Kochkov's incredibly useful GitHub gist ``TrueColour: Colours in terminal'' \cite{kochkov2019colours}.
 
 \subsubsection{Design} \label{ch:methods:interface:tickit:design}
 
+There are only two important structures in \texttt{rayterm}: the \texttt{UnicodeBuffer} and the \texttt{Terminal}.
+The \texttt{UnicodeBuffer} class is a direct analog to \texttt{PixelBuffer},
+with the \texttt{translate\_halfpixel} function handling translations, as we discuss in Section~\ref{ch:methods:interface:tickit:algorithms}.
+The \texttt{Terminal} class represents an actual terminal application, with the ability to render a frame, set the information string, resize the terminal, etc.
+The \texttt{rayterm} component is actually extremely simple, with just under three hundred lines of code.
+Much of the work is handed off to \texttt{libtickit}, which handles the actual character rendering.
+In user applications we suggest using \texttt{libtickit} for event loops and other input/output handling, as integrating a different utility may prove difficult given the dependencies of \name.
+
 \subsubsection{Algorithms} \label{ch:methods:interface:tickit:algorithms}
+
+There is only one real algorithm implemented in \texttt{rayterm}.
+This is the character translation algorithm that converts a \texttt{PixelBuffer} from the \texttt{raytrace} component to a \texttt{UnicodeBuffer}.
+This algorithm, called \texttt{translate\_halfpixel}, has a straightforward implementation: it simply iterates over the pixels in the \texttt{PixelBuffer} two rows at a time, converting the values to \texttt{unicode\_cell} structs.
+This two-row iteration is necessary because each unicode character is actually two pixels; the foreground is the ``upper'' pixel, while the background represents the ``lower'' pixel.
+The \texttt{unicode\_cell} struct thus holds both a foreground and background color.
+
+This translation algorithm is used to translate each frame's \texttt{PixelBuffer} before rendering the screen; at the time of writing, since only \texttt{translate\_halfpixel} is supported, all characters drawn to the screen are the unicode upper half block character \texttt{U+2580} (see Figure~\ref{fig:unicode_block_characters} for similar example characters).
+This causes the foreground color of a \texttt{unicode\_cell} to apply to the character portion of the character cell, and the background color to apply to the empty portion of that same cell.
+Through trial and error, we've found that varying the font size through odd values gives the best pixel-like results; even pt sizes can sometimes cause gaps which confuse the viewer.
 
 \subsubsection{Outcome} \label{ch:methods:interface:tickit:outcome}
 
-\subsection{Sample \name\ Consumer} \label{ch:methods:interface:demo}
+While developing the terminal interface was a long and iterative process, the result is a simple and straightforward interface available for use by consumers of the \name\ library.
+As with \texttt{rayterm-gpu}, due to time constraints \texttt{rayterm} does not have a well-defined test suite; however, its simplicity and reliance on \texttt{libtickit} (which is well tested) lowers the importance of such testing.
+At minimum, user applications should simply allocate a new \texttt{Terminal} with the \texttt{new} keyword.
+Then, the Tickit \texttt{run} or \texttt{tick} routines should be called to handle re-exposure; otherwise the terminal will not receive render updates.
+A new frame can be drawn (perhaps after modification of the scene graph or camera through the \texttt{Renderer} available in \texttt{Terminal}) with the \texttt{renderFrame} member function.
+With this extremely simple interface, complex applications can be designed.
+
+
+\subsection{RTExplore Sample} \label{ch:methods:interface:sample}
+
+Within the \name\ implementation repository \cite{raytermGpuImpl} we provide \texttt{rtexplore}, a simple terminal-based real-time ray-traced viewport into the test world of \texttt{raytrace}.
+This sample acts as both an integration test and proof of concept for other users of \name.
+When running this sample, or indeed any \name\ consumer application, five shared libraries must be linkable; these are listed below.
+Depending on how \texttt{libtickit} was compiled into \name, \texttt{libtickit.so} may also need to be available.
+A video demonstration of \texttt{rtexplore} is available as well \cite{raytermDemo}.
+
+\vspace{-0.5em}
+\begin{itemize}
+  \vspace{-0.5em}
+  \item \texttt{libtermkey.so}
+  \vspace{-0.5em}
+  \item \texttt{libunibilium.so}
+  \vspace{-0.5em}
+  \item \texttt{libcudart.so}
+  \vspace{-0.5em}
+  \item \texttt{liboptix.so}
+  \vspace{-0.5em}
+  \item \texttt{librayterm.so}
+  \vspace{-0.5em}
+\end{itemize}
+\vspace{-0.5em}
+
+The \texttt{rtexplore} sample uses a custom Tickit event loop to control input/output, as well as key and mouse event listeners.
+The key listener detects key presses in the terminal from the user, and modifies the \texttt{Camera} used for rendering by small amounts;
+The A, W, S, and D keys control camera position, while the arrow keys control orientation.
+The mouse listener is not used for input, but the caught events are still displayed in the info string, as are past key events.
+Thus, most major features of \name\ are utilized by \texttt{rtexplore}.
+Of course, this application has huge room for improvement, as does the rest of \name.
+Some options for future work are provided in Section~\ref{ch:conclusion:future}.
