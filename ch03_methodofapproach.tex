@@ -476,7 +476,7 @@ Larger versions of these images are available in Appendix~\ref{appendix:large_fi
 
 \subsubsection{Outcome} \label{ch:methods:renderer:parallel:outcome}
 
-As part of a larger system and due to reduced available development time, \texttt{rayterm-gpu} does not -- at the time of writing -- have a good test suite.
+As part of a larger system and due to reduced available development time, \texttt{rayterm-gpu} has a relatively sparse unit test suite.
 Unlike \texttt{rayterm-cpu}, it is tested primarily through integration and comparison tests.
 However, \texttt{rayterm-gpu} does meet its goal of increasing performance, so much so that with a GTX 980 Ti GPU, the average render time for a dense scene with tens of thousands of triangles is under 30 milliseconds.
 Of course, this is still at a low resolution with only 64 spp; however, this is a vast improvement over the CPU research prototype, which would probably take upwards of an hour on the same scene.
@@ -529,8 +529,8 @@ Through trial and error, we've found that varying the font size through odd valu
 \subsubsection{Outcome} \label{ch:methods:interface:tickit:outcome}
 
 While developing the terminal interface was a long and iterative process, the result is a simple and straightforward interface available for use by consumers of the \name\ library.
-As with \texttt{rayterm-gpu}, due to time constraints \texttt{rayterm} does not have a well-defined test suite; however, its simplicity and reliance on \texttt{libtickit} (which is well tested) lowers the importance of such testing.
-At minimum, user applications should simply allocate a new \texttt{Terminal} with the \texttt{new} keyword.
+As with \texttt{rayterm-gpu}, due to time constraints \texttt{rayterm} has a sparse unit test suite; however, its simplicity and reliance on \texttt{libtickit} (which is extremely well tested) lowers the importance of such testing.
+For usage, user applications should at minimum simply allocate a new \texttt{Terminal} with the \texttt{new} keyword.
 Then, the Tickit \texttt{run} or \texttt{tick} routines should be called to handle re-exposure; otherwise the terminal will not receive render updates.
 A new frame can be drawn (perhaps after modification of the scene graph or camera through the \texttt{Renderer} available in \texttt{Terminal}) with the \texttt{renderFrame} member function.
 With this extremely simple interface, complex applications can be designed.
