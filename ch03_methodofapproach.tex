@@ -45,9 +45,9 @@ Because of this simplicity, this engine's development was perfectly suited for t
 The development also explored many fundamentals so that future contributions would be well-founded.
 With 219 commits and over a thousand lines of code in the final product, along with many thousands of additions and deletions, \texttt{rayterm-cpu} accomplished its goals.
 
-\littlesection{Components} \label{ch:methods:renderer:sequential:components}
+\subsubsection{Design} \label{ch:methods:renderer:sequential:design}
 
-The sequential renderer's implementation relies on two main components, as well as the Eigen linear algebra library \cite{eigenweb}.
+The sequential renderer's design relies on two main components, as well as the Eigen linear algebra library \cite{eigenweb}.
 These components have a linear relationship, as can be seen in Figure~\ref{fig:rayterm-cpu_components}; \texttt{raytrace} deals with tracing rays, \texttt{raymath} with intersection logic, and Eigen with linear algebra.
 
 \vspace{0.3em}
@@ -128,7 +128,7 @@ The implementation behind all of these structures and functions are covered in S
   \label{fig:rayterm-cpu_raytrace_journey_of_a_ray}
 \end{figure}
 
-\littlesection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
+\subsubsection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
 
 The sequential renderer implements single-branch Monte Carlo ray-tracing, a type of rendering that can produce physically accurate images with little development effort.
 The algorithm is largely based on randomness, only modifying the path of a single ray at a time as it bounces around the scene.
@@ -275,7 +275,7 @@ This formula is derived from the excellent ``Scratchapixel'' \cite{prunier2017sh
   \vec{R_{refract}} = \eta\vec{R_{in}} + (\eta I - \sqrt{1 - \eta^2 \cdot (1 - I^2)})\vec{S_{normal}}
 \end{equation}
 
-\littlesection{Outcome} \label{ch:methods:renderer:sequential:outcome}
+\subsubsection{Outcome} \label{ch:methods:renderer:sequential:outcome}
 
 The sequential renderer is only a research prototype, and was never finished.
 This is primarily because more performance was needed for the final \name\ implementation; the parallel renderer fulfills that need.
@@ -286,6 +286,7 @@ Because of this, \texttt{rayterm-cpu} is very much a proof-of-concept and learni
 That is not to say that \texttt{rayterm-cpu} was not a useful system.
 Many of the algorithms implemented carry over to the parallel renderer, and so the development of that version was aided by existing work.
 An excellent example of this is the random generation in \texttt{raymath} and the material scatter functions in \texttt{raytrace}; these algorithms are core to ray-tracing and having a prior implementation simplified further development.
+Although they may not carry over unmodified, they are the first iteration in a long improvement cycle.
 
 \subsection{Parallel} \label{ch:methods:renderer:parallel}
 
@@ -310,7 +311,7 @@ Both of these are combined into a single \texttt{rayterm.so} library for use by 
 An example application is also bundled in the implementation repository \cite{raytermGpuImpl}, as the \texttt{rtexplore} component.
 All of these are discussed in more detail in Section~\ref{ch:implementation:final}.
 
-\littlesection{Libraries} \label{ch:methods:renderer:parallel:libraries}
+\subsubsection{Libraries} \label{ch:methods:renderer:parallel:libraries}
 
 Utilizing the massive parallel computation power of a GPU can be difficult -- in fact, before CUDA's release in 2007, there was no well-defined way to do so programmatically.
 CUDA is an API and computing platform that enables massively parallel computations \cite{nvidia2011cuda}.
@@ -326,7 +327,7 @@ Other useful algorithms are also included in the OptiX library, such as BVH and 
 The main method of communication between host (CPU) and device (GPU) are \texttt{Buffer}s, which are simply arrays managed by OptiX.
 Depending on the type of \texttt{Buffer}, data could be moved in one direction or both, depending on the context; an example of this would be the pixel buffer, which is written to on the device and then loaded into CPU-accessible memory for display.
 
-\littlesection{Programmability} \label{ch:methods:renderer:parallel:program}
+\subsubsection{Programmability} \label{ch:methods:renderer:parallel:program}
 
 Both OptiX and \name\ itself support programmability in some form.
 We will define programmability as the possibility of using user-specified code in some operational capacity at certain points in the program's execution.
@@ -361,7 +362,7 @@ When \name\ or a user application requests a CUDA function, material definition,
 This enables easy asset reuse and configurable definition.
 
 
-\littlesection{Configurability} \label{ch:methods:renderer:parallel:config}
+\subsubsection{Configurability} \label{ch:methods:renderer:parallel:config}
 
 At the time of writing, \name's test scene is hard-coded in the \texttt{raytrace} component.
 However, it is trivial to provide a loading mechanism so that user applications can specify the scene and any changes to it.
@@ -407,7 +408,7 @@ There is not currently a way to programmatically generate a \texttt{Mesh} or \te
 
 % TODO: explain scene description language here (after it is implemented)
 
-\littlesection{Design} \label{ch:methods:renderer:parallel:design}
+\subsubsection{Design} \label{ch:methods:renderer:parallel:design}
 
 OptiX is heavily utilized in \texttt{rayterm-gpu}.
 Much of the \texttt{raytrace} component deals with initializing and configuring the OptiX context correctly.
@@ -423,7 +424,7 @@ The \texttt{Programs} member instance holds an inventory of loaded OptiX CUDA fu
 Finally, the \texttt{Resources} member instance holds an inventory of \texttt{Material}s and \texttt{Mesh}s; it can also load more or associate existing assets together to produce \texttt{GeometryInstance}s, which could be added to the OptiX scene graph.
 There are other smaller supporting classes, such as \texttt{PixelBuffer}, which helps wrap existing OptiX functionality to ensure safe usage.
 
-\littlesection{Algorithms} \label{ch:methods:renderer:parallel:algorithms}
+\subsubsection{Algorithms} \label{ch:methods:renderer:parallel:algorithms}
 
 The parallel renderer uses many of the same algorithms as \texttt{rayterm-cpu}, so the previous discussion of those still apply.
 There are a few new algorithms that are unique to \texttt{rayterm-gpu}, however.
@@ -473,16 +474,26 @@ Larger versions of these images are available in Appendix~\ref{appendix:large_fi
   \label{fig:rayterm-gpu_smooth_normal_comparison}
 \end{figure}
 
-\littlesection{Outcome} \label{ch:methods:renderer:parallel:outcome}
+\subsubsection{Outcome} \label{ch:methods:renderer:parallel:outcome}
 
-This is a demonstration section on final renderer is capabable of -- this section uses only \texttt{ppm} output.
+As part of a larger system and due to reduced available development time, \texttt{rayterm-gpu} does not -- at the time of writing -- have a good test suite.
+Unlike \texttt{rayterm-cpu}, it is tested primarily through integration and comparison tests.
+However, \texttt{rayterm-gpu} does meet its goal of increasing performance, so much so that with a GTX 980 Ti GPU, the average render time for a dense scene with tens of thousands of triangles is under 30 milliseconds.
+Of course, this is still at a low resolution with only 64 spp; however, this is a vast improvement over the CPU research prototype, which would probably take upwards of an hour on the same scene.
+Much of this is due to the massively parallel architecture of OptiX and CUDA.
+
+Just as with \texttt{rayterm-cpu}, a \texttt{ppm} test image can be generated through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or with \texttt{gradle test}.
+This generates a \texttt{test\_image.ppm} file, examples of which we show from various stages of development in Section~\ref{ch:implementation:final:raytrace}.
+However, because \texttt{rayterm-gpu} integrates with the larger \name\ system, rendered images can also be seen with the \texttt{rtexplore} sample application, which we discuss in more detail in Section~\ref{ch:methods:interface:demo}.
 
 \section{Terminal Interface} \label{ch:methods:interface}
 
 \subsection{RayTerm Library} \label{ch:methods:interface:rayterm}
 
-\littlesection{Design} \label{ch:methods:interface:tickit:design}
+\subsubsection{Design} \label{ch:methods:interface:tickit:design}
 
-\littlesection{Algorithms} \label{ch:methods:interface:tickit:algorithms}
+\subsubsection{Algorithms} \label{ch:methods:interface:tickit:algorithms}
 
-\subsection{Demonstration} \label{ch:methods:interface:demo}
+\subsubsection{Outcome} \label{ch:methods:interface:tickit:outcome}
+
+\subsection{Sample \name\ Consumer} \label{ch:methods:interface:demo}
