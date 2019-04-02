@@ -69,7 +69,8 @@ Eigen \cite{eigenweb} is a linear algebra for C++ that supports matrix and vecto
 Eigen is also extremely well-optimized and uses SSE vectorized code, vastly improving performance on supported CPUs.
 In \texttt{raymath}, Eigen is used primarily for easy, tested representations and calculations involving vectors; all of the algorithms implemented use equations derived from the ones in Section~\ref{ch:intro:background:raytracing_math}, and so benefit from easy implementation.
 
-The base component in \texttt{rayterm-cpu} -- \texttt{raymath} -- provides support for various geometries and intersection routines. The geometries supported can be seen in Figure~\ref{fig:rayterm-cpu_raymath_geometry}, and use Eigen structures to represent their geometric data.
+The base component in \texttt{rayterm-cpu} -- \texttt{raymath} -- provides support for various geometries and intersection routines.
+The geometries supported can be seen in Figure~\ref{fig:rayterm-cpu_raymath_geometry}, and use Eigen structures to represent their geometric data.
 \texttt{raymath} also handles random number and vector generation, color handling, and intersection representation.
 The implementations behind these are covered in Section~\ref{ch:implementation:prototype:raymath}.
 
@@ -94,7 +95,7 @@ The main component in \texttt{rayterm-cpu} is \texttt{raytrace}; it handles worl
 
 Figure~\ref{fig:rayterm-cpu_raytrace_journey_of_a_ray} shows the function call path that is used when rendering a single ray.
 The main entry point is \texttt{raytrace\_ppm}, which creates rays with a \texttt{Camera} class instance.
-This instance contains specific parameters to control the position and orientation of the virtual camera, and thus controls where the \texttt{ray} originates from. and its direction.
+This instance contains specific parameters to control the position and orientation of the virtual camera, and thus controls where the \texttt{ray} originates from, as well as its direction.
 Then, that \texttt{ray} is sent on to the \texttt{World} class, where an \texttt{intersection} is retrieved, and then used to generate a \texttt{color} from the given \texttt{ray}.
 This color is then finally returned to \texttt{raytrace\_ppm}, which writes it to a \texttt{ppm} file.
 Unmentioned in this diagram are the recursive calls to \texttt{World::trace} from from \texttt{WorldObject::colorize}, which use the transformed ``scatter'' \texttt{ray} from \texttt{Material::scatter}.
@@ -412,7 +413,8 @@ Much of the \texttt{raytrace} component deals with initializing and configuring 
 The main class is \texttt{Renderer} -- it represents a render engine, and has state about the world and everything in it.
 \texttt{Renderer} is designed to be a singleton, although no code in \name\ assumes this; rather, each instance requires its own OptiX context.
 This could be a problem: according to the OptiX Programming Guide, ``multiple contexts can be active at one time in limited cases, but this is usually unnecessary.''
-In that quote, ``limited cases'' really mean that it is untested and not well supported, although technically possible \cite{nvidia2019optixdoc}. So depending on future OptiX changes, multi-renderer programs may or may not be a possibility.
+In that quote, ``limited cases'' really mean that it is untested and not well supported, although technically possible \cite{nvidia2019optixdoc}.
+So depending on future OptiX changes, multi-renderer programs may or may not be a possibility.
 
 A \texttt{Renderer} has three main components that operate on the OptiX context associated with the instance.
 The \texttt{Camera} member instance controls the current view of the world, and can be used to translate or rotate that view.
