@@ -60,13 +60,13 @@ Multiple images are displayed in quick succession, creating the illusion of move
 More details on this process are given in Section~\ref{ch:intro:overview:libtickit}.
 Rendered images are displayed in two different modes; the first uses single half-character pixels, and the second more complex Unicode block characters.
 The mechanics of these image composition methods are discussed in Section~\ref{ch:intro:overview:unicode}.
-Finally, Figure~\ref{fig:checker_metal} is a still image of the final terminal output \inlinetodo{update with actual output image}.
+Finally, Figure~\ref{fig:terminal_output} is a still image of the final terminal output.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.8\textwidth]{resources/checker_metal}
+  \includegraphics[width=0.8\textwidth]{impl-images/rtexplore/terminal_output}
   \caption{Example of terminal output}
-  \label{fig:checker_metal}
+  \label{fig:terminal_output}
 \end{figure}
 
 \subsection{Rendering Engines and Ray-Tracing}
@@ -329,9 +329,10 @@ We essentially ask, ``What points along this ray are on the defined surface?'' b
   f(\rayorg + t\raydir) = 0
 \end{equation}
 
-In \name, the only surfaces that are supported are spheres, triangles, and infinite planes, since their surface definition functions are mathematically simple \inlinetodo{update for actual supported surfaces}.
-A sphere is the simplest three-dimensional object to calculate ray intersection with, and therefore was the first implemented for \name.
-In fact, during feasibility testing, much of the math described in this section was implemented by hand in the Go programming language, instead of through existing APIs.
+In \name, only triangles are supported, for simplicity of implementation.
+However, in the research prototype we describe in Section~\ref{ch:methods:renderer:sequential} disks and spheres were the only supported surfaces due to the simplicity of their parametric equations.
+In fact, a sphere is the simplest three-dimensional object to calculate ray intersection with, and therefore was the first intersection test implemented in \texttt{rayterm-cpu}.
+During extremely early feasibility testing, some of the math described in this section was even implemented in the Go programming language, instead of through existing APIs or in C++ as in the research prototype.
 
 \littlesection{Ray-Sphere Intersection}
 
@@ -453,7 +454,10 @@ Only recently has ray-tracing even been able to achieve real-time levels of perf
 The largest innovator in this space, GPU chip design company NVIDIA, released its RTX series of GPUs that have hardware support for ray-tracing.
 RTX hardware spread is slow, however, due to its high early adoption cost.
 Therefore we do not focus on RTX hardware; instead, we look to slightly older technologies to provide the implementation backbone; this works well with the existing test hardware, which is a few generations old.
+However, if we can easily optimize for RTX hardware we do choose to, as we have in using RTX mode for OptiX.
+Some additional discussion on this topic is available in Chapter~\ref{ch:methods}, especially when comparing the sequential and parallel render engines.
 
+% are these sections really needed?
 % \todo{future subsection on what hardware API we actually used}
 % \todo{future subsection on how we dealt with GPU vs CPU\\and how we built two different implementations}
 

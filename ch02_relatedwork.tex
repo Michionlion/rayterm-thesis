@@ -92,7 +92,7 @@ In the common case, all light will be from the direction of nearby light sources
 However, we can also bias newly generated rays towards areas where refracted light may exist, such as around glass materials.
 Keeping this mathematical basis in mind was critical during implementation since the further we stray from this equation, the less photorealistic the final rendered images become.
 
-\section{Optimizations}
+% \section{Optimizations}
 
 % \todo{future section on GPU optimizations and problems, general GPU problems/solutions in related works}
 
@@ -110,7 +110,7 @@ Ray-tracing intersections are then done with the root group's bounding volume fi
 Once an intersection is found, instead of evaluating the rendering equation, we progress down the hierarchy from the bounding box we hit, and try more intersections.
 This can potentially skip the vast majority of geometry in the scene, thereby speeding up computation.
 There have been numerous improvements to this idea; however, BVHs continue to be an easy-to-implement and efficient acceleration structure \cite{prunier2017bvh}.
-A simple cube-based BVH was implemented in \name\ \inlinetodo{update with actual structure used}.
+The main acceleration structure used in \name\ is in fact a modified BVH from the OptiX library.
 
 \subsection{Parallelization}
 
@@ -132,7 +132,7 @@ Instead of a \$50 million monstrosity, relatively small GPU chips capable of the
 A small program available on Github was the original inspiration for some details of \name.
 Called TerminalImageViewer (\texttt{tiv}) \cite{tivGithub}, it uses RGB ANSI escape codes and Unicode block characters to display images in a terminal window.
 \name\ uses many of the same ideas to produce its own animated output.
-The algorithm behind \texttt{tiv} is also a direct inspiration for the algorithms used for ray-to-character translation \inlinetodo{reference methods section}.
+The algorithm behind \texttt{tiv} is also a direct inspiration for the algorithm used for ray-to-character translation.
 \name, however, improves upon TerminalImageViewer in two incredibly impactful ways: the graphics produced are animated, and the input data is a three-dimensional scene and not an image.
 Fundamentally, \texttt{tiv} and \name\ are similar only in output style, while the purpose and internal workings are generally dissimilar.
 
