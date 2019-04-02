@@ -423,6 +423,56 @@ The \texttt{Programs} member instance holds an inventory of loaded OptiX CUDA fu
 Finally, the \texttt{Resources} member instance holds an inventory of \texttt{Material}s and \texttt{Mesh}s; it can also load more or associate existing assets together to produce \texttt{GeometryInstance}s, which could be added to the OptiX scene graph.
 There are other smaller supporting classes, such as \texttt{PixelBuffer}, which helps wrap existing OptiX functionality to ensure safe usage.
 
+\littlesection{Algorithms} \label{ch:methods:renderer:parallel:algorithms}
+
+The parallel renderer uses many of the same algorithms as \texttt{rayterm-cpu}, so the previous discussion of those still apply.
+There are a few new algorithms that are unique to \texttt{rayterm-gpu}, however.
+First, a modification of the pinhole camera model was made.
+This was inspired by the camera models available in the advanced OptiX samples \cite{optixsamples}, and simply rewrites the equations used before in terms of $\phi$ and $theta$, as polar coordinates.
+In this new \texttt{Camera}, $\phi$ represents the rotation about the vertical world axis, and $\theta$ the rotation about the horizontal axis.
+This enables easier viewing modification so that the look direction can be controlled with just two control axis.
+
+More algorithms had to be developed as replacements for CPU-based algorithms in CUDA functions.
+For example, a \texttt{drand48} implementation is provided for CUDA functions to use, since the existing implementation is CPU-only.
+The implementation directly mirrors the UNIX specification for \texttt{drand48} \cite{drand48UNIX}.
+Additionally, the sampling algorithms based off of \texttt{drand48} were replaced with analytical solutions, to prevent sample looping and provide better uniform distribution.
+The math behind the analytical solution is based on resources from ``Scratchapixel'' as well as an older paper by the same author as ``Raytracing in One Weekend'' \cite{prunier2017global, shirley1997map}.
+We also use an OptiX provided sampler, \texttt{cosine\_sample\_hemisphere}, to generate the initial sample; the further analytical solution simply transforms that sample to the correct normal space.
+
+\begin{equation}
+  \label{equation:interpolated_normal}
+  N_{interpolated} = B_{x} \vec{N_{1}} + B_{y} \vec{N_{2}} + (1 - B_{x} - B_{y}) \vec{N_{0}}
+\end{equation}
+
+Finally, we use an algorithm to calculate the interpolated shading normal.
+This is very loosely derived from the OptiX samples \cite{optixsamples}, and uses the OptiX default \texttt{GeometryTriangles} attribute program to calculate the barycentric coordinates of the intersection point.
+Formula~\ref{equation:interpolated_normal} shows the calculation for obtaining the interpolated normal; this result is normalized and can then be used for reflection or refraction calculations.
+An interpolated value is extremely useful, because it takes into account the normals of each individual vertex and attempts to ``smooth'' the shape approximated by the triangle, thus making shading more accurate despite the physical differences.
+In Formula~\ref{equation:interpolated_normal}, $N_{i}$ is the vertex normal of the $i$-th vertex in the triangle, and $B$ is the two dimensional barycentric coordinate of the intersection point.
+The calculated result, $N_{interpolated}$, is the smoothed normal.
+This smoothing can be disabled by using an \texttt{OBJ} model that has had its normals exported as ``flag'' -- this causes each triangle's vertices to have their normals all match the face normal, instead of having individual normals.
+This is useful for flat faces, since the interpolated normal is then simply the same as the face normal.
+Figure~\ref{fig:rayterm-gpu_smooth_normal_comparison} shows a comparison between smoothed normals and face normals (sometimes called ``geometric normals'').
+Larger versions of these images are available in Appendix~\ref{appendix:large_figures} as Figure~\ref{fig:rayterm-gpu_smooth_normal_comparison_large}
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/before_smooth_normals}
+    \caption{Geometric normals (unsmoothed)}
+    \label{fig:rayterm-gpu_unsmoothed_normals}
+  \end{subfigure}
+  \hspace{1em}
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/after_smooth_normals}
+    \caption{Interpolated normals (smoothed)}
+    \label{fig:rayterm-gpu_smoothed_normals}
+  \end{subfigure}
+  \caption{Comparison of geometric and interpolated normals}
+  \label{fig:rayterm-gpu_smooth_normal_comparison}
+\end{figure}
+
 \littlesection{Outcome} \label{ch:methods:renderer:parallel:outcome}
 
 This is a demonstration section on final renderer is capabable of -- this section uses only \texttt{ppm} output.
