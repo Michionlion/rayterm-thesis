@@ -218,7 +218,7 @@ The dimensions are by convention $x$, $y$, $z$, and $w$.
 In \name\ however, we generally work only with vectors where $n = 3$ (only in $x$, $y$, and $z$), and each vector represents either a direction or a position in three-dimensional space.
 Vectors are related to both multivariable calculus and linear algebra -- an expansion on this basic explanation can be found in virtually any textbook on these topics.
 
-\littlesection{Vector Operations}
+\subsubsection{Vector Operations}
 
 Each set of all possible $n$-dimensional vectors are closed under the basic arithmetic operations.
 Addition, subtraction, along with some specialized versions of multiplication, are all defined.
@@ -264,7 +264,7 @@ The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \bullet \vec{v
   \vec{u} \bullet \vec{v} = \vec{u}_x\vec{v}_x + \vec{u}_y\vec{v}_y + \vec{u}_z\vec{v}_z
 \end{equation}
 
-\littlesection{Vector Equations}
+\subsubsection{Vector Equations}
 
 With the operations described above, we can write equations using vectors.
 This greatly simplifies the description of the mathematics in Section~\ref{ch:intro:background:raytracing_math}, since without vector mathematics every operation would need to be notated in cartesian coordinates.
@@ -334,7 +334,7 @@ However, in the research prototype we describe in Section~\ref{ch:methods:render
 In fact, a sphere is the simplest three-dimensional object to calculate ray intersection with, and therefore was the first intersection test implemented in \texttt{rayterm-cpu}.
 During extremely early feasibility testing, some of the math described in this section was even implemented in the Go programming language, instead of through existing APIs or in C++ as in the research prototype.
 
-\littlesection{Ray-Sphere Intersection}
+\subsubsection{Ray-Sphere Intersection}
 
 The surface definition function of a sphere is Function~\ref{equation:sphere_surface}, with $S$ representing the sphere.
 The intersection point between a ray and a sphere is given by solving Equation~\ref{equation:ray_sphere_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray}.
@@ -353,7 +353,7 @@ If there are no real roots, then the ray does not intersect the sphere.
   (\raydir^2)t^2 + 2(\raydir \bullet (\rayorg - \vec{S_{center}}))t + (\rayorg - \vec{S_{center}})^2 - {S_{radius}}^2 = 0
 \end{equation}
 
-\littlesection{Ray-Plane Intersection}
+\subsubsection{Ray-Plane Intersection}
 
 For any two-dimensional object, the plane it lies in is the first shape tested for intersection.
 Luckily, ray-plane intersection testing is fairly cheap and straightforward.
@@ -372,7 +372,7 @@ These equations were derived from basic vector math, along with guidance from ``
   (\vec{P_{normal}} \bullet \raydir)t + \vec{P_{normal}} \bullet (\rayorg - \vec{P_{offset}}) = 0
 \end{equation}
 
-\littlesection{Ray-Triangle Intersection}
+\subsubsection{Ray-Triangle Intersection}
 
 The method for testing intersection with triangles is a bit more complicated than the other tests we've covered so far.
 The mathematics for this section are again derived from vector mathematics.
@@ -419,7 +419,7 @@ With a large project such as \name, there are certain choices that must be made 
 These choices inform how the project is modified, built, and eventually executed.
 In the case of \name, we used the C++ language \cite{cpp14standard} for main development, and Gradle \cite{gradle} as a build system.
 
-\littlesection{Implementation Language}
+\subsubsection{Implementation Language}
 
 The C++ language was used for three main reasons.
 First, the language has a huge ecosystem of low-level tools, with interfaces to libraries such as OptiX, CUDA, FORTRAN-implemented mathematics like Blitz++, and much more.
@@ -433,7 +433,7 @@ This ensures that overhead is minimal, as well as guaranteeing readability for t
 Advanced features of C++ such as templating are avoided so as to keep the knowledge entry barrier low.
 Finally, all code in \name's implementation conforms to the Google C++ style guide \cite{googleStyleGuide}.
 
-\littlesection{Build System}
+\subsubsection{Build System}
 
 Complex projects can be a nightmare to manage, especially when there are multiple contributors.
 Build systems are an important tool that simplify this headache.
