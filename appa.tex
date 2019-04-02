@@ -13,6 +13,26 @@ However, the main body of work for \name\ is located in two GitHub repsitories, 
 \section{Time Multiplication Operations}\label{appendix:timemul}
 \lstinputlisting[language=C++]{code/timemul.cpp}
 
+\chapter{Larger Figures}\label{appendix:large_figures}
+This appendix shows larger images for some figures.
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/before_smooth_normals}
+    \caption{Geometric normals (unsmoothed)}
+    \label{fig:rayterm-gpu_unsmoothed_normals_large}
+  \end{subfigure}
+  \begin{subfigure}[htb]{\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/comparisons/after_smooth_normals}
+    \caption{Interpolated normals (smoothed)}
+    \label{fig:rayterm-gpu_smoothed_normals_large}
+  \end{subfigure}
+  \caption{Comparison of geometric and interpolated normals}
+  \label{fig:rayterm-gpu_smooth_normal_comparison_large}
+\end{figure}
+
 %   *******************************************************************
 %   * SEE THE MAIN FILE "AllegThesis.tex" FOR THE "\lstset" COMMAND   *
 %   * THAT DEFINES HOW PROGRAM LISTINGS WILL LOOK.                    *
