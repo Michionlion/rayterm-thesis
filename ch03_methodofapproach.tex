@@ -321,6 +321,8 @@ It does this by building on top of the CUDA platform, adding abstract and algori
 OptiX allows user-defined single-ray programs to be compiled into a single program, called a ``kernel,'' that runs on the GPU.
 These user programs are written in C++ and then transpiled to PTX, an instruction set for general purpose parallel programming.
 Other useful algorithms are also included in the OptiX library, such as BVH and similar acceleration structure implementations.
+The main method of communication between host (CPU) and device (GPU) are \texttt{Buffer}s, which are simply arrays managed by OptiX.
+Depending on the type of \texttt{Buffer}, data could be moved in one direction or both, depending on the context; an example of this would be the pixel buffer, which is written to on the device and then loaded into CPU-accessible memory for display.
 
 \littlesection{Programmability} \label{ch:methods:renderer:parallel:program}
 
@@ -399,13 +401,24 @@ The possible types are \texttt{int} to \texttt{int4}, and \texttt{float} to \tex
 In Figure~\ref{fig:rayterm-gpu_material_def}, a variable named \texttt{varAttenuation} is defined as $\vec{(0.15,\ 0.86,\ 0.21)}$.
 This variable is used in the \texttt{diffuse} PTX file as the color to attenuate the recursively traced ray by -- it is the color of the object this material is applied to.
 Any number of commands are allowed, and any later commands will overwrite previous commands if they contain similar information, such as an attrib command.
-There is not currently a way to programmatically generate a \texttt{Mesh} or \texttt{Material}, however these are possible future directions for trivial improvements to \name.
+There is not currently a way to programmatically generate a \texttt{Mesh} or \texttt{Material}, however these are possible future improvements to \name.
 
 % TODO: explain scene description language here (after it is implemented)
 
 \littlesection{Design} \label{ch:methods:renderer:parallel:design}
 
-This section is about the code structure and organization in the \texttt{rayterm-gpu} implementation.
+OptiX is heavily utilized in \texttt{rayterm-gpu}.
+Much of the \texttt{raytrace} component deals with initializing and configuring the OptiX context correctly.
+The main class is \texttt{Renderer} -- it represents a render engine, and has state about the world and everything in it.
+\texttt{Renderer} is designed to be a singleton, although no code in \name\ assumes this; rather, each instance requires its own OptiX context.
+This could be a problem: according to the OptiX Programming Guide, ``multiple contexts can be active at one time in limited cases, but this is usually unnecessary.''
+In that quote, ``limited cases'' really mean that it is untested and not well supported, although technically possible \cite{nvidia2019optixdoc}. So depending on future OptiX changes, multi-renderer programs may or may not be a possibility.
+
+A \texttt{Renderer} has three main components that operate on the OptiX context associated with the instance.
+The \texttt{Camera} member instance controls the current view of the world, and can be used to translate or rotate that view.
+The \texttt{Programs} member instance holds an inventory of loaded OptiX CUDA functions, and can be used to load more or get existing ones.
+Finally, the \texttt{Resources} member instance holds an inventory of \texttt{Material}s and \texttt{Mesh}s; it can also load more or associate existing assets together to produce \texttt{GeometryInstance}s, which could be added to the OptiX scene graph.
+There are other smaller supporting classes, such as \texttt{PixelBuffer}, which helps wrap existing OptiX functionality to ensure safe usage.
 
 \littlesection{Outcome} \label{ch:methods:renderer:parallel:outcome}
 
