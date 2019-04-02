@@ -10,15 +10,26 @@
 
 \section{Summary of Results}\label{ch:conclusion:summary}
 
+Over the many years of innovation in the field of computer graphics, advances in rendering have led to massive increases in the fidelity of engaging, satisfying, and realistic computer visualizations.
+With its initial development complete, \name\ is a new and unique entry into the ranks of rendering engines.
+It is reminiscent of retro aesthetics of the seventies and eighties but also uses new technology like ray-tracing to deliver compelling possibilities.
+\name\ can now be used as an engine for terminal-based 3D tools, visualizations, games, and more.
+The current implementation has been completely open-sourced under the AGPL v3 license, and any contributions are welcome.
+
+Throughout the development of \name\ new possibilities were entertained, sometimes discarded, but ultimately kept and distilled to the immature product we have now.
+In its current form, \name\ could easily be used to implement a terminal viewer for model files, arguably an incredibly useful tool that does not yet exist.
+As \name\ is designed in a simple, open, and accessible format, we hope that future improvements will make \name\ even better, more configurable, and extensible.
+
 \section{Future Work}\label{ch:conclusion:future}
 
-\begin{enumerate}
-  \item more materials / MDL support
-  \item scene description language
-  \item better rtexplore movement
-  \item environment image mapping (missed rays => image lookup)
-  \item much more...
-\end{enumerate}
+There is a lot of room for improvement in \name; it is, after all, an extremely early version of an ambitious idea.
+One major improvement possible is the creation of a scene description language.
+Currently, the scene must be set programmatically; if the same flexibility was given to scenes as is materials, user application development would be even easier.
+Another equally useful improvement would be support for ``Material Definition Language'' \cite{nvidia2015mdl} materials.
+This could involve a large reworking of the asset loading system but should provide an easy development process that does not require any CUDA programming knowledge to create high-quality ray-traced scenes in a terminal.
+
+Numerous other improvements are possible, such as environment mapping, explicit lighting, motion blur, triangle animation (which is actually somewhat supported), and much more.
+All of these improvements are possible with future collaborators on the open-sourced \name\ implementation.
 
 \section{Conclusion}\label{ch:conclusion:end}
 
@@ -29,4 +40,4 @@ The Tickit interface and its half-pixel translation algorithm, along with \textt
 \name\ is now a fully real-time capable ray-tracing engine, rendering 30 or more unicode character images per second to a terminal window on a moderately powerful computer.
 Since the initial startup development of \name\ is complete, all contributions to \name\ development are now welcome.
 In pursuit of maintaining good open-source readability and ease of development, documentation has been and will continue to be a priority throughout the transition process.
-We hope that future projects find \name\ inspiring and useful, whether as an engine or as a jumping-off point for real-time ray-tracing and terminal-based games.
+We hope that future projects find \name\ inspiring and useful, whether as an engine or as a jumping-off point for real-time ray-tracing and terminal-based applications.
