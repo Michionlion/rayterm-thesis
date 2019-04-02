@@ -277,7 +277,8 @@ This formula is derived from the excellent ``Scratchapixel'' \cite{prunier2017sh
 
 \littlesection{Outcome} \label{ch:methods:renderer:sequential:outcome}
 
-The sequential renderer is only a research prototype, and was never finished. This is primarily because more performance was needed for the final \name\ implementation; the parallel renderer fulfills that need.
+The sequential renderer is only a research prototype, and was never finished.
+This is primarily because more performance was needed for the final \name\ implementation; the parallel renderer fulfills that need.
 Because of the prototype nature of \texttt{rayterm-cpu}, the final implementation only renders images through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or with \texttt{gradle test}.
 This generates a \texttt{test\_image.ppm} file, examples of which we show from various stages of development in Section~\ref{ch:implementation:prototype:raytrace}.
 Because of this, \texttt{rayterm-cpu} is very much a proof-of-concept and learning example, rather than a fully-fledged library.
@@ -426,10 +427,12 @@ There are other smaller supporting classes, such as \texttt{PixelBuffer}, which 
 
 This is a demonstration section on final renderer is capabable of -- this section uses only \texttt{ppm} output.
 
-\section{Tickit Interface} \label{ch:methods:interface}
+\section{Terminal Interface} \label{ch:methods:interface}
 
-\subsection{Implementation} \label{ch:methods:interface:design}
-\littlesection{Design} \label{ch:methods:interface:design}
-\littlesection{Algorithms} \label{ch:methods:interface:design}
+\subsection{RayTerm Library} \label{ch:methods:interface:rayterm}
 
-\subsection{Demonstration} \label{ch:methods:interface}
+\littlesection{Design} \label{ch:methods:interface:tickit:design}
+
+\littlesection{Algorithms} \label{ch:methods:interface:tickit:algorithms}
+
+\subsection{Demonstration} \label{ch:methods:interface:demo}
