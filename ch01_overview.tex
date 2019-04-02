@@ -139,7 +139,7 @@ The main problems that Tickit solves are ones which need to use terminal escape 
 These escape codes tell the terminal how to display text by changing the formatting, positioning, or color.
 The library also disables character ``echoing'', the display of characters that are typed by the user.
 Because of this dependency on Tickit, \name\ can be used only with terminals that support it -- generally, any XTerm-like terminal will work, as long as it supports \texttt{terminfo} \cite{libtickitLibrary}.
-Additionally, full RGB direct color support is required for accurate color information.
+Additionally, full RGB direct color support is required for accurate color information; depending on Tickit's status, XTerm may be the only compatible terminal emulator.
 
 \subsection{Image Composition using Unicode Characters}
 \label{ch:intro:overview:unicode}
@@ -170,7 +170,7 @@ This allows each {\it character~pixel} to represent a hard gradient.
 
 There are two main image modes possible for use in \name.
 The first is pure {\it pixel mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used; this is the current default.
-Since monospaced character output (such as in a terminal) is twice as tall as it is wide, the half-block can split a single character into two pixels that are colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
+Since monospaced character output (such as in a terminal) is twice as tall as it is wide, the half-block can split a single character into two square pixels that are colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
 This means that a typical 85 by 30 character terminal results in a screen space of 85 by 60 pixels.
 This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel per sample is required.
 
@@ -422,16 +422,16 @@ In the case of \name, we used the C++ language \cite{cpp14standard} for main dev
 \subsubsection{Implementation Language}
 
 The C++ language was used for three main reasons.
-First, the language has a huge ecosystem of low-level tools, with interfaces to libraries such as OptiX, CUDA, FORTRAN-implemented mathematics like Blitz++, and much more.
+First, the language has a huge ecosystem of low-level tools, with interfaces to libraries such as OptiX, CUDA, Eigen, and much more.
 This ensures that no matter the need, there was most likely a library out there that could fill that need.
 Secondly, C++ allows low-level C-like programming while keeping abstractions such as objects available.
 Lastly, C++ is a reasonably fast language: with no virtual machine, unlike Java or Kotlin, garbage collection is not a burden.
-Decades of work have gone into compiler toolchains such as \texttt{g++} and \texttt{clang}, enabling automatic optimizations that would not be possible for newer languages.
+Decades of work have gone into compiler toolchains such as \texttt{g++} and \texttt{clang}, enabling optimizations that would likely not be possible for newer languages.
 
-\name\ attempts to keep most of its implementation to a C-compatible level, using classes and greater abstractions only as necessary.
-This ensures that overhead is minimal, as well as guaranteeing readability for the open source release.
+\name\ attempts to keep most of its implementation simple and straightforward, using classes and greater abstractions only as necessary.
+This ensures that overhead is minimal, as well as guaranteeing readability for open-source contributors.
 Advanced features of C++ such as templating are avoided so as to keep the knowledge entry barrier low.
-Finally, all code in \name's implementation conforms to the Google C++ style guide \cite{googleStyleGuide}.
+Finally, all code in \name's implementation conforms to the Google C++ style guide \cite{googleStyleGuide}, as checked by \texttt{clang-tidy}.
 
 \subsubsection{Build System}
 
@@ -449,7 +449,7 @@ All of these features make ongoing development and maintenance an easier proposi
 \label{ch:intro:background:hardware}
 
 There are many implementation issues related to the performance aspects of \name since high performance is a strict requirement for obtaining render times low enough for real-time display.
-For the purposes of testing, we use a machine with an Intel Core i7 4770k CPU and NVIDIA Geforce GTX 980Ti GPU.
+For the purposes of testing, we use a machine with an Intel Core i7 4770k CPU and NVIDIA Geforce GTX 980 Ti GPU.
 Only recently has ray-tracing even been able to achieve real-time levels of performance; much of this progress is thanks to advances in GPU technology.
 The largest innovator in this space, GPU chip design company NVIDIA, released its RTX series of GPUs that have hardware support for ray-tracing.
 RTX hardware spread is slow, however, due to its high early adoption cost.
@@ -468,6 +468,6 @@ In the remaining chapters of this thesis document, we will describe the features
 Chapter~\ref{ch:relatedwork} reviews a number of past approaches
 to ray-tracing, and provides background for some more advanced ray-tracing algorithms and data structures.
 It also describes some tools that we used for \name's initial proposal and testing.
-Chapter~\ref{ch:methods} outlines the high-level conceptual algorithms, test tooling, and methods used in this project.
-It is complemented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including example output at many different stages of the project.
-Finally, Chapter~\ref{ch:conclusion} completes this document, describing the future work left to complete, a hope for open-source contributions, and a look back at what the author learned through the experience of developing this project.
+Chapter~\ref{ch:methods} outlines the high-level conceptual algorithms, component design, and methodology used in this project.
+It is complemented by Chapter~\ref{ch:implementation}, which is an in-depth description of \name's implementation, including example output from many different stages of the project.
+Finally, Chapter~\ref{ch:conclusion} completes this document, describing the future work left to complete, a hope for open-source contributions, and a look back at the progress made throughout this development process.
