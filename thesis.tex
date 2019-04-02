@@ -17,8 +17,8 @@
 \setlength{\oddsidemargin} {20pt}
 \setlength{\marginparwidth} {72in}
 
-%\usepackage[bottom,single]{gatorthesis} % for final department copy
-\usepackage[debug,draft,single]{gatorthesis} % for student workcopy
+\usepackage[bottom,single]{gatorthesis} % for final department copy
+% \usepackage[debug,draft,single]{gatorthesis} % for student workcopy
 %\usepackage[single]{gatorthesis} % for student
 %\usepackage[debug,draft,nolists,nofront,single]{gatorthesis} % more options
 
@@ -134,9 +134,6 @@
 %   * WANT TO CHANGE NUMBERING DEPTH FOR SUBSECTIONS, OR ...           *
 %   ********************************************************************
 
-\setcounter{tocdepth}{2}    % # of section levels shown in table of contents
-\setcounter{secnumdepth}{3} % # of numbered subsection levels in the text
-
 \tableofcontents
 %\listoftables       % OMIT THIS IF YOU DON'T HAVE ANY TABLES
 \listoffigures      % OMIT THIS IF YOU DON'T HAVE ANY FIGURES
@@ -176,7 +173,8 @@
 
 \include{appa}  % Appendices go here
 
-\nocite{*}
+% only five or six sources uncited, used as auxillary reading basically
+% \nocite{*}
 
 \pagebreak
 
