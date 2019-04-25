@@ -51,17 +51,17 @@ All that these programs need is an infrastructure around the terminal for 3D ren
 \section{Overview}
 \label{ch:intro:overview}
 
-\name{} uses the recursive ray-tracing algorithm, simulating the path of light through the scene\,---\,this is described in more detail in Section~\ref{ch:intro:overview:raytracing}.
+\name{} uses a recursive ray-tracing algorithm, simulating the path of light through the scene\,---\,this is described in more detail in Section~\ref{ch:intro:overview:raytracing}.
 Many images are generated, or rendered, each second; once an image is rendered the Tickit library~\cite{libtickitLibrary} is used to display it in a terminal.
 Multiple images are displayed in quick succession, creating the illusion of movement.
 More details on this process are given in Section~\ref{ch:intro:overview:libtickit}.
-Rendered images are displayed in two different modes; the first uses single half-character pixels, and the second more complex Unicode block characters.
+Rendered images can be displayed in two different modes; the first uses single half-character pixels, and the second more complex Unicode block characters.
 The mechanics of these image composition methods are discussed in Section~\ref{ch:intro:overview:unicode}.
 Finally, Figure~\ref{fig:terminal_output} is a still image of the final terminal output.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=0.8\textwidth]{impl-images/rtexplore/terminal_output}
+  \includegraphics[width=0.8\textwidth]{impl-images/rtexplore/hq_terminal_output}
   \caption{Example of terminal output}
 \label{fig:terminal_output}
 \end{figure}
@@ -103,9 +103,9 @@ This is because the rendering equation contains an integral over all incoming li
 Ray-tracing algorithms that do this are known as {\it path-tracers\/} and are the most photorealistic rendering algorithms invented.
 
 \name{} does not use a full path-tracer\,---\,such algorithms are still many times too slow for most real-time rendering situations; however, a Monte-Carlo method that can approximate a full path-tracer is used.
-In \name{}, the rendering equation is solved by sampling the incoming light at each point with rays.
+In \name{}, the rendering equation is solved by sampling the incoming light at each encountered point with a single ray.
 This is known as recursive ray-tracing since it starts with a single ray that ``recurses'' when it encounters a surface.
-The eventual goal of the recursive ray-tracing algorithm is to create a tree of rays for each {\it fragment\/} to render.
+The eventual goal of the recursive ray-tracing algorithm is to create a single-branch tree of rays for each {\it fragment\/} to render.
 A fragment is either a pixel or some sub-pixel\,---\,many systems will use many fragments per pixel to get better anti-aliasing and more accurate results.
 Each ray contains some color that represents the color of the light in that ray.
 When a ray hits an object, it is {\it scattered\/} by the {\it material\/} of the object, generating a new ray.
@@ -114,8 +114,8 @@ This ray's trajectory is modified randomly based on probability and the specific
 The base of each generated tree is an {\it eye-ray\/}\,---\,a ray with its origin at the fragment location on the camera plane.
 The eye-ray's color is the color that will be rendered for that fragment.
 As the eye-ray projects forward, away from the eye, it is tested for intersection with all objects in the scene.
-When an intersection happens and the generated rays scattered, the eventual color values of the scattered rays are combined to produce the color of the original eye-ray.
-This is done recursively to fully render the scene.
+When an intersection happens and the generated ray is scattered and recursively evaluated, the eventual color values of the scattered rays are combined to produce the color of the eye-ray.
+A modification to this, and what true {\it path-tracers\/} do, is simulate many rays from each intersected point. This fully samples the space around the point and approximates the rendering equation.
 
 \subsection{Terminal Output using Tickit}
 \label{ch:intro:overview:libtickit}
@@ -135,8 +135,9 @@ Additionally, extra terminal output such as the command prompt or other characte
 The main problems that Tickit solves are ones which need to use terminal escape codes\,---\,short character sequences that tell a terminal emulator to change some specific data or use a different display method.
 These escape codes tell the terminal how to display text by changing the formatting, positioning, or color.
 The library also disables character ``echoing'', the display of characters that are typed by the user.
-Because of this dependency on Tickit, \name{} can be used only with terminals that support it\,---\,generally, any XTerm-like terminal will work, as long as it supports \texttt{terminfo}~\cite{libtickitLibrary}.
-Additionally, full RGB direct color support is required for accurate color information; depending on Tickit's status, XTerm may be the only compatible terminal emulator.
+Because of this dependency on Tickit, \name{} can be used only with terminals that support it\,---\,generally, any XTerm-like terminal will work, as long as it supports \texttt{libtickit}~\cite{libtickitLibrary}.
+Additionally, full RGB direct color support is required for accurate color information; depending on Tickit's development status, XTerm may be the only compatible terminal emulator.
+Additionally, specific configuration settings may need to be used\,---\,this are detailed in the implementation repository itself~\cite{raytermGpuImpl}.
 
 \subsection{Image Composition using Unicode Characters}
 \label{ch:intro:overview:unicode}
@@ -166,18 +167,18 @@ This allows each {\it character~pixel\/} to represent a hard gradient.
 \end{figure}
 
 There are two main image modes possible for use in \name{}.
-The first is pure {\it pixel mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used; this is the current default.
-Since monospaced character output (such as in a terminal) is twice as tall as it is wide, the half-block can split a single character into two square pixels that are colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
+The first is {\it pixel~mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used; this is the current default and only implemented mode.
+Since monospaced character output (such as in a terminal) is normally twice as tall as it is wide, the half-block can split a single character into two square pixels that can be colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
 This means that a typical 85 by 30 character terminal results in a screen space of 85 by 60 pixels.
-This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel per sample is required.
+This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel per sample is required (although at least eight are suggested\,---\,more complicated modes would need many times more rays).
 
 The second image mode is considerably more complicated and slower, as it uses significantly more rays per character in order to determine what Unicode block character most fits the desired output.
 On the other hand, it allows a much higher perceived resolution, since the characters used have smaller footprints of down to an eighth of a character in width or length.
 The differences between these two modes are highlighted in Figure~\ref{fig:unicode_mode_comparison1} and~\ref{fig:unicode_mode_comparison2}.
 It can be seen that the first image mode, {\it pixel mode}, shows a rather fuzzy definition of the main large sphere.
 However, in the second image mode, {\it character mode}, the sphere and the reflections seen in it are more defined.
-The performance impact of both modes is another factor that is assessed when making implementation decisions for \name{}; it informed how much actual definition was added by the second rendering mode.
 The current implementation does not fully implement character mode; instead, this is considered a well-defined area for future work.
+The images below were generated with TerminalImageViewer, an terminal image renderer~\cite{tivGithub}.
 
 \begin{figure}[htb]
   \centering
@@ -406,7 +407,7 @@ This is similar to what many other 3D rendering algorithms assume.
 \name{}'s development relies on many other systems.
 The actual implementation code is hosted on GitHub, a public platform for projects using the Git version control system~\cite{github, git}.
 A continuous integration system called Travis CI~\cite{travisci} is used for testing and environment management.
-Documentation is handled by \texttt{doxygen}~\cite{van2008doxygen}\,---\,all external facing functions, methods, and classes have a minimum of a few sentences of documentation.
+Documentation is handled by \texttt{doxygen}~\cite{van2008doxygen}\,---\,all external facing functions, methods, and classes aim to have a minimal sentence or two of documentation.
 More details about the implementation tools are given in Section~\ref{ch:intro:background:languages_and_libraries}; testing hardware and low-level APIs are discussed in Section~\ref{ch:intro:background:hardware}.
 
 \subsection{Programming Languages and Tools}
