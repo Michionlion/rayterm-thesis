@@ -396,7 +396,8 @@ At low stratification levels (meaning only 10 or so stratas), Figure~\ref{fig:ra
 An even more fascinating render, in Figure~\ref{fig:rayterm-gpu_bit_compression}, is produced when the number of stratas grows larger than a few hundred.
 We theorize that this is due to the \texttt{drand48} function's randomness breaking down past a certain level.
 The artifacts are reminiscent of bad compression, which may give some hint as to their source.
-Regardless of the outcome, this was the last development effort in \texttt{raytrace}; after this, the focus was shifted to \texttt{rayterm}.
+Regardless of the outcome, this was the last development effort in \texttt{raytrace} before shifting focus to \texttt{rayterm}.
+Various future work, however, has been completed since this document was first written\,---\,the implementation of glossy and dielectric materials, which can be seen in Figure~\ref{fig:rayterm-gpu_final_render_large} and Figure~\ref{fig:rayterm_terminal_output}, is one such effort.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -433,7 +434,7 @@ Beyond that development, \texttt{rayterm} came together with very few challenges
 \label{fig:terminal_colorline}
   \end{subfigure}
   \begin{subfigure}[htb]{0.48\textwidth}
-    \includegraphics[width=\textwidth]{impl-images/rtexplore/terminal_output}
+    \includegraphics[width=\textwidth]{impl-images/rtexplore/hq_terminal_output}
     \caption{\texttt{rtexplore} terminal output}
 \label{fig:rtexplore_terminal}
   \end{subfigure}
