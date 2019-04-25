@@ -7,7 +7,7 @@
 \chapter{Related Work}
 \label{ch:relatedwork}
 
-In this chapter, we will discuss a few related research papers, detail how they informed \name's development, and show the improvements of \name\ over other systems.
+In this chapter, we will discuss a few related research papers, detail how they informed \name{}'s development, and show the improvements of \name{} over other systems.
 First, we will conduct a high-level discussion of the first ray-tracing paper through to basic details on modern-day optimizations.
 Following that, we will discuss two Github projects, one of which was a major inspiration for Unicode image composition and the algorithms involved (see Section~\ref{ch:intro:overview:unicode}).
 
@@ -15,46 +15,46 @@ Following that, we will discuss two Github projects, one of which was a major in
 \label{ch:relatedwork:discovery}
 
 Here we describe the first ray-tracing paper, as well as two seminal works that brought ray-tracing to the forefront of photorealistic computer rendering.
-It is important to note here that many of these papers are relatively old, since the algorithms being used in \name\ are correspondingly dated.
-This is because most recent advances in ray-tracing concern more advanced methods of photorealistic rendering, such as path-tracing \cite{lafortune1993bi}, low-level optimizations \cite{wald2001interactive}, dynamic scene rendering \cite{wald2007ray}, and volumetric ray-tracing hardware acceleration \cite{kruger2003acceleration}, to name just a few.
-All of these topics, while interesting and tangentially related, are too advanced; comparison with the algorithms used in \name\ would be unrealistic and meaningless, beyond showing how much more development \name\ needs to be truly state of the art when compared to modern ray-tracers.
+It is important to note here that many of these papers are relatively old, since the algorithms being used in \name{} are correspondingly dated.
+This is because most recent advances in ray-tracing concern more advanced methods of photorealistic rendering, such as path-tracing~\cite{lafortune1993bi}, low-level optimizations~\cite{wald2001interactive}, dynamic scene rendering~\cite{wald2007ray}, and volumetric ray-tracing hardware acceleration~\cite{kruger2003acceleration}, to name just a few.
+All of these topics, while interesting and tangentially related, are too advanced; comparison with the algorithms used in \name{} would be unrealistic and meaningless, beyond showing how much more development \name{} needs to be truly state of the art when compared to modern ray-tracers.
 
 \subsection{The First Ray-Tracer}
 \label{ch:relatedwork:discovery:first}
 
-The very first ray-tracing algorithm was developed by Arthur Appel in his 1968 paper ``Some techniques for shading machine renderings of solids'' \cite{appel1968some}.
-His algorithm is now known as a ray casting algorithm -- it does not follow the approach we described in Section~\ref{ch:intro:overview:raytracing}.
+The very first ray-tracing algorithm was developed by Arthur Appel in his 1968 paper ``Some techniques for shading machine renderings of solids''~\cite{appel1968some}.
+His algorithm is now known as a ray casting algorithm\,---\,it does not follow the approach we described in Section~\ref{ch:intro:overview:raytracing}.
 Instead, rays are traced from a point light source to the object being shaded, and a plus symbol of varying size is rendered at that location, depending on the intensity of light at that point.
 When a photographic negative is taken, light spots that were not hit by the rays (thereby darkening them) are now ``in shadow'', as the color levels were inverted.
 Today, Appel's work is not normally considered a real ray-tracing algorithm.
 However, his work informed much of the following research, especially his ideas and mathematics on light intensity.
-After Appel's work, there were some commercial applications of ray-tracing in the field of radiosity; ray-tracing was used to track radiation inside tanks at Mathematical Applications Group, Inc (MAGI) \cite{whitted2018explains}.
+After Appel's work, there were some commercial applications of ray-tracing in the field of radiosity; ray-tracing was used to track radiation inside tanks at Mathematical Applications Group, Inc (MAGI)~\cite{whitted2018explains}.
 
 \subsection{The Breakthrough}
 \label{ch:relatedwork:discovery:breakthrough}
 
-The next big entry to the ray-tracing field was Turner Whitted's 1980 paper ``An Improved Illumination Model for Shaded Display'' \cite{whitted1980improved}.
+The next big entry to the ray-tracing field was Turner Whitted's 1980 paper ``An Improved Illumination Model for Shaded Display''~\cite{whitted1980improved}.
 In this groundbreaking and approachable work, Whitted introduced the recursive ray-tracing algorithm we covered in Section~\ref{ch:intro:overview:raytracing}.
-Whitted was not the first to use ray-tracing -- Arthur Appel had first pioneered the field over a decade ago, and there were also emerging commercial applications.
+Whitted was not the first to use ray-tracing\,---\,Arthur Appel had first pioneered the field over a decade ago, and there were also emerging commercial applications.
 Whitted's real contribution was the idea for how to improve ray-tracing so that it could solve the problem of {\it global illumination}.
 Global illumination was not yet formalized, but the idea was to somehow gather the effect of all light in the scene on every single point.
 This can easily be categorized as taking into account both direct lighting, light coming directly from a source, and indirect lighting, light coming from reflections, refractions, or other non-direct travel methods.
 
 Recursive ray-tracing approximates direct lighting easily, as each encountered point sends a ray to each light in the scene.
-Indirect lighting is slightly more difficult -- pure reflection and refraction are easy, but as soon as reflections become more diffuse, and there are many, many directions a point gets lit from, recursive ray-tracing breaks down and path-tracing must take over.
+Indirect lighting is slightly more difficult\,---\,pure reflection and refraction are easy, but as soon as reflections become more diffuse, and there are many, many directions a point gets lit from, recursive ray-tracing breaks down and path-tracing must take over.
 Despite this, ray-tracing was able to achieve remarkably good images, and thus Whitted-style ray-tracing was born.
 Even today, any simple recursive ray-tracing algorithms are known as Whitted-style ray-tracers.
-Indeed, \name\ uses a Whitted-style ray-tracer, with only some small enhancements, such as {\it heuristic emissive sampling}.
+Indeed, \name{} uses a Whitted-style ray-tracer, with only some small enhancements, such as {\it heuristic emissive sampling}.
 Essentially, this sampling adds a new generation method for rays so that when a ray encounters a diffuse reflective surface, we attempt to sample the possible locations for other emissive (light-producing or light-reflecting) objects.
 This adds some rudimentary support for area lights and diffuse reflections, although it is still not photorealistic.
 
-One element that is not mentioned in ``An Improved Illumination Model for Shaded Display'', but is in Whitted's retrospective on the paper \cite{whitted2018explains}, is adaptive super-sampling.
+One element that is not mentioned in ``An Improved Illumination Model for Shaded Display'', but is in Whitted's retrospective on the paper~\cite{whitted2018explains}, is adaptive super-sampling.
 This method generates more eye-rays, and therefore more definition, only in fragments that do not have sufficient detail.
 This is a relatively simple algorithm: the corners of each pixel provide four sample points creating a ``sample square''.
 Then, if each of the four points are sampled relatively close in value, and there isn't a small object visible through the pixel, the average sample is taken from each of the four points.
 If the points are not close in value, or there is a small object, then the sample square is subdivided and the process starts again, reusing some old values and calculating new ones.
 This method is inherently sequential and adds additional complexity to the ray-tracing algorithm.
-Therefore, it is not implemented in the current version of \name; however, it could be a future optimization.
+Therefore, it is not implemented in the current version of \name{}; however, it could be a future optimization.
 This optimization could, in fact, treat the entire starting canvas as a single sample square, and then refine sample points from there.
 Depending on the complexity of the small object test, this could be an improvement.
 
@@ -62,7 +62,7 @@ Depending on the complexity of the small object test, this could be an improveme
 \label{ch:relatedwork:discovery:formalization}
 
 The path to fully photorealistic rendering was blazed soon after Whitted's paper.
-The mathematical basis for all of ray-tracing and photorealistic rendering was published by James Kajiya in 1986 \cite{kajiya1986rendering}.
+The mathematical basis for all of ray-tracing and photorealistic rendering was published by James Kajiya in 1986~\cite{kajiya1986rendering}.
 In his paper ``The Rendering Equation'', he articulated a generalization for many different rendering algorithms; this generalization is shown as Equation~\ref{equation:the_rendering_equation} below.
 Although the idea behind the rendering equation was not completely new, Kajiya presented it in a form using vector mathematics, especially suited for computer graphics.
 The equation also gives direction for more advanced and photorealistic rendering techniques, leading up to path-tracing.
@@ -74,8 +74,8 @@ The equation also gives direction for more advanced and photorealistic rendering
 
 This equation is fairly complex, but a basic and simplified explanation will be given here.
 First, we will describe the terms: $I(x, x')$ is related to the intensity of light passing from point $x'$ to point $x$; $g(x, x')$ is a ``geometry'' term; $\epsilon(x, x')$ is related to the intensity of emitted light from $x'$ to $x$; $\rho(x, x',x'')$ is related to the intensity of light scatter from $x''$ to $x$ by a patch of surface at $x'$.
-Note that inside the integral is a recursive reference -- this is where we build an entire scene's lighting influence on a single point.
-We start with some definitions: $x'$ is the point we just hit with our sample ray, $x$ is the origin of our ray, and $x''$ is a point that we get through further ray-tracing -- it is a point found by reflecting or scattering the impacting ray.
+Note that inside the integral is a recursive reference\,---\,this is where we build an entire scene's lighting influence on a single point.
+We start with some definitions: $x'$ is the point we just hit with our sample ray, $x$ is the origin of our ray, and $x''$ is a point that we get through further ray-tracing\,---\,it is a point found by reflecting or scattering the impacting ray.
 The integral is actually the simplest element in the equation; it samples all possible incoming directions for light (referencing itself recursively), calculates the possible reflection from that light along the outgoing direction back towards $x$, and sums all these reflections up.
 The $\epsilon$ term is the amount of light emitted from $x'$.
 Finally, the $g$ term is included in Kajiya's original paper, but most other formulations remove it in favor of attenuation terms inside the integral.
@@ -84,10 +84,10 @@ Essentially, it controls how the geometry around $x'$ affects the outgoing light
 Since for practical purposes we can't infinitely recurse, we will eventually hit a recursion level when evaluating the rendering equation.
 In this case, the incoming light is simply set to the ambient light level and no additional recursive calculations take place.
 This takes care of all reflection, refraction, and light travel; notice, however, that we must solve the integral over an entire sphere of directions, and we must do this for every single point we sample, for every single direction we sample from.
-This is {\it horrendously} inefficient.
-The significant part of this equation for \name\ is the integral, since if we can approximate that, \name\ would be photorealistic.
+This is {\it horrendously\/} inefficient.
+The significant part of this equation for \name{} is the integral, since if we can approximate that, \name{} would be photorealistic.
 
-In \name, we use the rendering equation to inform the recursive ray generation, attempting to find areas of the integral where most of the light is incoming; this method we name {\it heuristic emissive sampling} (also mentioned above in Section~\ref{ch:relatedwork:discovery:breakthrough}).
+In \name{}, we use the rendering equation to inform the recursive ray generation, attempting to find areas of the integral where most of the light is incoming; this method we name {\it heuristic emissive sampling\/} (also mentioned above in Section~\ref{ch:relatedwork:discovery:breakthrough}).
 In the common case, all light will be from the direction of nearby light sources.
 However, we can also bias newly generated rays towards areas where refracted light may exist, such as around glass materials.
 Keeping this mathematical basis in mind was critical during implementation since the further we stray from this equation, the less photorealistic the final rendered images become.
@@ -101,71 +101,71 @@ Keeping this mathematical basis in mind was critical during implementation since
 Ray-tracing requires intersection tests with every object in the scene.
 If it were possible to drastically reduce the number of tests computed for each ray, perhaps by only testing the ray against objects in its general vicinity, massive speed increases would emerge.
 As it turns out, this was first explored right after Whitted's original paper.
-The Bounding Volume Hierarchy (BVH) acceleration structure was proposed in Steven Rubin and Turner Whitted's 1980 paper ``A 3-dimensional representation for fast rendering of complex scenes'' \cite{rubin1980}.
+The Bounding Volume Hierarchy (BVH) acceleration structure was proposed in Steven Rubin and Turner Whitted's 1980 paper ``A 3-dimensional representation for fast rendering of complex scenes''~\cite{rubin1980}.
 
 A BVH groups objects into hierarchical organizations, with each group covering a larger area than the groups inside it.
-Each group has a {\it bounding volume}, a geometric primitive that encloses all members of that group.
+Each group has a {\it bounding volume\/}, a geometric primitive that encloses all members of that group.
 In most common implementations of a BVH, this bounding box is a cube, since it is easy to determine the required box from a list of vertices inside it.
 Ray-tracing intersections are then done with the root group's bounding volume first.
 Once an intersection is found, instead of evaluating the rendering equation, we progress down the hierarchy from the bounding box we hit, and try more intersections.
 This can potentially skip the vast majority of geometry in the scene, thereby speeding up computation.
-There have been numerous improvements to this idea; however, BVHs continue to be an easy-to-implement and efficient acceleration structure \cite{prunier2017bvh}.
-The main acceleration structure used in \name\ is in fact a modified BVH from the OptiX library.
+There have been numerous improvements to this idea; however, BVHs continue to be an easy-to-implement and efficient acceleration structure~\cite{prunier2017bvh}.
+The main acceleration structure used in \name{} is in fact a modified BVH from the OptiX library.
 
 \subsection{Parallelization}
 
-Ray-tracing is inherently parallelizable because each eye-ray and its descendants are independent -- rays cannot collide, and one fragment's eye-ray does not affect another fragment's eye-ray.
+Ray-tracing is inherently parallelizable because each eye-ray and its descendants are independent\,---\,rays cannot collide, and one fragment's eye-ray does not affect another fragment's eye-ray.
 Thus, there have been many optimizations that target enhanced hardware acceleration to enable massively parallel ray-tracing.
-The first example of this was ``Design and Analysis of a Parallel Ray Tracing Computer'' \cite{cleary1983design}, a 1983 paper by John Cleary and others.
+The first example of this was ``Design and Analysis of a Parallel Ray Tracing Computer''~\cite{cleary1983design}, a 1983 paper by John Cleary and others.
 In it, Cleary describes a computing system that is functionally similar to the Graphics Processing Units (GPUs) available today.
 They were even able to build small prototypes, but calculated that a full-blown system would cost \$50 million and be able to generate 1000 by 1000 pixel images in 0.15 seconds.
 Sadly, 1983 chip technology had not yet progressed to the point where such a large multi-core processor was feasible.
 
 However, all is not lost.
-Much of the research done in this area led to the design of systems such as OptiX and CUDA, enabling projects like \name\ to benefit from the massive speed increases estimated by early papers \cite{parker2010optix, nvidia2011cuda, whitted2018explains}.
+Much of the research done in this area led to the design of systems such as OptiX and CUDA, enabling projects like \name{} to benefit from the massive speed increases estimated by early papers~\cite{parker2010optix, nvidia2011cuda, whitted2018explains}.
 Instead of a \$50 million monstrosity, relatively small GPU chips capable of the same performance are now available for only hundreds of dollars.
 
 \section{Related Applications}
 
 \subsection{Terminal Images}
 
-A small program available on Github was the original inspiration for some details of \name.
-Called TerminalImageViewer (\texttt{tiv}) \cite{tivGithub}, it uses RGB ANSI escape codes and Unicode block characters to display images in a terminal window.
-\name\ uses many of the same ideas to produce its own animated output.
+A small program available on Github was the original inspiration for some details of \name{}.
+Called TerminalImageViewer (\texttt{tiv})~\cite{tivGithub}, it uses RGB ANSI escape codes and Unicode block characters to display images in a terminal window.
+ \name{} uses many of the same ideas to produce its own animated output.
 The algorithm behind \texttt{tiv} is also a direct inspiration for the algorithm used for ray-to-character translation.
-\name, however, improves upon TerminalImageViewer in two incredibly impactful ways: the graphics produced are animated, and the input data is a three-dimensional scene and not an image.
-Fundamentally, \texttt{tiv} and \name\ are similar only in output style, while the purpose and internal workings are generally dissimilar.
+ \name{}, however, improves upon TerminalImageViewer in two incredibly impactful ways: the graphics produced are animated, and the input data is a three-dimensional scene and not an image.
+Fundamentally, \texttt{tiv} and \name{} are similar only in output style, while the purpose and internal workings are generally dissimilar.
 
 \subsection{Gaming with Termloop}
 
-A goal of \name\ is to support future games that might use the terminal as a graphical display.
-Games have utilized the terminal as a display mechanism for a long time -- text-based adventure games were built with a terminal in mind, and RPGs also got their start with randomly generated levels displayed in 2D in a terminal window.
-Termloop is a game engine built to display games in a terminal \cite{termloop}.
+A goal of \name{} is to support future games that might use the terminal as a graphical display.
+Games have utilized the terminal as a display mechanism for a long time\,---\,text-based adventure games were built with a terminal in mind, and RPGs also got their start with randomly generated levels displayed in 2D in a terminal window.
+Termloop is a game engine built to display games in a terminal~\cite{termloop}.
 It has support for collision detection, keyboard and mouse input, ASCII art, camera movement, and more.
-Its purpose is similar to \name's -- namely, to facilitate game creation in the terminal.
+Its purpose is similar to \name{}'s\,---\,namely, to facilitate game creation in the terminal.
 Termloop is also built in pure Go, a fairly portable programming language that has the advantage in simplicity when compared to C++.
 However, Termloop, like all other terminal game engines available today, has one glaring limitation: it is not 3D.
 
-Unlike \name, Termloop cannot support complex environments, shaded models, or other modern graphical features common in game engines today.
+Unlike \name{}, Termloop cannot support complex environments, shaded models, or other modern graphical features common in game engines today.
 This one differentiating factor is huge; it means that no games can ever be made that don't fit into the strict field of two-dimensional graphics.
-\name\ changes this, enabling huge possibilities for future programs and applications built on top of \name.
-This also allows for existing games to be rewritten or ``ported'' to \name; perhaps in the future, ``Skyrim'' or ``Doom'' will be running in a terminal!
-While \name\ doesn't have the other niceties such as collision detection, the ultimate goal of \name, beyond this initial implementation and development, is to grow to provide the same level of support for 3D games that Termloop has for 2D games.
+ \name{} changes this, enabling huge possibilities for future programs and applications built on top of \name{}.
+This also allows for existing games to be rewritten or ``ported'' to \name{}; perhaps in the future, ``Skyrim'' or ``Doom'' will be running in a terminal!
+While \name{} doesn't have the other niceties such as collision detection, the ultimate goal of \name{}, beyond this initial implementation and development, is to grow to provide the same level of support for 3D games that Termloop has for 2D games.
 
 \subsection{Modern Ray-Tracing}
 
 Although we have described older methods for ray-tracing, and some modern optimizations, we have yet to mention a modern ray-tracer.
-OctaneRender is a professional real-time 3D renderer \cite{octane}.
+OctaneRender is a professional real-time 3D renderer~\cite{octane}.
 It is based on a GPU path-tracing algorithm, boasting physically correct shading while denoising its output using sophisticated machine learning algorithms.
-OctaneRender is far beyond \name\ in terms of raw optimization, power, and photorealism.
+OctaneRender is far beyond \name{} in terms of raw optimization, power, and photorealism.
 It implements a full path-tracing algorithm, along with volumetric rendering support.
 Another big advantage OctaneRender has is the ability to render models and textures that do not fit into a GPU's memory.
-This is very impactful for large scenes, but luckily the benefits would not be very great for \name, since the low resolution prevents the details that take up that large memory space, like high-resolution textures, from making a difference.
+This is very impactful for large scenes, but luckily the benefits would not be very great for \name{}, since the low resolution prevents the details that take up that large memory space, like high-resolution textures, from making a difference.
 
-In comparing OctaneRender to \name, it is important to keep in mind that although \name\ is neither as performant nor as photorealistic, it does provide a somewhat similar experience.
-This is because \name\ renders to a much lower resolution screen: the terminal.
+In comparing OctaneRender to \name{}, it is important to keep in mind that although \name{} is neither as performant nor as photorealistic, it does provide a somewhat similar experience.
+This is because \name{} renders to a much lower resolution screen: the terminal.
 This introduces many advantages that OctaneRender does not have; first and foremost is the ability to run on slightly less powerful machines.
-The very latest GPU is not require to utilize \name, whereas OctaneRender will use all the compute power it can get and more.
-\name\ is also very forgiving when rendering 3D assets such as models -- after all, the resolution is incredibly low.
-This makes development of visuals for \name-based game engines much, much easier and faster.
-Finally, \name\ has an aesthetic that can't be created through photorealism -- it evokes memories of old, nostalgic video games and 90s movie CGI; \name\ fully embraces the retro theme, and benefits from doing so.
+The very latest GPU is not require to utilize \name{}, whereas OctaneRender will use all the compute power it can get and more.
+ \name{} is also very forgiving when rendering 3D assets such as models\,---\,after all, the resolution is incredibly low.
+This makes development of visuals for \name{}-based game engines much, much easier and faster.
+Finally, \name{} has an aesthetic that can't be created through photorealism\,---\,it evokes memories of old, nostalgic video games and 90s movie CGI; \name{} fully embraces the retro theme, and benefits from doing so.
