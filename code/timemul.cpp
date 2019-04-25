@@ -28,7 +28,8 @@ int main(int argc, char* argv[]) {
             printf("End run %d, ", i);
         }
 
-        times[i] = duration_cast<std::chrono::nanoseconds>(end - begin).count();
+        auto elp = duration_cast<nanoseconds>(end - begin);
+        times[i] = elp.count();
         if (i >= warmup) {
             printf("time: %ldns\n", times[i]);
         }
@@ -40,6 +41,7 @@ int main(int argc, char* argv[]) {
     }
     average_time /= n;
 
-    printf("\nSUMMARY\n\nMultiplied %d floats in %ldns on average\n", n, average_time);
+    printf("\nSUMMARY\n\nMultiplied %d floats in", n);
+    printf("%ldns on average\n", average_time);
     exit(0);
 }
