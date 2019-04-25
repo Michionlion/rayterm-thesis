@@ -1,6 +1,9 @@
 *.pdf
 *.synctex.gz
 *.aux
+*.xdv
+*.fls
+*.equ
 *.bbl
 *.blg
 *.lof
