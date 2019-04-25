@@ -44,9 +44,8 @@ Recursive ray-tracing approximates direct lighting easily, as each encountered p
 Indirect lighting is slightly more difficult\,---\,pure reflection and refraction are easy, but as soon as reflections become more diffuse, and there are many, many directions a point gets lit from, recursive ray-tracing breaks down and path-tracing must take over.
 Despite this, ray-tracing was able to achieve remarkably good images, and thus Whitted-style ray-tracing was born.
 Even today, any simple recursive ray-tracing algorithms are known as Whitted-style ray-tracers.
-Indeed, \name{} uses a Whitted-style ray-tracer, with only some small enhancements, such as {\it heuristic emissive sampling}.
-Essentially, this sampling adds a new generation method for rays so that when a ray encounters a diffuse reflective surface, we attempt to sample the possible locations for other emissive (light-producing or light-reflecting) objects.
-This adds some rudimentary support for area lights and diffuse reflections, although it is still not photorealistic.
+Indeed, \name{} uses a single-branch path-tracer derived from Whitten-style ray-tracers\,---\,the main difference is the use of probability to determine future rays.
+This improves on the basics by enabling more photorealistic effects, like glass caustics.
 
 One element that is not mentioned in ``An Improved Illumination Model for Shaded Display'', but is in Whitted's retrospective on the paper~\cite{whitted2018explains}, is adaptive super-sampling.
 This method generates more eye-rays, and therefore more definition, only in fragments that do not have sufficient detail.
@@ -85,18 +84,10 @@ Since for practical purposes we can't infinitely recurse, we will eventually hit
 In this case, the incoming light is simply set to the ambient light level and no additional recursive calculations take place.
 This takes care of all reflection, refraction, and light travel; notice, however, that we must solve the integral over an entire sphere of directions, and we must do this for every single point we sample, for every single direction we sample from.
 This is {\it horrendously\/} inefficient.
-The significant part of this equation for \name{} is the integral, since if we can approximate that, \name{} would be photorealistic.
-
-In \name{}, we use the rendering equation to inform the recursive ray generation, attempting to find areas of the integral where most of the light is incoming; this method we name {\it heuristic emissive sampling\/} (also mentioned above in Section~\ref{ch:relatedwork:discovery:breakthrough}).
-In the common case, all light will be from the direction of nearby light sources.
-However, we can also bias newly generated rays towards areas where refracted light may exist, such as around glass materials.
-Keeping this mathematical basis in mind was critical during implementation since the further we stray from this equation, the less photorealistic the final rendered images become.
-
-% \section{Optimizations}
-
-% \todo{future section on GPU optimizations and problems, general GPU problems/solutions in related works}
+The significant part of this equation is the integral\,---\,since \name{} approximates it, albeit rudimentarily, \name{} approximates photorealism.
 
 \subsection{Accelerated Intersections}
+\label{ch:relatedwork:discovery:acceleration}
 
 Ray-tracing requires intersection tests with every object in the scene.
 If it were possible to drastically reduce the number of tests computed for each ray, perhaps by only testing the ray against objects in its general vicinity, massive speed increases would emerge.
@@ -113,6 +104,7 @@ There have been numerous improvements to this idea; however, BVHs continue to be
 The main acceleration structure used in \name{} is in fact a modified BVH from the OptiX library.
 
 \subsection{Parallelization}
+\label{ch:relatedwork:discovery:parallelization}
 
 Ray-tracing is inherently parallelizable because each eye-ray and its descendants are independent\,---\,rays cannot collide, and one fragment's eye-ray does not affect another fragment's eye-ray.
 Thus, there have been many optimizations that target enhanced hardware acceleration to enable massively parallel ray-tracing.
@@ -126,8 +118,10 @@ Much of the research done in this area led to the design of systems such as Opti
 Instead of a \$50 million monstrosity, relatively small GPU chips capable of the same performance are now available for only hundreds of dollars.
 
 \section{Related Applications}
+\label{ch:relatedwork:applications}
 
 \subsection{Terminal Images}
+\label{ch:relatedwork:applications:tiv}
 
 A small program available on Github was the original inspiration for some details of \name{}.
 Called TerminalImageViewer (\texttt{tiv})~\cite{tivGithub}, it uses RGB ANSI escape codes and Unicode block characters to display images in a terminal window.
@@ -137,6 +131,7 @@ The algorithm behind \texttt{tiv} is also a direct inspiration for the algorithm
 Fundamentally, \texttt{tiv} and \name{} are similar only in output style, while the purpose and internal workings are generally dissimilar.
 
 \subsection{Gaming with Termloop}
+\label{ch:relatedwork:applications:termloop}
 
 A goal of \name{} is to support future games that might use the terminal as a graphical display.
 Games have utilized the terminal as a display mechanism for a long time\,---\,text-based adventure games were built with a terminal in mind, and RPGs also got their start with randomly generated levels displayed in 2D in a terminal window.
@@ -147,7 +142,7 @@ Termloop is also built in pure Go, a fairly portable programming language that h
 However, Termloop, like all other terminal game engines available today, has one glaring limitation: it is not 3D.
 
 Unlike \name{}, Termloop cannot support complex environments, shaded models, or other modern graphical features common in game engines today.
-This one differentiating factor is huge; it means that no games can ever be made that don't fit into the strict field of two-dimensional graphics.
+This one differentiating factor is huge; it means that no game can ever be made that doesn't fit into the strict field of two-dimensional graphics.
  \name{} changes this, enabling huge possibilities for future programs and applications built on top of \name{}.
 This also allows for existing games to be rewritten or ``ported'' to \name{}; perhaps in the future, ``Skyrim'' or ``Doom'' will be running in a terminal!
 While \name{} doesn't have the other niceties such as collision detection, the ultimate goal of \name{}, beyond this initial implementation and development, is to grow to provide the same level of support for 3D games that Termloop has for 2D games.
