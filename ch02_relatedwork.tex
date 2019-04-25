@@ -62,14 +62,13 @@ Depending on the complexity of the small object test, this could be an improveme
 
 The path to fully photorealistic rendering was blazed soon after Whitted's paper.
 The mathematical basis for all of ray-tracing and photorealistic rendering was published by James Kajiya in 1986~\cite{kajiya1986rendering}.
-In his paper ``The Rendering Equation'', he articulated a generalization for many different rendering algorithms; this generalization is shown as Equation~\ref{equation:the_rendering_equation} below.
+In his paper ``The Rendering Equation'', he articulated a generalization for many different rendering algorithms; this generalization is shown as Equation~\ref{The Rendering Equation} below.
 Although the idea behind the rendering equation was not completely new, Kajiya presented it in a form using vector mathematics, especially suited for computer graphics.
 The equation also gives direction for more advanced and photorealistic rendering techniques, leading up to path-tracing.
 
-\begin{equation}
-\label{equation:the_rendering_equation}
+\noteworthy{
   I(x, x') = g(x, x') \Big[\epsilon(x, x') + \int_{S} \rho(x, x',x'')I(x', x'')dx''\Big]
-\end{equation}
+}{The Rendering Equation}
 
 This equation is fairly complex, but a basic and simplified explanation will be given here.
 First, we will describe the terms: $I(x, x')$ is related to the intensity of light passing from point $x'$ to point $x$; $g(x, x')$ is a ``geometry'' term; $\epsilon(x, x')$ is related to the intensity of emitted light from $x'$ to $x$; $\rho(x, x',x'')$ is related to the intensity of light scatter from $x''$ to $x$ by a patch of surface at $x'$.

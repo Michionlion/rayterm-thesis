@@ -33,6 +33,9 @@
 \usepackage{hyperref}
 \usepackage{subcaption}
 \usepackage{mathtools}
+\usepackage{tocloft}
+\usepackage{ragged2e}   % to undo \centering
+\usepackage{glossaries}
 \usepackage[T1]{fontenc}
 \usepackage{mathptmx}
 \usepackage{listings}
@@ -92,6 +95,33 @@
 \newcommand{\rayorg}{\vec{R_{origin}}}
 \newcommand{\raydir}{\vec{R_{direction}}}
 
+
+%% Equation list (https://tex.stackexchange.com/questions/173102/table-of-equations-like-list-of-figures)
+
+
+
+% define list of equations
+\newcommand{\listequationsname}{\LARGE{List of Equations}}
+\newlistof{myequations}{equ}{\listequationsname}
+\newcommand{\myequations}[1]{
+   \addcontentsline{equ}{myequations}{\protect\numberline{\theequation}#1}
+}
+\setlength{\cftmyequationsnumwidth}{2.3em}
+\setlength{\cftmyequationsindent}{1.5em}
+
+% command to box, label, reference, and
+% include noteworthy equation in list of equations
+\newcommand{\noteworthy}[2]{
+\vspace{-1em}
+\begin{align} \label{#2} \ensuremath{\boxed{#1}} \end{align}
+\myequations{#2}
+\vspace{-2.75em}
+\begin{center}
+{ \small \textit{#2} }
+\end{center}
+\vspace{-0.5em}
+}
+
 \begin{document}
 
 \thesistitle{{\large \name{}:}\\{A Ray-Tracing Rendering Engine for XTerm-like Terminals}}
@@ -136,6 +166,8 @@
 \tableofcontents
 %\listoftables       % OMIT THIS IF YOU DON'T HAVE ANY TABLES
 \listoffigures      % OMIT THIS IF YOU DON'T HAVE ANY FIGURES
+
+\listofmyequations{} \pagebreak
 
 %   ********************************************************************
 %   * A GLOSSARY IS ALMOST NEVER NEEDED UNLESS YOU HAVE AN UNUSUALLY   *

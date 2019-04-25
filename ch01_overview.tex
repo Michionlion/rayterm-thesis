@@ -96,7 +96,7 @@ This is only the case in reality when light travels through a vacuum with no gra
 Additional mathematics and systems must be used to bend, attenuate, or scatter a ray to accurately render transparent volumes\,---\,this is called volumetric ray-tracing.
 Volumetric ray-tracing is not currently supported in \name{}, but is a fascinating area for future work.
 
-The formal basis for ray-tracing is the rendering equation, articulated by James Kajiya in 1986~\cite{kajiya1986rendering}.
+The formal basis for ray-tracing is the rendering equation (Equation~\ref{The Rendering Equation}), articulated by James Kajiya in 1986~\cite{kajiya1986rendering}.
 The rendering equation models the outgoing light at some point in some direction given all incoming light, a bidirectional reflectance distribution function (BDRF), and a normal (a perpendicular direction) for the surface at the point modeled.
 If solved for every point in the scene, the rendering equation could generate a completely photorealistic image\,---\,this would, however, require massive amounts of computation.
 This is because the rendering equation contains an integral over all incoming light which must be solved through numerical analysis.
@@ -220,47 +220,42 @@ Vectors are related to both multivariable calculus and linear algebra\,---\,an e
 
 Each set of all possible $n$-dimensional vectors are closed under the basic arithmetic operations.
 Addition, subtraction, along with some specialized versions of multiplication, are all defined.
-Addition and subtraction are calculated on a component-wise basis\,---\,for instance, in three dimensions addition and subtraction can be calculated using Formula~\ref{equation:vector_addition} and Formula~\ref{equation:vector_subtraction}.
+Addition and subtraction are calculated on a component-wise basis\,---\,for instance, in three dimensions addition and subtraction can be calculated using Formula~\ref{Vector Addition} and Formula~\ref{Vector Subtraction}.
 
-\begin{equation}
-\label{equation:vector_addition}
+\noteworthy{
   \vec{u} + \vec{v} = (\vec{u}_x + \vec{v}_x, \vec{u}_y + \vec{v}_y, \vec{u}_z + \vec{v}_z)
-\end{equation}
+}{Vector Addition}
 
-\begin{equation}
-\label{equation:vector_subtraction}
+\noteworthy{
   \vec{u} - \vec{v} = (\vec{u}_x - \vec{v}_x, \vec{u}_y - \vec{v}_y, \vec{u}_z - \vec{v}_z)
-\end{equation}
+}{Vector Subtraction}
 
 There are three other operations, each based on numerical multiplication.
 The first is simple scalar multiplication.
 A scalar in this context is just a regular number, such as $2$.
-Scalar multiplication is defined by Formula~\ref{equation:vector_scalar_multiplication}, and is also a closed operation for $n$-dimensional vectors.
+Scalar multiplication is defined by Formula~\ref{Vector Scalar Multiplication}, and is also a closed operation for $n$-dimensional vectors.
 
-\begin{equation}
-\label{equation:vector_scalar_multiplication}
+\noteworthy{
   k\vec{v} = (k\vec{v}_x, k\vec{v}_y, k\vec{v}_z)
-\end{equation}
+}{Vector Scalar Multiplication}
 
 Then we have the cross product.
 This is a specialized multiplication operation only applicable when $n = 3$ that results in a vector that is perpendicular to both of its operands.
-The cross product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \times \vec{v}$, and can be calculated with Formula~\ref{equation:vector_cross_product}.
+The cross product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \times \vec{v}$, and can be calculated with Formula~\ref{Vector Cross Product}.
 
-\begin{equation}
-\label{equation:vector_cross_product}
+\noteworthy{
   \vec{u} \times \vec{v} = (\vec{u}_y\vec{v}_z - \vec{u}_z\vec{v}_y, \vec{u}_z\vec{v}_x - \vec{u}_x\vec{v}_z, \vec{u}_x\vec{v}_y - \vec{u}_y\vec{v}_x)
-\end{equation}
+}{Vector Cross Product}
 
 Finally, the dot product is a third multiplication operation that is applicable to any $n$-dimensional vector.
 However, the result of the dot product operation is a simple scalar, not a new vector.
 The dot product only makes semantic sense when talking about direction vectors: it gives a sense of how much two vectors are ``aligned'' with each other.
 It is often used to determine if two vectors are at right angles with each other, since in that case the dot product would be $0$.
-The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \bullet \vec{v}$, and can be found using Formula~\ref{equation:vector_dot_product}.
+The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \bullet \vec{v}$, and can be found using Formula~\ref{Vector Dot Product}.
 
-\begin{equation}
-\label{equation:vector_dot_product}
+\noteworthy{
   \vec{u} \bullet \vec{v} = \vec{u}_x\vec{v}_x + \vec{u}_y\vec{v}_y + \vec{u}_z\vec{v}_z
-\end{equation}
+}{Vector Dot Product}
 
 \subsubsection{Vector Equations}
 
@@ -278,14 +273,13 @@ To use the right-hand rule, point your right hand's index finger in the directio
 Your thumb will point in the direction of the resulting cross product.
 Note that this causes the order of operands to matter\,---\,a different order will produce the opposite direction.
 
-\begin{equation}
-\label{equation:vector_dot_product_cos}
+\noteworthy{
   \vec{u} \bullet \vec{v} = |\vec{u}| \cdot |\vec{v}| \cdot \cos{\theta}
-\end{equation}
+}{Cosine Vector Dot Product}
 
 Second, {\it dotting\/} two vectors multiplies their lengths while keeping in mind their direction\,---\,two vectors perfectly parrallel to each other would have a dot product that was simply their lengths multiplied.
 However, two vectors perfectly perpendicular to each other have a dot product of zero.
-There is actually a second definition of the dot product (Formula~\ref{equation:vector_dot_product_cos}) that can be a little easier to understand with this context.
+There is actually a second definition of the dot product (Formula~\ref{Cosine Vector Dot Product}) that can be a little easier to understand with this context.
 In this formula, $\theta$ is the angle between the two operands, and $|\vec{w}|$ is the length of $\vec{w}$.
 
 \subsection{Ray-Tracing Mathematics}
@@ -296,13 +290,12 @@ The basic mathematical construct used in ray-tracing is called a {\it ray}.
 Rays are defined by two vectors: an origin point, referred to as $\rayorg$ for some ray $R$, and a direction, referenced as $\raydir$.
 These two vectors together represent a line of infinite length that starts at the origin and projects along the direction.
 An important addition to the concept of rays is a point along a ray\,---\,this can be defined by using a third variable, $t$, to represent how far along the ray the point is located.
-Therefore, Formula~\ref{equation:point_on_ray} can be used to get the coordinates of such a point in three-dimensional space.
+Therefore, Formula~\ref{Parametric Ray} can be used to get the coordinates of such a point in three-dimensional space.
 Assuming $\raydir$ is a unit vector, this is the {\it parametric~form\/} of a ray.
 
-\begin{equation}
-\label{equation:point_on_ray}
+\noteworthy{
   \vec{point} = \rayorg + t\raydir
-\end{equation}
+}{Parametric Ray}
 
 With this concept, algorithms can be described to model the interaction between rays and other surfaces.
 The algorithms discussed are run millions of times per second in a highly parallelized environment.
@@ -311,21 +304,19 @@ All of the ray-tracing mathematics described here are synthesized from Peter Shi
 Some smaller sections also benefit from ideas in Jean-Colas Prunier's ``Scratchapixel''~\cite{prunier2017triangle}.
 
 Scenes that can be ray-traced must be a collection of surfaces that are mathematically intersectable with a ray.
-Any surface that can be defined by an implicit surface definition function, in the form of Function~\ref{equation:surface_equation}, is intersectable with a ray~\cite{pharr2016physically}.
-In Function~\ref{equation:surface_equation} and for the rest of this section, $\vec{p}$ is a vector representing a point in three-dimensional space.
+Any surface that can be defined by an implicit surface definition function, in the form of Formula~\ref{Implicit Surface Definition Function}, is intersectable with a ray~\cite{pharr2016physically}.
+In Formula~\ref{Implicit Surface Definition Function} and for the rest of this section, $\vec{p}$ is a vector representing a point in three-dimensional space.
 The implicit surface definition function must have the property that if and only if $f(\vec{p})$ is $0$, then $\vec{p}$ is on the defined surface.
-The point of intersection between a ray and a surface defined in this way can be found by solving Equation~\ref{equation:ray_surface_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray} to calculate the coordinates of that point on the ray.
+The point of intersection between a ray and a surface defined in this way can be found by solving Equation~\ref{Ray-Surface Intersection} for $t$ and then using Formula~\ref{Parametric Ray} to calculate the coordinates of that point on the ray.
 We essentially ask, ``What points along this ray are on the defined surface?'' by passing in all possible points on the ray, parameterized by $t$.
 
-\begin{equation}
-\label{equation:surface_equation}
+\noteworthy{
   f(\vec{p}) = 0
-\end{equation}
+}{Implicit Surface Definition Function}
 
-\begin{equation}
-\label{equation:ray_surface_intersection}
+\noteworthy{
   f(\rayorg + t\raydir) = 0
-\end{equation}
+}{Ray-Surface Intersection}
 
 In \name{}, only triangles are supported, for simplicity of implementation.
 However, in the research prototype we describe in Section~\ref{ch:methods:renderer:sequential} disks and spheres were the only supported surfaces due to the simplicity of their parametric equations.
@@ -334,41 +325,37 @@ During extremely early feasibility testing, some of the math described in this s
 
 \subsubsection{Ray-Sphere Intersection}
 
-The surface definition function of a sphere is Function~\ref{equation:sphere_surface}, with $S$ representing the sphere.
-The intersection point between a ray and a sphere is given by solving Equation~\ref{equation:ray_sphere_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray}.
+The surface definition function of a sphere is Formula~\ref{Parametric Sphere}, with $S$ representing the sphere.
+The intersection point between a ray and a sphere is given by solving Equation~\ref{Ray-Sphere Intersection} for $t$ and then using Formula~\ref{Parametric Ray}.
 Both of these equations are directly adapted from ``Ray Tracing in One Weekend''~\cite{shirley2016ray}.
-Notice that Equation~\ref{equation:ray_sphere_intersection} is quadratic, and the number (and values) of the roots give us the $t$ we want to use.
+Notice that Equation~\ref{Ray-Sphere Intersection} is quadratic, and the number (and values) of the roots give us the $t$ we want to use.
 The smallest positive root corresponds to the point on the ray which first intersects the sphere.
 If there are no real roots, then the ray does not intersect the sphere.
 
-\begin{equation}
-\label{equation:sphere_surface}
+\noteworthy{
   f(\vec{p}) = (\vec{p} - \vec{S_{center}})^2 - {S_{radius}}^2
-\end{equation}
+}{Parametric Sphere}
 
-\begin{equation}
-\label{equation:ray_sphere_intersection}
+\noteworthy{
   (\raydir^2)t^2 + 2(\raydir \bullet (\rayorg - \vec{S_{center}}))t + (\rayorg - \vec{S_{center}})^2 - {S_{radius}}^2 = 0
-\end{equation}
+}{Ray-Sphere Intersection}
 
 \subsubsection{Ray-Plane Intersection}
 
 For any two-dimensional object, the plane it lies in is the first shape tested for intersection.
 Luckily, ray-plane intersection testing is fairly cheap and straightforward.
-The surface definition function of a plane is Function~\ref{equation:plane_surface}, with $P$ representing the plane.
+The surface definition function of a plane is Formula~\ref{Parametric Plane}, with $P$ representing the plane.
 The plane's {\it offset\/} is a point on the plane, and the plane's {\it normal\/} is a vector perpendicular to the plane.
-The intersection point between a ray and a plane is given by solving Equation~\ref{equation:ray_plane_intersection} for $t$ and then using Formula~\ref{equation:point_on_ray}.
+The intersection point between a ray and a plane is given by solving Equation~\ref{Ray-Plane Intersection} for $t$ and then using Formula~\ref{Parametric Ray}.
 These equations were derived from basic vector math, along with guidance from ``Physically Based Rendering''~\cite{pharr2016physically}.
 
-\begin{equation}
-\label{equation:plane_surface}
+\noteworthy{
   f(\vec{p}) = (\vec{p} - \vec{P_{offset}}) \bullet \vec{P_{normal}}
-\end{equation}
+}{Parametric Plane}
 
-\begin{equation}
-\label{equation:ray_plane_intersection}
+\noteworthy{
   (\vec{P_{normal}} \bullet \raydir)t + \vec{P_{normal}} \bullet (\rayorg - \vec{P_{offset}}) = 0
-\end{equation}
+}{Ray-Plane Intersection}
 
 \subsubsection{Ray-Triangle Intersection}
 
@@ -381,16 +368,15 @@ We do this using the ``inside-outside'' method (as suggested by ``Scratchapixel'
 
 To conduct the test, we label each triangle vertex $\vec{V_i}$, with $i$ increasing in the counter-clockwise direction.
 We then have three triangle vertices: $\vec{V_0}$, $\vec{V_1}$, and $\vec{V_2}$.
-We can now use Function~\ref{equation:left_edge_test}: if $f(i) > 0$ for each $i$, then $\vec{Q}$ is inside the triangle.
+We can now use Formula~\ref{Left Edge Test}: if $f(i) > 0$ for each $i$, then $\vec{Q}$ is inside the triangle.
 Otherwise, $\vec{Q}$ is outside the triangle.
-Note that in Function~\ref{equation:left_edge_test}, if $i = 3$, then $i = 0$ ($i$ ``wraps'' to only valid values).
+Note that in Formula~\ref{Left Edge Test}, if $i = 3$, then $i = 0$ ($i$ ``wraps'' to only valid values).
 
-\begin{equation}
-\label{equation:left_edge_test}
+\noteworthy{
   f(i) = P_{normal} \bullet ((\vec{V_{i+1}} - \vec{V_i}) \times (\vec{Q} - \vec{V_i}))
-\end{equation}
+}{Left Edge Test}
 
-Function~\ref{equation:left_edge_test} can be complicated to visualize, so imagine this: we first form two vectors, both with $\rayorg = \vec{V_i}$.
+Formula~\ref{Left Edge Test} can be complicated to visualize, so imagine this: we first form two vectors, both with $\rayorg = \vec{V_i}$.
 The first points along the triangle's edge, while the other points towards $\vec{Q}$.
 Both of these vectors will be in the plane of the triangle.
 Thus, if we cross them, the vector produced will either be away from the plane in the same direction as $\vec{P_{normal}}$, or away from the plane in the opposite direction.
@@ -426,7 +412,7 @@ Secondly, C++ allows low-level C-like programming while keeping abstractions suc
 Lastly, C++ is a reasonably fast language: with no virtual machine, unlike Java or Kotlin, garbage collection is not a burden.
 Decades of work have gone into compiler toolchains such as \texttt{g++} and \texttt{clang}, enabling optimizations that would likely not be possible for newer languages.
 
-\name{} attempts to keep most of its implementation simple and straightforward, using classes and greater abstractions only as necessary.
+Our implementation attempts to stay simple and straightforward, using classes and greater abstractions only as necessary.
 This ensures that overhead is minimal, as well as guaranteeing readability for open-source contributors.
 Advanced features of C++ such as templating are avoided so as to keep the knowledge entry barrier low.
 Finally, all code in \name{}'s implementation conforms to the Google C++ style guide~\cite{googleStyleGuide}, as checked by \texttt{clang-tidy}.
