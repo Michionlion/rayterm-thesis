@@ -104,7 +104,7 @@ As it turns out, this was first explored right after Whitted's original paper.
 The Bounding Volume Hierarchy (BVH) acceleration structure was proposed in Steven Rubin and Turner Whitted's 1980 paper ``A 3-dimensional representation for fast rendering of complex scenes''~\cite{rubin1980}.
 
 A BVH groups objects into hierarchical organizations, with each group covering a larger area than the groups inside it.
-Each group has a {\it bounding volume\/}, a geometric primitive that encloses all members of that group.
+Each group has a {\it bounding volume}, a geometric primitive that encloses all members of that group.
 In most common implementations of a BVH, this bounding box is a cube, since it is easy to determine the required box from a list of vertices inside it.
 Ray-tracing intersections are then done with the root group's bounding volume first.
 Once an intersection is found, instead of evaluating the rendering equation, we progress down the hierarchy from the bounding box we hit, and try more intersections.

@@ -145,7 +145,7 @@ Additionally, full RGB direct color support is required for accurate color infor
 \label{ch:intro:overview:unicode}
 
 Unicode is a character standard that allows anyone to reference many thousands of characters to compose text, no matter the environment around the text~\cite{unicode}.
-Some critical characters that \name{} uses are known as the {\it block characters\/}\,---\,they are characters \texttt{U+2580} -- \texttt{U+259F}, a subset of which are shown in Figure~\ref{fig:unicode_characters}.
+Some critical characters that \name{} uses are known as the {\it block characters\/}\,---\,they are characters \texttt{U+2580}\,--\,\texttt{U+259F}, a subset of which are shown in Figure~\ref{fig:unicode_characters}.
 The core of image composition using Unicode is an algorithm coloring the characters and the background\,---\,\name{} uses this algorithm on every character of the output to both determine the character to display, and the foreground and background colors for that character.
 The foreground colors the character itself, whereas the background provides a relief color.
 This allows each {\it character~pixel\/} to represent a hard gradient.
@@ -164,7 +164,7 @@ This allows each {\it character~pixel\/} to represent a hard gradient.
     \caption{Quadrant Elements}
 \label{fig:unicode_quadrant_characters}
   \end{subfigure}
-  \caption{Subset of \texttt{U+2580} -- \texttt{U+259F}~\cite{unicode}}
+  \caption{Subset of \texttt{U+2580}\,--\,\texttt{U+259F}~\cite{unicode}}
 \label{fig:unicode_characters}
 \end{figure}
 
@@ -282,7 +282,7 @@ Note that this causes the order of operands to matter\,---\,a different order wi
 
 \begin{equation}
 \label{equation:vector_dot_product_cos}
-  \vec{u} \bullet \vec{v} = |\vec{u}| \cdot |\vec{v}| \cdot cos(\theta)
+  \vec{u} \bullet \vec{v} = |\vec{u}| \cdot |\vec{v}| \cdot \cos{\theta}
 \end{equation}
 
 Second, {\it dotting\/} two vectors multiplies their lengths while keeping in mind their direction\,---\,two vectors perfectly parrallel to each other would have a dot product that was simply their lengths multiplied.
