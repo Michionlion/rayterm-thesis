@@ -241,7 +241,7 @@ Finally, $R_0$ is the value of the Fresnel term when there is minimal reflection
 
 This approximation gives values close to $0$ when the view angle is high, for example when looking directly through an object; it gives values close to $1$ when the view angle is low, for example on the oblique sides of a sphere.
 This can be seen in Figure~\ref{fig:rayterm-cpu_fresnel}: notice that the gradient is not linear and the white is mostly concentrated on the oblique edges of the sphere.
-The approximation is then used to determine if the ray will be refracted (low values) or reflected (high values) by testing against a random scalar in the range $\[0, 1\)$.
+The approximation is then used to determine if the ray will be refracted (low values) or reflected (high values) by testing against a random scalar in the interval $\left[0, 1\right)$.
 This will result in high viewing angles (black in Figure~\ref{fig:rayterm-cpu_fresnel}) generating refraction rays, and low viewing angles (white in Figure~\ref{fig:rayterm-cpu_fresnel}) generating reflection rays.
 This is a close approximation of the effect that glass and other dielectrics have when viewed in the real world.
 
