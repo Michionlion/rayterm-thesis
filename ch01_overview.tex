@@ -29,27 +29,24 @@ Finally, Section~\ref{ch:intro:outline} outlines the rest of this thesis documen
 \section{Motivation}
 \label{ch:intro:motivation}
 
-I have always been fascinated with rendering algorithms, especially ray-tracing.
-This fascination fueled an interest in game engine development, 3D modeling, and other computer graphics topics.
-The idea for \name{} came out of a disappointment\,---\,I was working on a project that made a virtual space seem larger than it was when the user was wearing a virtual reality headset.
-Sadly, someone had already developed a toolkit that did exactly what I wanted to achieve.
+Rendering algorithms are intricate and complicated beasts, and as they are further developed, it is plain to see that some form of ray-tracing is the future.
+\name{} arose from the simple idea of combining the retro and old-school pixelated aesthetic with photorealism.
+The pixelated aesthetic matches very well with a terminal, since there is not a huge amount of resolution available when using characters as pixels.
+With this low resolution also came the possibility of real Monte-Carlo path-tracing, which allows much more natural interaction modeling based on probability.
+All of these come together to make \name{} the perfect combination of feasible development and aesthetic whimsy.
 
-Through my search for a replacement project, I discovered that, for me, one of the biggest draws to an idea was the ability for that idea to affect other people.
-Whether it was something that many others could use or an idea that people could contribute to, I wanted to make something other people saw.
-That is where the draw of open-source software came from for me, and why \name{} is open-source.
-Additionally, I discovered that there are many niches in software\,---\,places where there just is not a lot of people making things.
-Computer graphics in a terminal emulator (see Section~\ref{ch:intro:overview:libtickit}) is one of those corners.
-The only real application many people saw for this niche was the rendering of images to the terminal\,---\,in fact, some of the initial inspiration for \name{} came from TerminalImageViewer~\cite{tivGithub}, a program to accomplish that very task.
-
-I saw more possibilities, however.
+\name{} is open-source\,---\,beyond the algorithms and aesthetic, this provides another identity for the project.
+Open-source is an easy way for many people to both contribute to and use software, and developing such enabling software is an exciting journey in and of itself.
+As another differientiator, \name{} fills a fairly small niche: computer graphics in a terminal emulator (see Section~\ref{ch:intro:overview:libtickit}).
+The only real application exploited in this niche is the rendering of images to the terminal\,---\,in fact, some of the initial inspiration for \name{} came from TerminalImageViewer~\cite{tivGithub}, a program to accomplish that very task.
+There are many more possibilities, however.
 There is no need to keep the terminal in a by-gone era, stuck with only colored characters and still graphics.
 The terminal is, after all, only a window into some text.
-Why does this text have to be stationary?
-Why does it need to be text at all?
-The answer, of course, is that it does not.
-There is a huge amount of potential in a 3D rendering engine that outputs to the terminal\,---\,there are so many applications, from rendering 3D model files to playing video games to visualizing music.
+This text does not have to be stationary, or even recognizable text at all!
+There is a huge amount of potential in a 3D rendering engine that outputs to the terminal\,---\,there are many possible applications.
+From rendering 3D model files to playing video games to visualizing music, the list goes on; creativity is the only real limit in this kind of domain.
 All that these programs need is an infrastructure around the terminal for 3D rendering.
-\name{} aims to create that infrastructure through a completely novel combination of ray-traced 3D rendering and Unicode-based image composition.
+\name{} aims to provide that infrastructure through a completely novel combination of ray-traced 3D rendering and Unicode-based image representation.
 
 \section{Overview}
 \label{ch:intro:overview}
