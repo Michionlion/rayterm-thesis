@@ -397,7 +397,6 @@ An even more fascinating render, in Figure~\ref{fig:rayterm-gpu_bit_compression}
 We theorize that this is due to the \texttt{drand48} function's randomness breaking down past a certain level.
 The artifacts are reminiscent of bad compression, which may give some hint as to their source.
 Regardless of the outcome, this was the last development effort in \texttt{raytrace} before shifting focus to \texttt{rayterm}.
-Various future work, however, has been completed since this document was first written\,---\,the implementation of glossy and dielectric materials, which can be seen in Figure~\ref{fig:rayterm-gpu_final_render_large} and Figure~\ref{fig:rayterm_terminal_output}, is one such effort.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -414,6 +413,29 @@ Various future work, however, has been completed since this document was first w
   \end{subfigure}
   \caption{Stratified rendering attempts}
 \label{fig:rayterm-gpu_stratified}
+\end{figure}
+
+Various future work has been completed since this document was first written\,---\,the implementation of glossy and dielectric materials, which can be seen in Figure~\ref{fig:rayterm-gpu_final_render_large} and Figure~\ref{fig:rayterm_terminal_output}, is one such effort.
+The overall difference that GPU compute power in \name{} makes is massive\,---\,in Figure~\ref{fig:rayterm_final_ppm_outputs} the current \texttt{ppm} output from both the experimental CPU renderer as well as the full GPU \name{} implementation is shown.
+Both of these examples have a pixel resolution of $960$ by $624$, and were rendered with $1024$ samples per pixel.
+The massive performance difference shows why GPU compute is so important: the CPU \texttt{ppm} took $455$ seconds to render, while the GPU \texttt{ppm} took only $23$ seconds.
+This difference alone, seen here at a higher quality and resolution than should be expected from applications in terminal mode, is ample justification for implementing the parallel version of \name{}.
+
+\vspace{0.3em}
+\begin{figure}[htb]
+  \centering
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/hq_complete_1024spp_455s}
+    \caption{Final \texttt{ppm} output from \texttt{rayterm-cpu} ($1024$ spp)}
+\label{fig:rayterm-cpu_final_ppm_output}
+  \end{subfigure}
+  \begin{subfigure}[htb]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{impl-images/gpu/hq_complete_1024spp_23s}
+    \caption{Final \texttt{ppm} output from \texttt{rayterm-gpu} ($1024$ spp)}
+\label{fig:rayterm-gpu_final_ppm_output}
+  \end{subfigure}
+  \caption{Stratified rendering attempts}
+\label{fig:rayterm_final_ppm_outputs}
 \end{figure}
 
 \subsection{\texttt{rayterm}}\label{ch:implementation:final:rayterm}
