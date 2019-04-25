@@ -392,7 +392,7 @@ Although this was not successful, mostly because of complications with the curre
 These can be seen in Figure~\ref{fig:rayterm-gpu_stratified}.
 The attempt here is to essentially break the \texttt{drand48} return values into ``stratas'', and pick a random value in each strata for every \texttt{drand48} call.
 However, these strata were advanced linearly, so the first random value would always be in the first strata, and so on.
-At low stratification levels (meaning only 10 or so stratas), Figure~\ref{fig:rayterm-gpu_stratified} is produced.
+At low stratification levels (meaning only 10 or so stratas), Figure~\ref{fig:rayterm-gpu_stratified_example} is produced.
 An even more fascinating render, in Figure~\ref{fig:rayterm-gpu_bit_compression}, is produced when the number of stratas grows larger than a few hundred.
 We theorize that this is due to the \texttt{drand48} function's randomness breaking down past a certain level.
 
@@ -402,7 +402,7 @@ We theorize that this is due to the \texttt{drand48} function's randomness break
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/first_attempt_stratified_sampling}
     \caption{First stratified sampling attempt}
-\label{fig:rayterm-gpu_stratified}
+\label{fig:rayterm-gpu_stratified_example}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/weird_attempt_stratified_sampling}
