@@ -8,7 +8,7 @@
 \chapter{Implementation}\label{ch:implementation}
 
 In this chapter we discuss the implementation journey, and all the challenges and solutions we encountered.
-Because much of the development effort for \name\ was focused on ray-tracing, many of the topics here are also related to ray-tracing.
+Because much of the development effort for \name{} was focused on ray-tracing, many of the topics here are also related to ray-tracing.
 
 \section{CPU Prototype}\label{ch:implementation:prototype}
 
@@ -28,7 +28,7 @@ The below sections chronicle the implementation journey, with various figures at
 \subsection{\texttt{raymath}}\label{ch:implementation:prototype:raymath}
 
 The \texttt{raymath} component was really straightforward to implement, and there are no significant challenges.
-This was also an introduction to the Eigen library \cite{eigenweb} and C++ in general.
+This was also an introduction to the Eigen library~\cite{eigenweb} and C++ in general.
 One big decision made in \texttt{raymath} was to \texttt{typedef} certain Eigen template types to ensure that the rest of \texttt{rayterm-cpu} code used only types such as \texttt{vector} or \texttt{ray}, instead of the more complicated Eigen equivelents \texttt{Eigen::Matrix<scalar, 3, 1>} and \texttt{Eigen::ParametrizedLine<scalar, 3>}.
 A \texttt{scalar} type was also defined, in theory for the purpose of changing from \texttt{double} to \texttt{float} calculations if desired.
 However there are some dependencies in \texttt{raytrace} on \texttt{double} calculations, so changing that now is likely to introduce problems.
@@ -40,7 +40,7 @@ The \texttt{raymath} component is also one of the better-tested modules, with te
 
 \subsection{\texttt{raytrace}}\label{ch:implementation:prototype:raytrace}
 
-The \texttt{raytrace} component had the most development time put into it throughout the entire \name\ development process.
+The \texttt{raytrace} component had the most development time put into it throughout the entire \name{} development process.
 It started off as an extremely simple Monte Carlo path-tracer and graduated to increasingly more complex materials, algorithms, and implementations.
 Here we will describe some of the steps through this process.
 
@@ -80,7 +80,7 @@ The next steps were to enable multiple samples per pixel.
 Figure~\ref{fig:rayterm-cpu_multisampling} shows some of the difficulties we encountered.
 The biggest challenge here was ensuring that the ray direction was correct;
 during this time \texttt{Camera} was rewritten into the final version, with much better robustness for situations like this.
-In \texttt{rayterm-cpu} we use random subpixel jitter for every sample -- this was what caused the majority of the issues, and took some time to work out.
+In \texttt{rayterm-cpu} we use random subpixel jitter for every sample\,---\,this was what caused the majority of the issues, and took some time to work out.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -109,7 +109,7 @@ In the beginning, Lambertian scatter was achieved through picking a random vecto
 This provides a good approximation, but later versions replaced this with a non-uniform hemispherical sampling algorithm, which generates a vector in the entire visible hemisphere centered on the normal from the intersection point.
 There is an existing bug with this version, however: the sampling is not uniform.
 There is a concentration around the normal vector due to the random sampling method we used.
-This is fixed in \texttt{rayterm-gpu} -- you can see the difference in Figure~\ref{fig:rayterm-gpu_hemispherical_sampling}.
+This is fixed in \texttt{rayterm-gpu}\,---\,you can see the difference in Figure~\ref{fig:rayterm-gpu_hemispherical_sampling}.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -135,7 +135,7 @@ This is fixed in \texttt{rayterm-gpu} -- you can see the difference in Figure~\r
 
 Figure~\ref{fig:rayterm-cpu_intersection_bug} was the first high-quality render attempted, and it actually revealed a subtle bug not seen before.
 This render took 141 seconds and had an spp of 1600.
-The bug revealed is easily visible at the intersection between the small and large spheres -- there is a ``ledge'' or bright spot where it should be completely occluded.
+The bug revealed is easily visible at the intersection between the small and large spheres\,---\,there is a ``ledge'' or bright spot where it should be completely occluded.
 This was a result of too high of a limit being placed on the scattered rays; rays that had an intersection less than $0.001$ were discarded.
 However, these rays would have darkened the crevice between the two spheres.
 They essentially bounced back and forth between the spheres, attenuating at each bounce, but were stopped too soon while the distance they traveled was still visible.
@@ -152,7 +152,7 @@ This was easily fixed by decreasing the limit to $0.00001$.
 Now that the ray-tracing basics were taken care of, we moved on to more diverse materials.
 Figure~\ref{fig:rayterm-cpu_metallic} is a test scene with various metallic or glossy materials, along with some Lambertian.
 The only real difference between the two is that glossy materials have a bias towards the reflection direction when scattering rays.
-That bias is controlled by the roughness -- the large sphere to the right has a very low roughness, while the closer small red sphere's roughness is slightly larger.
+That bias is controlled by the roughness\,---\,the large sphere to the right has a very low roughness, while the closer small red sphere's roughness is slightly larger.
 At lower values, the roughness controls the blurriness of reflections; at larger values, it controls how ``diffuse'' the object looks.
 Again in the first implementation, the math behind the scattering was similar to the Lambertian mathematics, except instead of a sphere offset by the normal, the random vectors were generated in a sphere with radius equal to the roughness value, and offset by the normalized reflection direction.
 This also provides a workable approximation but was soon replaced, just as the Lambertian math was.
@@ -226,10 +226,10 @@ It manifested as a halo of lighter color around the edges of metallic spheres wi
 This turned out to have been caused by the old sphere mathematics in the metallic scatter function.
 It manifested the way it did because when roughness values were high, the generated rays sometimes intersected the surface of the sphere and were not discarded; instead, the lighter color that was not visible to the camera leaked over the edges.
 This was a fascinating bug to tackle, and resulted in a lot of learning experiences.
-We additionally did the first comparison test between a Blender \cite{blender} scene and our own.
+We additionally did the first comparison test between a Blender~\cite{blender} scene and our own.
 This test showed that once the solution was implemented, our metallic material is very similar to Blender's.
-We also learned from this comparison that the dielectric material is not quite physically accurate -- notice that there is a darker edge around the glass ball in the Blender reference image, which is much smaller in the \texttt{rayterm-cpu} generated image.
-This could be caused by offsets in Blender's ray-tracing or inaccuracies in the refraction mathematics, however, it is probably the Schlick approximation \cite{schlick1994inexpensive} that is to blame.
+We also learned from this comparison that the dielectric material is not quite physically accurate\,---\,notice that there is a darker edge around the glass ball in the Blender reference image, which is much smaller in the \texttt{rayterm-cpu} generated image.
+This could be caused by offsets in Blender's ray-tracing or inaccuracies in the refraction mathematics, however, it is probably the Schlick approximation~\cite{schlick1994inexpensive} that is to blame.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -266,8 +266,8 @@ This is still useful, but not as much as it could be if remote GPU testing was a
 The next biggest challenge \texttt{rayterm-gpu} faced was the amount and size of the dependencies needed.
 CUDA alone is almost two gigabytes, and OptiX adds another large chunk.
 This challenge was fairly enjoyable to tackle, however, and with submodules and git repositories set up for remote cloning, dependency management was fairly easy.
-Related to that challenge was integration with Gradle \cite{gradle}, which is always complicated when dealing with the Software Model.
-Again, however, trial and error proved enough, and the build script available in the \name\ implementation repository \cite{raytermGpuImpl} is extremely full-featured and supports a number of special tasks.
+Related to that challenge was integration with Gradle~\cite{gradle}, which is always complicated when dealing with the Software Model.
+Again, however, trial and error proved enough, and the build script available in the \name{} implementation repository~\cite{raytermGpuImpl} is extremely full-featured and supports a number of special tasks.
 Combined with custom shell scripts to run specific tests or applications, and the development environment was a joy to work with.
 
 % \begin{enumerate}
@@ -305,8 +305,8 @@ It is likely that this is due to some particularity with the pinhole camera impl
 \end{figure}
 
 In Figure~\ref{fig:rayterm-gpu_mesh} we can see the first mesh imported.
-\ref{fig:rayterm-gpu_barycentric_coordinates} displays the barycentric coordinates in much the same way as normals were displayed for \texttt{rayterm-cpu}, and \ref{fig:rayterm-gpu_geometric_normals} displays the actual geometric normals.
-Already there is a massive improvement in performance -- these images render in less than a second and contain over fifteen thousand triangles.
+\ref{fig:rayterm-gpu_barycentric_coordinates} displays the barycentric coordinates in much the same way as normals were displayed for \texttt{rayterm-cpu}, and~\cite{fig:rayterm-gpu_geometric_normals} displays the actual geometric normals.
+Already there is a massive improvement in performance\,---\,these images render in less than a second and contain over fifteen thousand triangles.
 That would probably cripple \texttt{rayterm-cpu}.
 
 \vspace{0.3em}
@@ -344,7 +344,7 @@ The only development required was to translate the random generation functions.
 This was an adventure in and of itself since a direct translation was not actually possible; see Section~\ref{ch:methods:renderer:parallel:algorithms} for more.
 Figure~\ref{fig:rayterm-gpu_artifacts} was the first test render.
 At first the artifacts were quite confusing; however, after a little debugging it was evident that rays were somehow colliding with their origin triangle.
-To fix this, a lower limit of $0.00001$ was set on the ray intersection calculation -- any intersection distance smaller than that limit was ignored.
+To fix this, a lower limit of $0.00001$ was set on the ray intersection calculation\,---\,any intersection distance smaller than that limit was ignored.
 This cleaned up the image nicely, generating Figure~\ref{fig:rayterm-gpu_fixed_artifacts} for an almost complete test scene.
 
 \vspace{0.3em}
@@ -419,8 +419,8 @@ Regardless of the outcome, this was the last development effort in \texttt{raytr
 
 The \texttt{rayterm} component is fairly simple in design.
 It contains a \texttt{Terminal} and a few other utility methods and algorithms draw a \texttt{PixelBuffer} to the screen.
-The main development effort when working on \texttt{rayterm} was actually updating the \texttt{libtickit} library \cite{libtickitLibrary, libtickitCustom} to work correctly with RGB direct color.
-This took a surprising amount of development for relatively few changes, although there is now a GitHub repository with over 70 commits, Travis CI, and testing enabled; ensuring confidence in the Tickit version in use by \name.
+The main development effort when working on \texttt{rayterm} was actually updating the \texttt{libtickit} library~\cite{libtickitLibrary, libtickitCustom} to work correctly with RGB direct color.
+This took a surprising amount of development for relatively few changes, although there is now a GitHub repository with over 70 commits, Travis CI, and testing enabled; ensuring confidence in the Tickit version in use by \name{}.
 Figure~\ref{fig:terminal_colorline} is an example of one of the tests that were conducted to ensure \texttt{libtickit} was working as expected.
 Beyond that development, \texttt{rayterm} came together with very few challenges.
 
@@ -443,11 +443,11 @@ Beyond that development, \texttt{rayterm} came together with very few challenges
 
 \subsection{\texttt{rtexplore}}\label{ch:implementation:final:rtexplore}
 
-The \texttt{rtexplore} user application is the face of \name.
+The \texttt{rtexplore} user application is the face of \name{}.
 It is not, however, the actual product of this work.
-Developed in just a few hours with the aim of showing the capabilities of \name, it is heavily based on Tickit examples \cite{libtickitLibrary}.
+Developed in just a few hours with the aim of showing the capabilities of \name{}, it is heavily based on Tickit examples~\cite{libtickitLibrary}.
 There are many future improvements possible to the program, however.
 With some additional configurability upgrades to \texttt{rayterm}, a much better user experience could be achieved.
-Additionally, more documentation and other sample applications would probably be useful to potential users of \name.
+Additionally, more documentation and other sample applications would probably be useful to potential users of \name{}.
 The current state of \texttt{rtexplore} is shown in Figure~\ref{fig:rtexplore_terminal}.
-This can easily be replicated by cloning the \name\ implementation repository \cite{raytermGpuImpl} and running the \texttt{run.sh} script after setting up dependencies.
+This can easily be replicated by cloning the \name{} implementation repository~\cite{raytermGpuImpl} and running the \texttt{run.sh} script after setting up dependencies.
