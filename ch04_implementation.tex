@@ -59,21 +59,21 @@ This uses the same normal visualization as before.
   \begin{subfigure}[htb]{0.2\textwidth}
     \includegraphics[width=\textwidth]{impl-images/first_test_image_no_raytracing}
     \caption{First image output}
-    \label{fig:rayterm-cpu_ppm_output_first}
+\label{fig:rayterm-cpu_ppm_output_first}
   \end{subfigure}
   \begin{subfigure}[htb]{0.35\textwidth}
     \includegraphics[width=\textwidth]{impl-images/first_real_raytraced_sphere_shows_normals_fov_72}
     \caption{First raytraced image}
-    \label{fig:rayterm-cpu_first_raytraced_image}
+\label{fig:rayterm-cpu_first_raytraced_image}
   \end{subfigure}
   \begin{subfigure}[htb]{0.4\textwidth}
     \centering
     \includegraphics[width=\textwidth]{impl-images/first_raytraced_world_normals_fov_78}
     \caption{First multi-object image}
-    \label{fig:rayterm-cpu_first_multiobject_raytraced_image}
+\label{fig:rayterm-cpu_first_multiobject_raytraced_image}
   \end{subfigure}
   \caption{Ray-tracing firsts}
-  \label{fig:rayterm-cpu_firsts}
+\label{fig:rayterm-cpu_firsts}
 \end{figure}
 
 The next steps were to enable multiple samples per pixel.
@@ -88,20 +88,20 @@ In \texttt{rayterm-cpu} we use random subpixel jitter for every sample -- this w
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/multiple_samples_per_pixel_difficulties}
     \caption{Difficulties}
-    \label{fig:rayterm-cpu_multisample_problems}
+\label{fig:rayterm-cpu_multisample_problems}
   \end{subfigure}
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/more_multiple_samples_per_pixel_difficulties}
     \caption{More difficulties}
-    \label{fig:rayterm-cpu_multisample_more_problems}
+\label{fig:rayterm-cpu_multisample_more_problems}
   \end{subfigure}
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/multiple_samples_antialiasing_working_normals}
     \caption{Finally working}
-    \label{fig:rayterm-cpu_multisample_working}
+\label{fig:rayterm-cpu_multisample_working}
   \end{subfigure}
   \caption{Multiple samples per pixel}
-  \label{fig:rayterm-cpu_multisampling}
+\label{fig:rayterm-cpu_multisampling}
 \end{figure}
 
 The first material development used a different scattering function than currently; the development sequence is shown in Figure~\ref{fig:rayterm-cpu_lambert_development}.
@@ -117,20 +117,20 @@ This is fixed in \texttt{rayterm-gpu} -- you can see the difference in Figure~\r
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/first_semi_lambert_sphere_render}
     \caption{First Lambertian}
-    \label{fig:rayterm-cpu_lambert}
+\label{fig:rayterm-cpu_lambert}
   \end{subfigure}
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/first_multi_sample_diffuse_sphere}
     \caption{Refined Lambertian}
-    \label{fig:rayterm-cpu_lambert_refined}
+\label{fig:rayterm-cpu_lambert_refined}
   \end{subfigure}
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/colored_lambertian_32spp}
     \caption{Attenuated Lambertian}
-    \label{fig:rayterm-cpu_lambert_colored}
+\label{fig:rayterm-cpu_lambert_colored}
   \end{subfigure}
   \caption{Lambertian Development}
-  \label{fig:rayterm-cpu_lambert_development}
+\label{fig:rayterm-cpu_lambert_development}
 \end{figure}
 
 Figure~\ref{fig:rayterm-cpu_intersection_bug} was the first high-quality render attempted, and it actually revealed a subtle bug not seen before.
@@ -146,7 +146,7 @@ This was easily fixed by decreasing the limit to $0.00001$.
   \centering
   \includegraphics[width=0.65\textwidth]{impl-images/hq_141s_1600spp_32d_diffuse_example}
   \caption{Bugged intersection cutoff}
-  \label{fig:rayterm-cpu_intersection_bug}
+\label{fig:rayterm-cpu_intersection_bug}
 \end{figure}
 
 Now that the ray-tracing basics were taken care of, we moved on to more diverse materials.
@@ -165,7 +165,7 @@ This method is discussed in more detail in Section~\ref{ch:methods:renderer:sequ
   \centering
   \includegraphics[width=0.5\textwidth]{impl-images/hq_diffuse_metal_mirror_512spp}
   \caption{Metallic materials}
-  \label{fig:rayterm-cpu_metallic}
+\label{fig:rayterm-cpu_metallic}
 \end{figure}
 
 Next on the list of material types to implement were dielectrics.
@@ -181,20 +181,20 @@ This bug is discussed later on as well.
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/hq_glass_pure_refraction_with_metal_and_lambert}
     \caption{Dielectric Refraction only}
-    \label{fig:rayterm-cpu_dielectric_pure_refraction}
+\label{fig:rayterm-cpu_dielectric_pure_refraction}
   \end{subfigure}
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/problems_with_refraction_and_dielectrics}
     \caption{Fresnel difficulties}
-    \label{fig:rayterm-cpu_dielectric_frensel_difficulties}
+\label{fig:rayterm-cpu_dielectric_frensel_difficulties}
   \end{subfigure}
   \begin{subfigure}[htb]{0.3\textwidth}
     \includegraphics[width=\textwidth]{impl-images/hq_1024spp_glass_lambert_metal_bugged}
     \caption{Dielectric ``bubble''}
-    \label{fig:rayterm-cpu_dielectric_metallic_bug}
+\label{fig:rayterm-cpu_dielectric_metallic_bug}
   \end{subfigure}
   \caption{Dielectric Development}
-  \label{fig:rayterm-cpu_dielectric_development}
+\label{fig:rayterm-cpu_dielectric_development}
 \end{figure}
 
 Figure~\ref{fig:rayterm-cpu_t_intersection_bug} shows a bug that appeared after first implementing dielectrics, where metals with a high roughness value were seemingly not shading correctly.
@@ -210,15 +210,15 @@ This bug fix also exposed the metallic material halo bug, which we talk about ne
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/bugfixes/before_fix_smallest_t_intersect}
     \caption{Before fix}
-    \label{fig:rayterm-cpu_t_intersection_before}
+\label{fig:rayterm-cpu_t_intersection_before}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/bugfixes/after_fix_smallest_t_intersect}
     \caption{After fix}
-    \label{fig:rayterm-cpu_t_intersection_after}
+\label{fig:rayterm-cpu_t_intersection_after}
   \end{subfigure}
   \caption{Smallest $t$ intersection bug}
-  \label{fig:rayterm-cpu_t_intersection_bug}
+\label{fig:rayterm-cpu_t_intersection_bug}
 \end{figure}
 
 The most challenging and complicated bug we encountered during \texttt{rayterm-cpu} development was the metal halo bug; Figure~\ref{fig:rayterm-cpu_halo_bug} shows various informative outputs from the debugging effort.
@@ -237,25 +237,25 @@ This could be caused by offsets in Blender's ray-tracing or inaccuracies in the 
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/bugfixes/before_fix_metal_halo}
     \caption{Before fix}
-    \label{fig:rayterm-cpu_halo_before}
+\label{fig:rayterm-cpu_halo_before}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/bugfixes/after_fix_metal_halo}
     \caption{After fix}
-    \label{fig:rayterm-cpu_halo_after}
+\label{fig:rayterm-cpu_halo_after}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/hq_768spp_glass_metal_mirror_lambert_materials}
     \caption{Glass material and metal halo bug}
-    \label{fig:rayterm-cpu_glass_metal_bug}
+\label{fig:rayterm-cpu_glass_metal_bug}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/bugfixes/reference_fix_metal_halo}
     \caption{Blender reference image}
-    \label{fig:rayterm-cpu_halo_reference}
+\label{fig:rayterm-cpu_halo_reference}
   \end{subfigure}
   \caption{Metallic halo bug}
-  \label{fig:rayterm-cpu_halo_bug}
+\label{fig:rayterm-cpu_halo_bug}
 \end{figure}
 
 \section{Final Implementation}\label{ch:implementation:final}
@@ -293,15 +293,15 @@ It is likely that this is due to some particularity with the pinhole camera impl
   \begin{subfigure}[htb]{0.4\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/second_gpu_image_gradient}
     \caption{First sky image}
-    \label{fig:rayterm-gpu_first_rendered_image}
+\label{fig:rayterm-gpu_first_rendered_image}
   \end{subfigure}
   \begin{subfigure}[htb]{0.4\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/first_mesh_render}
     \caption{First mesh render}
-    \label{fig:rayterm-gpu_first_mesh_render}
+\label{fig:rayterm-gpu_first_mesh_render}
   \end{subfigure}
   \caption{GPU rendering firsts}
-  \label{fig:rayterm-gpu_basics}
+\label{fig:rayterm-gpu_basics}
 \end{figure}
 
 In Figure~\ref{fig:rayterm-gpu_mesh} we can see the first mesh imported.
@@ -315,15 +315,15 @@ That would probably cripple \texttt{rayterm-cpu}.
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/first_mesh_render_finding_object}
     \caption{Triangle barycentric coordinates}
-    \label{fig:rayterm-gpu_barycentric_coordinates}
+\label{fig:rayterm-gpu_barycentric_coordinates}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/first_mesh_render_refining_normals}
     \caption{After fix}
-    \label{fig:rayterm-gpu_geometric_normals}
+\label{fig:rayterm-gpu_geometric_normals}
   \end{subfigure}
   \caption{Triangle geometric normals}
-  \label{fig:rayterm-gpu_mesh}
+\label{fig:rayterm-gpu_mesh}
 \end{figure}
 
 After the initial development to enable loading \texttt{OBJ} files, additional configuration was easy.
@@ -335,7 +335,7 @@ Each instance of the same model is created with an OptiX \texttt{Matrix4x4} dict
   \centering
   \includegraphics[width=0.5\textwidth]{impl-images/gpu/mesh_rendering_positioning}
   \caption{Test scene creation}
-  \label{fig:rayterm-gpu_test_scene_creation}
+\label{fig:rayterm-gpu_test_scene_creation}
 \end{figure}
 
 Next, we tackled Lambertian materials.
@@ -353,15 +353,15 @@ This cleaned up the image nicely, generating Figure~\ref{fig:rayterm-gpu_fixed_a
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/first_lambert_shading}
     \caption{First Lambertian shading render}
-    \label{fig:rayterm-gpu_artifacts}
+\label{fig:rayterm-gpu_artifacts}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/lambert_shading_offset_fixing_artifacts}
     \caption{After adding lower limit}
-    \label{fig:rayterm-gpu_fixed_artifacts}
+\label{fig:rayterm-gpu_fixed_artifacts}
   \end{subfigure}
   \caption{First Lambertian material render}
-  \label{fig:rayterm-gpu_lambert}
+\label{fig:rayterm-gpu_lambert}
 \end{figure}
 
 In between Figure~\ref{fig:rayterm-gpu_lambert} and Figure~\ref{fig:rayterm-gpu_hemispherical_sampling}, attenuation was implemented.
@@ -376,15 +376,15 @@ The main difference is an overall lightening and increased contrast of shadows a
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/before_naive_sampling_change_64spp}
     \caption{Before uniform hemispherical sampling}
-    \label{fig:rayterm-gpu_hemispherical_sampling_before}
+\label{fig:rayterm-gpu_hemispherical_sampling_before}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/after_naive_sample_change_64spp}
     \caption{After uniform hemispherical sampling}
-    \label{fig:rayterm-gpu_hemispherical_sampling_after}
+\label{fig:rayterm-gpu_hemispherical_sampling_after}
   \end{subfigure}
   \caption{Uniform hemispherical sampling}
-  \label{fig:rayterm-gpu_hemispherical_sampling}
+\label{fig:rayterm-gpu_hemispherical_sampling}
 \end{figure}
 
 The last optimization attempt was to implement stratified sampling.
@@ -404,15 +404,15 @@ Regardless of the outcome, this was the last development effort in \texttt{raytr
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/first_attempt_stratified_sampling}
     \caption{First stratified sampling attempt}
-    \label{fig:rayterm-gpu_stratified}
+\label{fig:rayterm-gpu_stratified}
   \end{subfigure}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/gpu/weird_attempt_stratified_sampling}
     \caption{Bit compression at high stratification}
-    \label{fig:rayterm-gpu_bit_compression}
+\label{fig:rayterm-gpu_bit_compression}
   \end{subfigure}
   \caption{Stratified rendering attempts}
-  \label{fig:rayterm-gpu_stratified}
+\label{fig:rayterm-gpu_stratified}
 \end{figure}
 
 \subsection{\texttt{rayterm}}\label{ch:implementation:final:rayterm}
@@ -430,15 +430,15 @@ Beyond that development, \texttt{rayterm} came together with very few challenges
   \begin{subfigure}[htb]{0.48\textwidth}
     \includegraphics[width=\textwidth]{impl-images/rtexplore/terminal_drawing_colorline}
     \caption{\texttt{rayterm} test output}
-    \label{fig:terminal_colorline}
+\label{fig:terminal_colorline}
   \end{subfigure}
   \begin{subfigure}[htb]{0.48\textwidth}
     \includegraphics[width=\textwidth]{impl-images/rtexplore/terminal_output}
     \caption{\texttt{rtexplore} terminal output}
-    \label{fig:rtexplore_terminal}
+\label{fig:rtexplore_terminal}
   \end{subfigure}
   \caption{Terminal output}
-  \label{fig:rayterm_terminal_output}
+\label{fig:rayterm_terminal_output}
 \end{figure}
 
 \subsection{\texttt{rtexplore}}\label{ch:implementation:final:rtexplore}

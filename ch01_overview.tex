@@ -66,7 +66,7 @@ Finally, Figure~\ref{fig:terminal_output} is a still image of the final terminal
   \centering
   \includegraphics[width=0.8\textwidth]{impl-images/rtexplore/terminal_output}
   \caption{Example of terminal output}
-  \label{fig:terminal_output}
+\label{fig:terminal_output}
 \end{figure}
 
 \subsection{Rendering Engines and Ray-Tracing}
@@ -88,7 +88,7 @@ Section~\ref{ch:intro:background:hardware} provides more details on these advanc
   \centering
   \includegraphics[width=0.8\textwidth]{resources/glasses_povray}
   \caption{POV-Ray render created by Gilles Tran \cite{povray2006render}}
-  \label{fig:povray_render}
+\label{fig:povray_render}
 \end{figure}
 
 Ray-tracing revolves around the idea of {\it rays}, a mathematical construct that represents an infinite line emanating in some direction from a starting point in three-dimensional space.
@@ -156,16 +156,16 @@ This allows each {\it character~pixel} to represent a hard gradient.
   \begin{subfigure}[htb]{0.4\textwidth}
     \includegraphics[width=\textwidth]{resources/block_elements}
     \caption{Block Elements}
-    \label{fig:unicode_block_characters}
+\label{fig:unicode_block_characters}
   \end{subfigure}
   \hfill
   \begin{subfigure}[htb]{0.51\textwidth}
     \includegraphics[width=\textwidth]{resources/quadrant_elements}
     \caption{Quadrant Elements}
-    \label{fig:unicode_quadrant_characters}
+\label{fig:unicode_quadrant_characters}
   \end{subfigure}
   \caption{Subset of \texttt{U+2580} -- \texttt{U+259F} \cite{unicode}}
-  \label{fig:unicode_characters}
+\label{fig:unicode_characters}
 \end{figure}
 
 There are two main image modes possible for use in \name.
@@ -187,16 +187,16 @@ The current implementation does not fully implement character mode; instead, thi
   \begin{subfigure}[htb]{0.49\textwidth}
     \includegraphics[width=\textwidth]{resources/many_spheres_square}
     \caption{Pixel Mode Image Output}
-    \label{fig:unicode_mode_comparison1}
+\label{fig:unicode_mode_comparison1}
   \end{subfigure}
   \hfill
   \begin{subfigure}[htb]{0.49\textwidth}
     \includegraphics[width=\textwidth]{resources/many_spheres}
     \caption{Character Mode Image Output}
-    \label{fig:unicode_mode_comparison2}
+\label{fig:unicode_mode_comparison2}
   \end{subfigure}
   \caption{Examples of Image Mode Output}
-  \label{fig:unicode_mode_comparison}
+\label{fig:unicode_mode_comparison}
 \end{figure}
 
 \section{Background}
@@ -225,12 +225,12 @@ Addition, subtraction, along with some specialized versions of multiplication, a
 Addition and subtraction are calculated on a component-wise basis -- for instance, in three dimensions addition and subtraction can be calculated using Formula~\ref{equation:vector_addition} and Formula~\ref{equation:vector_subtraction}.
 
 \begin{equation}
-  \label{equation:vector_addition}
+\label{equation:vector_addition}
   \vec{u} + \vec{v} = (\vec{u}_x + \vec{v}_x, \vec{u}_y + \vec{v}_y, \vec{u}_z + \vec{v}_z)
 \end{equation}
 
 \begin{equation}
-  \label{equation:vector_subtraction}
+\label{equation:vector_subtraction}
   \vec{u} - \vec{v} = (\vec{u}_x - \vec{v}_x, \vec{u}_y - \vec{v}_y, \vec{u}_z - \vec{v}_z)
 \end{equation}
 
@@ -240,7 +240,7 @@ A scalar in this context is just a regular number, such as $2$.
 Scalar multiplication is defined by Formula~\ref{equation:vector_scalar_multiplication}, and is also a closed operation for $n$-dimensional vectors.
 
 \begin{equation}
-  \label{equation:vector_scalar_multiplication}
+\label{equation:vector_scalar_multiplication}
   k\vec{v} = (k\vec{v}_x, k\vec{v}_y, k\vec{v}_z)
 \end{equation}
 
@@ -249,7 +249,7 @@ This is a specialized multiplication operation only applicable when $n = 3$ that
 The cross product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \times \vec{v}$, and can be calculated with Formula~\ref{equation:vector_cross_product}.
 
 \begin{equation}
-  \label{equation:vector_cross_product}
+\label{equation:vector_cross_product}
   \vec{u} \times \vec{v} = (\vec{u}_y\vec{v}_z - \vec{u}_z\vec{v}_y, \vec{u}_z\vec{v}_x - \vec{u}_x\vec{v}_z, \vec{u}_x\vec{v}_y - \vec{u}_y\vec{v}_x)
 \end{equation}
 
@@ -260,7 +260,7 @@ It is often used to determine if two vectors are at right angles with each other
 The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \bullet \vec{v}$, and can be found using Formula~\ref{equation:vector_dot_product}.
 
 \begin{equation}
-  \label{equation:vector_dot_product}
+\label{equation:vector_dot_product}
   \vec{u} \bullet \vec{v} = \vec{u}_x\vec{v}_x + \vec{u}_y\vec{v}_y + \vec{u}_z\vec{v}_z
 \end{equation}
 
@@ -281,7 +281,7 @@ Your thumb will point in the direction of the resulting cross product.
 Note that this causes the order of operands to matter -- a different order will produce the opposite direction.
 
 \begin{equation}
-  \label{equation:vector_dot_product_cos}
+\label{equation:vector_dot_product_cos}
   \vec{u} \bullet \vec{v} = |\vec{u}| \cdot |\vec{v}| \cdot cos(\theta)
 \end{equation}
 
@@ -302,7 +302,7 @@ Therefore, Formula~\ref{equation:point_on_ray} can be used to get the coordinate
 Assuming $\raydir$ is a unit vector, this is the {\it parametric~form} of a ray.
 
 \begin{equation}
-  \label{equation:point_on_ray}
+\label{equation:point_on_ray}
   \vec{point} = \rayorg + t\raydir
 \end{equation}
 
@@ -320,12 +320,12 @@ The point of intersection between a ray and a surface defined in this way can be
 We essentially ask, ``What points along this ray are on the defined surface?'' by passing in all possible points on the ray, parameterized by $t$.
 
 \begin{equation}
-  \label{equation:surface_equation}
+\label{equation:surface_equation}
   f(\vec{p}) = 0
 \end{equation}
 
 \begin{equation}
-  \label{equation:ray_surface_intersection}
+\label{equation:ray_surface_intersection}
   f(\rayorg + t\raydir) = 0
 \end{equation}
 
@@ -344,12 +344,12 @@ The smallest positive root corresponds to the point on the ray which first inter
 If there are no real roots, then the ray does not intersect the sphere.
 
 \begin{equation}
-  \label{equation:sphere_surface}
+\label{equation:sphere_surface}
   f(\vec{p}) = (\vec{p} - \vec{S_{center}})^2 - {S_{radius}}^2
 \end{equation}
 
 \begin{equation}
-  \label{equation:ray_sphere_intersection}
+\label{equation:ray_sphere_intersection}
   (\raydir^2)t^2 + 2(\raydir \bullet (\rayorg - \vec{S_{center}}))t + (\rayorg - \vec{S_{center}})^2 - {S_{radius}}^2 = 0
 \end{equation}
 
@@ -363,12 +363,12 @@ The intersection point between a ray and a plane is given by solving Equation~\r
 These equations were derived from basic vector math, along with guidance from ``Physically Based Rendering'' \cite{pharr2016physically}.
 
 \begin{equation}
-  \label{equation:plane_surface}
+\label{equation:plane_surface}
   f(\vec{p}) = (\vec{p} - \vec{P_{offset}}) \bullet \vec{P_{normal}}
 \end{equation}
 
 \begin{equation}
-  \label{equation:ray_plane_intersection}
+\label{equation:ray_plane_intersection}
   (\vec{P_{normal}} \bullet \raydir)t + \vec{P_{normal}} \bullet (\rayorg - \vec{P_{offset}}) = 0
 \end{equation}
 
@@ -388,7 +388,7 @@ Otherwise, $\vec{Q}$ is outside the triangle.
 Note that in Function~\ref{equation:left_edge_test}, if $i = 3$, then $i = 0$ ($i$ ``wraps'' to only valid values).
 
 \begin{equation}
-  \label{equation:left_edge_test}
+\label{equation:left_edge_test}
   f(i) = P_{normal} \bullet ((\vec{V_{i+1}} - \vec{V_i}) \times (\vec{Q} - \vec{V_i}))
 \end{equation}
 

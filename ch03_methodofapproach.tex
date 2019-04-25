@@ -36,7 +36,7 @@ For example, Figure~\ref{fig:rayterm-cpu_ppm} was rendered in about twenty secon
   \centering
   \includegraphics[width=0.75\textwidth]{impl-images/first_positionable_camera}
   \caption{\texttt{rayterm-cpu} example \texttt{ppm} output}
-  \label{fig:rayterm-cpu_ppm}
+\label{fig:rayterm-cpu_ppm}
 \end{figure}
 
 The main advantage of a sequential renderer is the lower development overhead since there is no need to interface with a complex device such as a GPU.
@@ -62,7 +62,7 @@ These components have a linear relationship, as can be seen in Figure~\ref{fig:r
       \path [<-](rm) edge node[midway, fill=white] {\tiny depends on} (rt);
   \end{tikzpicture}
   \caption{Component and dependency relationships in \texttt{rayterm-cpu}}
-  \label{fig:rayterm-cpu_components}
+\label{fig:rayterm-cpu_components}
 \end{figure}
 
 Eigen \cite{eigenweb} is a linear algebra for C++ that supports matrix and vector manipulations, various matrix decompositions and geometry features, and has many extensions for numerous other numerical operations.
@@ -86,7 +86,7 @@ The implementations behind these are covered in Section~\ref{ch:implementation:p
       \path [<-](g) edge node[midway, fill=white] {\tiny inherits} (d);
   \end{tikzpicture}
   \caption{Geometric structures in \texttt{raymath}}
-  \label{fig:rayterm-cpu_raymath_geometry}
+\label{fig:rayterm-cpu_raymath_geometry}
 \end{figure}
 
 The main component in \texttt{rayterm-cpu} is \texttt{raytrace}; it handles world representation, materials, and raytracing.
@@ -125,7 +125,7 @@ The implementation behind all of these structures and functions are covered in S
       \path [->](e) edge node[midway, fill=white] {\tiny calls} (s);
   \end{tikzpicture}
   \caption{The journey of a \texttt{ray} and its \texttt{intersection}}
-  \label{fig:rayterm-cpu_raytrace_journey_of_a_ray}
+\label{fig:rayterm-cpu_raytrace_journey_of_a_ray}
 \end{figure}
 
 \subsubsection{Algorithms} \label{ch:methods:renderer:sequential:algorithms}
@@ -144,28 +144,28 @@ An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu_ppm_noi
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_1}
     \caption{1 sample per pixel}
-    \label{fig:rayterm-cpu_ppm_noisy_1}
+\label{fig:rayterm-cpu_ppm_noisy_1}
   \end{subfigure}
   \hspace{1em}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_4}
     \caption{4 samples per pixel}
-    \label{fig:rayterm-cpu_ppm_noisy_4}
+\label{fig:rayterm-cpu_ppm_noisy_4}
   \end{subfigure}
   \vspace{1em}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_32}
     \caption{32 samples per pixel}
-    \label{fig:rayterm-cpu_ppm_noisy_32}
+\label{fig:rayterm-cpu_ppm_noisy_32}
   \end{subfigure}
   \hspace{1em}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/samples_spp_1024}
     \caption{1024 samples per pixel}
-    \label{fig:rayterm-cpu_ppm_noisy_1024}
+\label{fig:rayterm-cpu_ppm_noisy_1024}
   \end{subfigure}
   \caption{Sample per pixel differentiated output from \texttt{rayterm-cpu}}
-  \label{fig:rayterm-cpu_ppm_noisy}
+\label{fig:rayterm-cpu_ppm_noisy}
 \end{figure}
 
 For an spp value of four, there are four rays generated for each pixel; thus, the rendering equation \cite{kajiya1986rendering} is approximated at the first intersection by four random direction samplings (keep in mind the integration is over the sphere or hemisphere around the point of intersection for each ray).
@@ -178,7 +178,7 @@ This would likely be combined with branched Monte Carlo rendering, which involve
 This would reduce the noise at low spp values significantly better than simply increasing the spp value, although at the slight cost of performance (more rays to calculate).
 
 \begin{equation}
-  \label{equation:raytracing_ops}
+\label{equation:raytracing_ops}
   N_{ops} = R \cdot S \cdot D \cdot N
 \end{equation}
 
@@ -213,7 +213,7 @@ The Lambertian material, sometimes known as diffuse, is very simple; the scatter
 Essentially, when a ray hits a Lambertian object the ray reflects around the tiny crevices and cracks on the surface of the object so that the direction is entirely random once it leaves the object.
 
 \begin{equation}
-  \label{equation:reflection}
+\label{equation:reflection}
   \vec{R_{reflect}} = \vec{R_{in}} - 2(\vec{S_{normal}} \bullet \vec{R_{in}})\vec{S_{normal}}
 \end{equation}
 
@@ -231,11 +231,11 @@ In this approximation, $\theta$ is the angle between the incoming ray direction 
 Finally, $R_0$ is the value of the Fresnel term when there is minimal reflection \textit{i.e.} when $\theta = 0$.
 
 \begin{equation}
-  \label{equation:schlick_base}
+\label{equation:schlick_base}
   R_0 = (\frac{n_1 - n_2}{n_1 + n_2})^2
 \end{equation}
 \begin{equation}
-  \label{equation:schlick}
+\label{equation:schlick}
   R(\theta) = R_0 + (1 - R_0)(1 - cos \theta)^5
 \end{equation}
 
@@ -250,7 +250,7 @@ This is a close approximation of the effect that glass and other dielectrics hav
   \centering
   \includegraphics[width=0.4\textwidth]{resources/fresnel}
   \caption{Schlick approximation for a sphere (white is $1$, black is $0$) \cite{learnopengltheory}}
-  \label{fig:rayterm-cpu_fresnel}
+\label{fig:rayterm-cpu_fresnel}
 \end{figure}
 
 Now that the kind of ray has been chosen, the refraction or reflection direction is calculated.
@@ -262,15 +262,15 @@ There is some additional handling in the implementation of this formula to ensur
 This involves flipping the $n$ values and negating $I$ or $\vec{S_{normal}}$.
 This formula is derived from the excellent ``Scratchapixel'' \cite{prunier2017shading} and ``Raytracing in One Weekend'' \cite{shirley2016ray}, with some significant rewriting.
 \begin{equation}
-  \label{equation:refraction_eta}
+\label{equation:refraction_eta}
   \eta = \frac{n_{from}}{n_{to}}
 \end{equation}
 \begin{equation}
-  \label{equation:refraction_i}
+\label{equation:refraction_i}
   I = (\vec{R_{in}} \bullet \vec{S_{normal}})
 \end{equation}
 \begin{equation}
-  \label{equation:refraction}
+\label{equation:refraction}
   \vec{R_{refract}} = \eta\vec{R_{in}} + (\eta I - \sqrt{1 - \eta^2 \cdot (1 - I^2)})\vec{S_{normal}}
 \end{equation}
 
@@ -340,7 +340,7 @@ Before we describe \name's approach, let us consider Figure~\ref{fig:rayterm-gpu
   \centering
   \includegraphics[width=0.7\textwidth]{resources/optix_trace}
   \caption{OptiX Program call graph}
-  \label{fig:rayterm-gpu_optix_trace}
+\label{fig:rayterm-gpu_optix_trace}
 \end{figure}
 
 In \name, we only use part of Figure~\ref{fig:rayterm-gpu_optix_trace} -- the ``Traverse'' section is unused in {\it RTX} mode, because it enables custom intersections and acceleration structures.
@@ -435,7 +435,7 @@ Second, the color output space is transformed into BT.709 \cite{ituBT709}; this 
 
 
 \begin{equation}
-  \label{equation:bt709}
+\label{equation:bt709}
   L = \left\{
               \begin{array}{ll}
                 \frac{V}{4.5} & \quad V < 0.081 \\
@@ -454,7 +454,7 @@ The math behind the analytical solution is based on resources from ``Scratchapix
 We also use an OptiX provided sampler, \texttt{cosine\_sample\_hemisphere}, to generate the initial sample; the further analytical solution simply transforms that sample to the correct normal space.
 
 \begin{equation}
-  \label{equation:interpolated_normal}
+\label{equation:interpolated_normal}
   N_{interpolated} = B_{x} \vec{N_{1}} + B_{y} \vec{N_{2}} + (1 - B_{x} - B_{y}) \vec{N_{0}}
 \end{equation}
 
@@ -475,16 +475,16 @@ Larger versions of these images are available in Appendix~\ref{appendix:large_fi
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/before_smooth_normals}
     \caption{Geometric normals (unsmoothed)}
-    \label{fig:rayterm-gpu_unsmoothed_normals}
+\label{fig:rayterm-gpu_unsmoothed_normals}
   \end{subfigure}
   \hspace{1em}
   \begin{subfigure}[htb]{0.45\textwidth}
     \includegraphics[width=\textwidth]{impl-images/comparisons/after_smooth_normals}
     \caption{Interpolated normals (smoothed)}
-    \label{fig:rayterm-gpu_smoothed_normals}
+\label{fig:rayterm-gpu_smoothed_normals}
   \end{subfigure}
   \caption{Comparison of geometric and interpolated normals}
-  \label{fig:rayterm-gpu_smooth_normal_comparison}
+\label{fig:rayterm-gpu_smooth_normal_comparison}
 \end{figure}
 
 \subsubsection{Outcome} \label{ch:methods:renderer:parallel:outcome}
