@@ -395,8 +395,6 @@ However, these strata were advanced linearly, so the first random value would al
 At low stratification levels (meaning only 10 or so stratas), Figure~\ref{fig:rayterm-gpu_stratified} is produced.
 An even more fascinating render, in Figure~\ref{fig:rayterm-gpu_bit_compression}, is produced when the number of stratas grows larger than a few hundred.
 We theorize that this is due to the \texttt{drand48} function's randomness breaking down past a certain level.
-The artifacts are reminiscent of bad compression, which may give some hint as to their source.
-Regardless of the outcome, this was the last development effort in \texttt{raytrace} before shifting focus to \texttt{rayterm}.
 
 \vspace{0.3em}
 \begin{figure}[htb]
