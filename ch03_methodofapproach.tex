@@ -7,18 +7,18 @@
 %
 \chapter{Method of Approach} \label{ch:methods}
 
-\name\ was developed using a modified agile approach; short development ``sprints'' were executed for key system development.
+ \name{} was developed using a modified agile approach; short development ``sprints'' were executed for key system development.
 We describe the product of some of those sprints in Section~\ref{ch:methods:renderer}, primarily the ray-tracing engines.
 In Section~\ref{ch:methods:interface} we also describe the Tickit interface and its algorithms.
-The overall structure of the project is twofold: there is an unfinished research prototype, called \texttt{rayterm-cpu}, as well as a finished prototype called \texttt{rayterm-gpu}, or simply \name.
+The overall structure of the project is twofold: there is an unfinished research prototype, called \texttt{rayterm-cpu}, as well as a finished prototype called \texttt{rayterm-gpu}, or simply \name{}.
 We will describe the development process of these implementations further in Chapter~\ref{ch:implementation}; this chapter focuses on the algorithms, design, and overall structure of the project.
 
 
 \section{Render Engines} \label{ch:methods:renderer}
-While building \name, two separate render engine prototypes were implemented.
-The first, which we describe in Section~\ref{ch:methods:renderer:sequential}, was a simple, single core sequential renderer \cite{raytermCpuImpl}.
+While building \name{}, two separate render engine prototypes were implemented.
+The first, which we describe in Section~\ref{ch:methods:renderer:sequential}, was a simple, single core sequential renderer~\cite{raytermCpuImpl}.
 This engine was developed in three main development sprints, over a period of about two months.
-The second, described in Section~\ref{ch:methods:renderer:parallel}, uses CUDA \cite{nvidia2011cuda} and OptiX \cite{parker2010optix} to leverage GPU compute power in parallel.
+The second, described in Section~\ref{ch:methods:renderer:parallel}, uses CUDA~\cite{nvidia2011cuda} and OptiX~\cite{parker2010optix} to leverage GPU compute power in parallel.
 This engine was developed over two sprints, in a little under a month.
 
 
@@ -47,7 +47,7 @@ With 219 commits and over a thousand lines of code in the final product, along w
 
 \subsubsection{Design} \label{ch:methods:renderer:sequential:design}
 
-The sequential renderer's design relies on two main components, as well as the Eigen linear algebra library \cite{eigenweb}.
+The sequential renderer's design relies on two main components, as well as the Eigen linear algebra library~\cite{eigenweb}.
 These components have a linear relationship, as can be seen in Figure~\ref{fig:rayterm-cpu_components}; \texttt{raytrace} deals with tracing rays, \texttt{raymath} with intersection logic, and Eigen with linear algebra.
 
 \vspace{0.3em}
@@ -65,11 +65,11 @@ These components have a linear relationship, as can be seen in Figure~\ref{fig:r
 \label{fig:rayterm-cpu_components}
 \end{figure}
 
-Eigen \cite{eigenweb} is a linear algebra for C++ that supports matrix and vector manipulations, various matrix decompositions and geometry features, and has many extensions for numerous other numerical operations.
+Eigen~\cite{eigenweb} is a linear algebra for C++ that supports matrix and vector manipulations, various matrix decompositions and geometry features, and has many extensions for numerous other numerical operations.
 Eigen is also extremely well-optimized and uses SSE vectorized code, vastly improving performance on supported CPUs.
 In \texttt{raymath}, Eigen is used primarily for easy, tested representations and calculations involving vectors; all of the algorithms implemented use equations derived from the ones in Section~\ref{ch:intro:background:raytracing_math}, and so benefit from easy implementation.
 
-The base component in \texttt{rayterm-cpu} -- \texttt{raymath} -- provides support for various geometries and intersection routines.
+The base component in \texttt{rayterm-cpu}\,---\,\texttt{raymath}\,---\,provides support for various geometries and intersection routines.
 The geometries supported can be seen in Figure~\ref{fig:rayterm-cpu_raymath_geometry}, and use Eigen structures to represent their geometric data.
 \texttt{raymath} also handles random number and vector generation, color handling, and intersection representation.
 The implementations behind these are covered in Section~\ref{ch:implementation:prototype:raymath}.
@@ -168,7 +168,7 @@ An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu_ppm_noi
 \label{fig:rayterm-cpu_ppm_noisy}
 \end{figure}
 
-For an spp value of four, there are four rays generated for each pixel; thus, the rendering equation \cite{kajiya1986rendering} is approximated at the first intersection by four random direction samplings (keep in mind the integration is over the sphere or hemisphere around the point of intersection for each ray).
+For an spp value of four, there are four rays generated for each pixel; thus, the rendering equation~\cite{kajiya1986rendering} is approximated at the first intersection by four random direction samplings (keep in mind the integration is over the sphere or hemisphere around the point of intersection for each ray).
 Thus, the more rays generated, the more accurate that sampling becomes.
 This is still not really solving the rendering equation and is a large simplification.
 Rather, the different eye-rays generated because of the spp value sample slightly different intersection points.
@@ -198,13 +198,13 @@ Thus, the time to complete a render varies proportionally to the number of objec
 As an example, take a scene with $3$ spheres and a disk.
 Let us render an $80$ by $52$ pixel image;
 we will choose to use $32$ samples per pixel to get a reasonable image quality.
-For maximum recursion depth, a value of $5$ should be plenty for the simple scene we have -- a more complex scene could probably benefit from a few more, but since attenuation reduces the impact each successive ray has on a fragment, it is very unlikely to matter past a few tens.
+For maximum recursion depth, a value of $5$ should be plenty for the simple scene we have\,---\,a more complex scene could probably benefit from a few more, but since attenuation reduces the impact each successive ray has on a fragment, it is very unlikely to matter past a few tens.
 Thus, we have all the information we need: $R = 4160,\ S = 32,\ D = 5,\ N = 4$.
 We can calculate the final number of basic ray-tracing intersections by simply multiplying these variables together: we get $2662400$.
 Since this kind of image can usually be rendered in around 200 milliseconds by \texttt{rayterm-cpu}, we can get a sense of how fast the existing intersection is already: one test takes about $75$ nanoseconds.
 There's not much hope of drastically improving this time.
 Even to get render time down to $33$ milliseconds, which is needed for $30$ frames per second playback, we would need an intersection test to take no more than $12.4$ nanoseconds.
-This is nigh impossible with modern CPUs -- for comparison, basic multiplication takes an average 19 nanoseconds on an i7-4770k, a relatively modern processor -- the code to calculate this value on any computer can be seen in Appendix~\ref{appendix:timemul}.
+This is nigh impossible with modern CPUs\,---\,for comparison, basic multiplication takes an average 19 nanoseconds on an i7-4770k, a relatively modern processor\,---\,the code to calculate this value on any computer can be seen in Appendix~\ref{appendix:timemul}.
 Therefore any further major performance improvement needs to break out of the sequential world this algorithm was written in.
 
 The algorithms used for intersection are already covered in Section~\ref{ch:intro:background:raytracing_math}; however the scattering algorithms are discussed below.
@@ -218,16 +218,16 @@ Essentially, when a ray hits a Lambertian object the ray reflects around the tin
 \end{equation}
 
 The metallic material scatters rays in a similar way as the Lambertian but includes a bias towards the reflection direction.
-The reflection direction is calculated using Formula~\ref{equation:reflection} \cite{prunier2017shading}, where $\vec{R_{reflect}}$ is the reflected ray, $\vec{R_{in}}$ is the incoming ray, and $\vec{S_{normal}}$ is the surface normal.
+The reflection direction is calculated using Formula~\ref{equation:reflection}~\cite{prunier2017shading}, where $\vec{R_{reflect}}$ is the reflected ray, $\vec{R_{in}}$ is the incoming ray, and $\vec{S_{normal}}$ is the surface normal.
 The bias is generated by using a ray direction that is linearly interpolated between the pure reflection direction from Formula~\ref{equation:reflection} and a random direction generated as in Lambertian materials.
-The amount of linear interpolation is known as the ``roughness'' -- a roughness of zero gives perfect reflection (a mirror), whereas a roughness of one gives the same results as a Lambertian material.
+The amount of linear interpolation is known as the ``roughness''\,---\,a roughness of zero gives perfect reflection (a mirror), whereas a roughness of one gives the same results as a Lambertian material.
 A slightly more accurate roughness ramp could be attained by using spherical linear interpolation, however, because of the significant performance penalty that was not used.
 
 Finally, the dielectric material is the most complicated.
 A dielectric material supports both reflection (as in the other materials), and refraction.
 Since we scatter only one ray at a time, the scatter function uses probability to determine which kind of trajectory will be used.
-This probability is based on Schlick's approximation of the Fresnel factor, as seen in Formula~\ref{equation:schlick} \cite{schlick1994inexpensive, learnopengltheory, prunier2017shading}.
-In this approximation, $\theta$ is the angle between the incoming ray direction and the surface normal; $n_1$ and $n_2$ are the indices of refraction of the object and air -- these are reversed if the ray is leaving the object.
+This probability is based on Schlick's approximation of the Fresnel factor, as seen in Formula~\ref{equation:schlick}~\cite{schlick1994inexpensive, learnopengltheory, prunier2017shading}.
+In this approximation, $\theta$ is the angle between the incoming ray direction and the surface normal; $n_1$ and $n_2$ are the indices of refraction of the object and air\,---\,these are reversed if the ray is leaving the object.
 Finally, $R_0$ is the value of the Fresnel term when there is minimal reflection \textit{i.e.} when $\theta = 0$.
 
 \begin{equation}
@@ -249,18 +249,18 @@ This is a close approximation of the effect that glass and other dielectrics hav
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.4\textwidth]{resources/fresnel}
-  \caption{Schlick approximation for a sphere (white is $1$, black is $0$) \cite{learnopengltheory}}
+  \caption{Schlick approximation for a sphere (white is $1$, black is $0$)~\cite{learnopengltheory}}
 \label{fig:rayterm-cpu_fresnel}
 \end{figure}
 
 Now that the kind of ray has been chosen, the refraction or reflection direction is calculated.
-There is an additional possibility that the specific ray we have cannot be refracted because of total internal reflection -- in this case, we switch over to a reflection ray.
+There is an additional possibility that the specific ray we have cannot be refracted because of total internal reflection\,---\,in this case, we switch over to a reflection ray.
 The ray direction in the reflection case is calculated with Formula~\ref{equation:reflection} as in previous materials.
 The ray direction in the refraction case is calculated with Formula~\ref{equation:refraction}.
 In this formula, $\vec{R_{refract}}$ is the refracted ray; $n_{from}$ is the index of refraction of the medium we are transfering from, and $n_{to}$ is the corresponding index; $\vec{R_{in}}$ is the incoming ray; and $\vec{S_{normal}}$ is the surface normal.
 There is some additional handling in the implementation of this formula to ensure both ray directions (exiting and entering an object) are supported.
 This involves flipping the $n$ values and negating $I$ or $\vec{S_{normal}}$.
-This formula is derived from the excellent ``Scratchapixel'' \cite{prunier2017shading} and ``Raytracing in One Weekend'' \cite{shirley2016ray}, with some significant rewriting.
+This formula is derived from the excellent ``Scratchapixel''~\cite{prunier2017shading} and ``Raytracing in One Weekend''~\cite{shirley2016ray}, with some significant rewriting.
 \begin{equation}
 \label{equation:refraction_eta}
   \eta = \frac{n_{from}}{n_{to}}
@@ -277,8 +277,8 @@ This formula is derived from the excellent ``Scratchapixel'' \cite{prunier2017sh
 \subsubsection{Outcome} \label{ch:methods:renderer:sequential:outcome}
 
 The sequential renderer is only a research prototype and was never finished.
-This is primarily because more performance was needed for the final \name\ implementation; the parallel renderer fulfills that need.
-Because of the prototype nature of \texttt{rayterm-cpu}, the final implementation only renders images through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or with \texttt{gradle test}.
+This is primarily because more performance was needed for the final \name{} implementation; the parallel renderer fulfills that need.
+Because of the prototype nature of \texttt{rayterm-cpu}, the final implementation only renders images through a Google Test~\cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository~\cite{raytermCpuImpl}, or with \texttt{gradle test}.
 This generates a \texttt{test\_image.ppm} file, examples of which we show from various stages of development in Section~\ref{ch:implementation:prototype:raytrace}.
 Because of this, \texttt{rayterm-cpu} is very much a proof-of-concept and learning example, rather than a fully-fledged library.
 
@@ -293,7 +293,7 @@ The parallel render engine, \texttt{rayterm-gpu}, uses a Graphics Processing Uni
 This improves performance dramatically because each eye-ray's children (the result of a collision between an object and a ray) are dependant on only their parent eye-ray.
 Thus, the computation of a single pixel's color is completely independent of every other pixel.
 
-A short introduction to NVIDIA GPUs may be useful here; they consist primarily of small units of computation circuitry called ``multiprocessors'' which themselves are controllers for several CUDA cores \cite{fermi2009nvidia}, distributing workloads.
+A short introduction to NVIDIA GPUs may be useful here; they consist primarily of small units of computation circuitry called ``multiprocessors'' which themselves are controllers for several CUDA cores~\cite{fermi2009nvidia}, distributing workloads.
 Multiprocessors work on data and code called ``thread blocks.''
 Each individual CUDA core in a multiprocessor executes an individual thread in a thread block.
 These CUDA cores execute individual threads on the GPU; they can each handle an individual intersection test, and with thousands of them per GPU, we can easily cut the render time down.
@@ -303,22 +303,22 @@ A discussion on the specific hardware used for development and testing is availa
 
 With 227 commits and over 1.5 thousand lines of code, along with many thousands of additions and deletions, \texttt{rayterm-gpu} has a good start on its life.
 There are many, many more improvements possible, however.
-We detail some of them in the context of the larger \name\ implementation in Section~\ref{ch:conclusion:future}.
-The implementation repository for \texttt{rayterm-gpu} \cite{raytermGpuImpl} is also the same used for \name\ as a whole; thus, while we only describe \texttt{rayterm-gpu} in this section, our discussion here also applies to the final \name\ library.
-This section specifically covers the \texttt{raytrace} component of the final \name\ library; Section~\ref{ch:methods:interface} covers the \texttt{rayterm} component.
+We detail some of them in the context of the larger \name{} implementation in Section~\ref{ch:conclusion:future}.
+The implementation repository for \texttt{rayterm-gpu}~\cite{raytermGpuImpl} is also the same used for \name{} as a whole; thus, while we only describe \texttt{rayterm-gpu} in this section, our discussion here also applies to the final \name{} library.
+This section specifically covers the \texttt{raytrace} component of the final \name{} library; Section~\ref{ch:methods:interface} covers the \texttt{rayterm} component.
 Both of these are combined into a single \texttt{rayterm.so} library for use by other applications.
-An example application is also bundled in the implementation repository \cite{raytermGpuImpl}, as the \texttt{rtexplore} component.
+An example application is also bundled in the implementation repository~\cite{raytermGpuImpl}, as the \texttt{rtexplore} component.
 All of these are discussed in more detail in Section~\ref{ch:implementation:final}.
 
 \subsubsection{Libraries} \label{ch:methods:renderer:parallel:libraries}
 
-Utilizing the massively parallel computation power of a GPU can be difficult -- in fact, before CUDA's release in 2007, there was no well-defined way to do so programmatically.
-CUDA is an API and computing platform that enables massively parallel computations \cite{nvidia2011cuda}.
+Utilizing the massively parallel computation power of a GPU can be difficult\,---\,in fact, before CUDA's release in 2007, there was no well-defined way to do so programmatically.
+CUDA is an API and computing platform that enables massively parallel computations~\cite{nvidia2011cuda}.
 A special extension of C++, known as CUDA C/C++, can be compiled with \texttt{nvcc}, a custom LLVM-based C/C++ compiler.
 This extension enables library support for GPU accelerated multi-threading, physics, and linear algebra, along with many implementations of common data transformation algorithms.
-A significant limitation, especially for ray-tracing, is that performance can be significantly affected for inherently divergent tasks -- tasks which do not consistently follow the same control flow -- such as traversing an acceleration structure.
+A significant limitation, especially for ray-tracing, is that performance can be significantly affected for inherently divergent tasks\,---\,tasks which do not consistently follow the same control flow\,---\,such as traversing an acceleration structure.
 
-OptiX is an API interface developed for current generation NVIDIA GPUs that enables GPU accelerated ray-object intersection calculations in a programmable graphics pipeline \cite{parker2010optix, nvidia2019optixdoc}.
+OptiX is an API interface developed for current generation NVIDIA GPUs that enables GPU accelerated ray-object intersection calculations in a programmable graphics pipeline~\cite{parker2010optix, nvidia2019optixdoc}.
 It does this by building on top of the CUDA platform, adding abstract and algorithm implementations for common ray-tracing tasks.
 OptiX allows user-defined single-ray programs to be compiled into a single program, called a ``kernel,'' that runs on the GPU.
 These user programs are written in C++ and then transpiled to PTX, an instruction set for general purpose parallel programming.
@@ -328,12 +328,12 @@ Depending on the type of \texttt{Buffer}, data could be moved in one direction o
 
 \subsubsection{Programmability} \label{ch:methods:renderer:parallel:program}
 
-Both OptiX and \name\ itself support programmability in some form.
+Both OptiX and \name{} itself support programmability in some form.
 We will define programmability as the possibility of using user-specified code in some operational capacity at certain points in the program's execution.
 For example, it is possible in OptiX to define a CUDA function that will be executed to test if a ray intersects with an object; this enables part of the capability to render any intersectable object with OptiX.
-\name\ supports material programs that are passed on to OptiX to deal with material scatters; because of this it should one day be possible to use NVIDIA MDL materials \cite{nvidia2015mdl} in \name.
-We utilize programmability in OptiX in a fairly generic way, because much of the implementation burden for a specific application lies on the application author, and \name\ simply provides an interface.
-Before we describe \name's approach, let us consider Figure~\ref{fig:rayterm-gpu_optix_trace}.
+ \name{} supports material programs that are passed on to OptiX to deal with material scatters; because of this it should one day be possible to use NVIDIA MDL materials~\cite{nvidia2015mdl} in \name{}.
+We utilize programmability in OptiX in a fairly generic way, because much of the implementation burden for a specific application lies on the application author, and \name{} simply provides an interface.
+Before we describe \name{}'s approach, let us consider Figure~\ref{fig:rayterm-gpu_optix_trace}.
 
 \vspace{0.3em}
 \begin{figure}[htb]
@@ -343,32 +343,32 @@ Before we describe \name's approach, let us consider Figure~\ref{fig:rayterm-gpu
 \label{fig:rayterm-gpu_optix_trace}
 \end{figure}
 
-In \name, we only use part of Figure~\ref{fig:rayterm-gpu_optix_trace} -- the ``Traverse'' section is unused in {\it RTX} mode, because it enables custom intersections and acceleration structures.
-In \texttt{rayterm-gpu}, only triangle intersections are supported, and acceleration structure calculations are handed off to OptiX's ``Trbvh'' algorithm \cite{karras2013fast}.
+In \name{}, we only use part of Figure~\ref{fig:rayterm-gpu_optix_trace}\,---\,the ``Traverse'' section is unused in {\it RTX\/} mode, because it enables custom intersections and acceleration structures.
+In \texttt{rayterm-gpu}, only triangle intersections are supported, and acceleration structure calculations are handed off to OptiX's ``Trbvh'' algorithm~\cite{karras2013fast}.
 Triangle intersection and acceleration structure builds are highly optimized in OptiX, more so than any user library could achieve.
 In newer NVIDIA RTX GPUs these constraints also enable real hardware acceleration, as opposed to GPU accelerated computation.
 In Figure~\ref{fig:rayterm-gpu_optix_trace}, yellow boxes are user-defined programs.
-\name\ defines the Ray Generation Program as a pinhole camera model.
-The Exception Program is also defined, with switches to only enable debug prints and exception handling if \name\ is compiled in debug mode.
-Lastly, \name\ defines the Miss Program to shade the background of the scene a smooth sky gradient.
+ \name{} defines the Ray Generation Program as a pinhole camera model.
+The Exception Program is also defined, with switches to only enable debug prints and exception handling if \name{} is compiled in debug mode.
+Lastly, \name{} defines the Miss Program to shade the background of the scene a smooth sky gradient.
 The Closest Hit and Any Hit Programs, however, are completely user-defined.
 These programs control the scattering of rays when they encounter an object.
-How \name\ handles the passthrough configuration of these programs is detailed in the next section.
+How \name{} handles the passthrough configuration of these programs is detailed in the next section.
 
-\name\ supports loading triangle models (in the \texttt{OBJ} format), material definitions, and CUDA functions (transpiled to PTX) from arbitrary locations on disk.
+ \name{} supports loading triangle models (in the \texttt{OBJ} format), material definitions, and CUDA functions (transpiled to PTX) from arbitrary locations on disk.
 These locations are currently specified as compile-time defines \texttt{PROGRAM\_DIRECTORY} and \texttt{ASSET\_DIRECTORY}.
-When \name\ or a user application requests a CUDA function, material definition, or object model, these directories are used to search for and load the requested data, which is then inventoried and given an id that the user can reference it with.
+When \name{} or a user application requests a CUDA function, material definition, or object model, these directories are used to search for and load the requested data, which is then inventoried and given an id that the user can reference it with.
 This enables easy asset reuse and configurable definition.
 
 
 \subsubsection{Configurability} \label{ch:methods:renderer:parallel:config}
 
-At the time of writing, \name's test scene is hard-coded in the \texttt{raytrace} component.
+At the time of writing, \name{}'s test scene is hard-coded in the \texttt{raytrace} component.
 However, it is trivial to provide a loading mechanism so that user applications can specify the scene and any changes to it.
 Although the scene itself cannot currently be configured, a wide array of possibilities are available for material and object definitions.
 Objects are loaded from an \texttt{OBJ} model file, which should specify at minimum the vertices and vertex normals of the model.
-\name\ uses TinyObjLoader \cite{tinyobjloader} to load and triangulate \texttt{OBJ} files.
-Then, the basic attributes -- vertex positions, normals, shapes, etc. -- are stored in a \texttt{Mesh} object that is inventoried in the resource system.
+ \name{} uses TinyObjLoader~\cite{tinyobjloader} to load and triangulate \texttt{OBJ} files.
+Then, the basic attributes\,---\,vertex positions, normals, shapes, etc.\,---\,are stored in a \texttt{Mesh} object that is inventoried in the resource system.
 For materials, a similar process is implemented.
 First, a custom parser decodes the given material file, which should conform to the format specified below.
 Then, an OptiX \texttt{Material} is created and inventoried.
@@ -401,9 +401,9 @@ The \texttt{attrib} command sets the attribute program for the \texttt{GeometryT
 Finally, the \texttt{var} command specifies a variable to pass through to the GPU CUDA function; the format is \texttt{var:<type>,<name>,<value>}.
 The possible types are \texttt{int} to \texttt{int4}, and \texttt{float} to \texttt{float4}; the values are specified in a comma-separated list.
 In Figure~\ref{fig:rayterm-gpu_material_def}, a variable named \texttt{varAttenuation} is defined as $\vec{(0.15,\ 0.86,\ 0.21)}$.
-This variable is used in the \texttt{diffuse} PTX file as the color to attenuate the recursively traced ray by -- it is the color of the object this material is applied to.
+This variable is used in the \texttt{diffuse} PTX file as the color to attenuate the recursively traced ray by\,---\,it is the color of the object this material is applied to.
 Any number of commands are allowed, and any later commands will overwrite previous commands if they contain similar information, such as an attrib command.
-There is not currently a way to programmatically generate a \texttt{Mesh} or \texttt{Material}, however, these are possible future improvements to \name.
+There is not currently a way to programmatically generate a \texttt{Mesh} or \texttt{Material}, however, these are possible future improvements to \name{}.
 
 % TODO: explain scene description language here (after it is implemented)
 
@@ -411,10 +411,10 @@ There is not currently a way to programmatically generate a \texttt{Mesh} or \te
 
 OptiX is heavily utilized in \texttt{rayterm-gpu}.
 Much of the \texttt{raytrace} component deals with initializing and configuring the OptiX context correctly.
-The main class is \texttt{Renderer} -- it represents a render engine, and has state about the world and everything in it.
-\texttt{Renderer} is designed to be a singleton, although no code in \name\ assumes this; rather, each instance requires its own OptiX context.
+The main class is \texttt{Renderer}\,---\,it represents a render engine, and has state about the world and everything in it.
+\texttt{Renderer} is designed to be a singleton, although no code in \name{} assumes this; rather, each instance requires its own OptiX context.
 This could be a problem: according to the OptiX Programming Guide, ``multiple contexts can be active at one time in limited cases, but this is usually unnecessary.''
-In that quote, ``limited cases'' really mean that it is untested and not well supported, although technically possible \cite{nvidia2019optixdoc}.
+In that quote, ``limited cases'' really mean that it is untested and not well supported, although technically possible~\cite{nvidia2019optixdoc}.
 So depending on future OptiX changes, multi-renderer programs may or may not be a possibility.
 
 A \texttt{Renderer} has three main components that operate on the OptiX context associated with the instance.
@@ -428,10 +428,10 @@ There are other smaller supporting classes, such as \texttt{PixelBuffer}, which 
 The parallel renderer uses many of the same algorithms as \texttt{rayterm-cpu}, so the previous discussion of those still apply.
 There are a few new algorithms that are unique to \texttt{rayterm-gpu}, however.
 First, a modification of the pinhole camera model was made.
-This was inspired by the camera models available in the advanced OptiX samples \cite{optixsamples}, and simply rewrites the equations used before in terms of $\phi$ and $\theta$, as polar coordinates.
+This was inspired by the camera models available in the advanced OptiX samples~\cite{optixsamples}, and simply rewrites the equations used before in terms of $\phi$ and $\theta$, as polar coordinates.
 In this new \texttt{Camera}, $\phi$ represents the rotation about the vertical world axis, and $\theta$ the rotation about the horizontal axis.
 This enables easier viewing modification so that the look direction can be controlled with just two control axis.
-Second, the color output space is transformed into BT.709 \cite{ituBT709}; this ensures color accuracy and gamma correctness, as well as being the assumed color space for \texttt{ppm} files.
+Second, the color output space is transformed into BT.709~\cite{ituBT709}; this ensures color accuracy and gamma correctness, as well as being the assumed color space for \texttt{ppm} files.
 
 
 \begin{equation}
@@ -448,9 +448,9 @@ Formula~\ref{equation:bt709} shows the piecewise function definition for convers
 This is done for each color component to get the final color for each pixel.
 Additional algorithms also had to be developed as replacements for CPU-based algorithms in CUDA functions.
 For example, a \texttt{drand48} implementation is provided for CUDA functions to use, since the existing implementation is CPU-only.
-The implementation directly mirrors the UNIX specification for \texttt{drand48} \cite{drand48UNIX}.
+The implementation directly mirrors the UNIX specification for \texttt{drand48}~\cite{drand48UNIX}.
 Additionally, the sampling algorithms based off of \texttt{drand48} were replaced with analytical solutions, to prevent sample looping and provide better uniform distribution.
-The math behind the analytical solution is based on resources from ``Scratchapixel'' as well as an older paper by the same author as ``Raytracing in One Weekend'' \cite{prunier2017global, shirley1997map}.
+The math behind the analytical solution is based on resources from ``Scratchapixel'' as well as an older paper by the same author as ``Raytracing in One Weekend''~\cite{prunier2017global, shirley1997map}.
 We also use an OptiX provided sampler, \texttt{cosine\_sample\_hemisphere}, to generate the initial sample; the further analytical solution simply transforms that sample to the correct normal space.
 
 \begin{equation}
@@ -459,12 +459,12 @@ We also use an OptiX provided sampler, \texttt{cosine\_sample\_hemisphere}, to g
 \end{equation}
 
 Finally, we use an algorithm to calculate the interpolated shading normal.
-This is very loosely derived from the OptiX samples \cite{optixsamples}, and uses the OptiX default \texttt{GeometryTriangles} attribute program to calculate the barycentric coordinates of the intersection point.
+This is very loosely derived from the OptiX samples~\cite{optixsamples}, and uses the OptiX default \texttt{GeometryTriangles} attribute program to calculate the barycentric coordinates of the intersection point.
 Formula~\ref{equation:interpolated_normal} shows the calculation for obtaining the interpolated normal; this result is normalized and can then be used for reflection or refraction calculations.
 An interpolated value is extremely useful because it takes into account the normals of each individual vertex and attempts to ``smooth'' the shape approximated by the triangle, thus making shading more accurate despite the physical differences.
 In Formula~\ref{equation:interpolated_normal}, $N_{i}$ is the vertex normal of the $i$-th vertex in the triangle, and $B$ is the two dimensional barycentric coordinate of the intersection point.
 The calculated result, $N_{interpolated}$, is the smoothed normal.
-This smoothing can be disabled by using an \texttt{OBJ} model that has had its normals exported as ``flag'' -- this causes each triangle's vertices to have their normals all match the face normal, instead of having individual normals.
+This smoothing can be disabled by using an \texttt{OBJ} model that has had its normals exported as ``flag''\,---\,this causes each triangle's vertices to have their normals all match the face normal, instead of having individual normals.
 This is useful for flat faces since the interpolated normal is then simply the same as the face normal.
 Figure~\ref{fig:rayterm-gpu_smooth_normal_comparison} shows a comparison between smoothed normals and face normals (sometimes called ``geometric normals'').
 Larger versions of these images are available in Appendix~\ref{appendix:large_figures} as Figure~\ref{fig:rayterm-gpu_smooth_normal_comparison_large}
@@ -495,27 +495,27 @@ However, \texttt{rayterm-gpu} does meet its goal of increasing performance, so m
 Of course, this is still at a low resolution with only 64 spp; however, this is a vast improvement over the CPU research prototype, which would probably take upwards of an hour on the same scene.
 Much of this is due to the massively parallel architecture of OptiX and CUDA.
 
-Just as with \texttt{rayterm-cpu}, a \texttt{ppm} test image can be generated through a Google Test \cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository \cite{raytermCpuImpl}, or with \texttt{gradle test}.
+Just as with \texttt{rayterm-cpu}, a \texttt{ppm} test image can be generated through a Google Test~\cite{googletest} case, which can be run with the \texttt{test.sh} script in the implementation repository~\cite{raytermCpuImpl}, or with \texttt{gradle test}.
 This generates a \texttt{test\_image.ppm} file, examples of which we show from various stages of development in Section~\ref{ch:implementation:final:raytrace}.
-However, because \texttt{rayterm-gpu} integrates with the larger \name\ system, rendered images can also be seen with the \texttt{rtexplore} sample application, which we discuss in more detail in Section~\ref{ch:methods:interface:sample}.
+However, because \texttt{rayterm-gpu} integrates with the larger \name{} system, rendered images can also be seen with the \texttt{rtexplore} sample application, which we discuss in more detail in Section~\ref{ch:methods:interface:sample}.
 
 \section{Terminal Interface} \label{ch:methods:interface}
 
-The \name\ library depends on two main components: the render engine, and the terminal interface.
+The \name{} library depends on two main components: the render engine, and the terminal interface.
 This terminal interface uses the render engine to generate images for display in the terminal; it also converts those images from raw pixel colors to unicode characters.
 This interface is defined in the actual library, which we discuss in Section~\ref{ch:methods:interface:rayterm}, as well as the user application.
 We provide and discuss a sample user application in Section~\ref{ch:methods:interface:sample}.
 
 \subsection{RayTerm} \label{ch:methods:interface:rayterm}
 
-\name\ is distinct from \texttt{rayterm} -- \name\ is the entire system, and the name of the project, whereas \texttt{rayterm} is the name of the terminal interface component in the larger implementation.
+ \name{} is distinct from \texttt{rayterm}\,---\,\name{} is the entire system, and the name of the project, whereas \texttt{rayterm} is the name of the terminal interface component in the larger implementation.
 The interface depends on the \texttt{raytrace} component discussed in Section~\ref{ch:methods:renderer:parallel} to provide a render engine.
-Another dependency is \texttt{libtickit} \cite{libtickitLibrary}, a library that supports ANSI escape code detection and subsequent usage.
-Because of the relative obscurity of Tickit, we adapted the main codebase to our needs \cite{libtickitCustom}; some of these fixes and changes have made their way upstream.
+Another dependency is \texttt{libtickit}~\cite{libtickitLibrary}, a library that supports ANSI escape code detection and subsequent usage.
+Because of the relative obscurity of Tickit, we adapted the main codebase to our needs~\cite{libtickitCustom}; some of these fixes and changes have made their way upstream.
 
-Because of the \texttt{libtickit} usage, \name\ works best in a real XTerm terminal; color output should additionally be enabled by setting the \texttt{COLORTERM} environment variable to \texttt{truecolor}.
+Because of the \texttt{libtickit} usage, \name{} works best in a real XTerm terminal; color output should additionally be enabled by setting the \texttt{COLORTERM} environment variable to \texttt{truecolor}.
 These settings are only supported on relatively recent versions of XTerm.
-More information of direct color compatibility and the relevant ANSI escape codes can be found in Anton Kochkov's incredibly useful GitHub gist ``TrueColour: Colours in terminal'' \cite{kochkov2019colours}.
+More information of direct color compatibility and the relevant ANSI escape codes can be found in Anton Kochkov's incredibly useful GitHub gist ``TrueColour: Colours in terminal''~\cite{kochkov2019colours}.
 
 \subsubsection{Design} \label{ch:methods:interface:tickit:design}
 
@@ -525,7 +525,7 @@ with the \texttt{translate\_halfpixel} function handling translations, as we dis
 The \texttt{Terminal} class represents an actual terminal application, with the ability to render a frame, set the information string, resize the terminal, etc.
 The \texttt{rayterm} component is actually extremely simple, with just under three hundred lines of code.
 Much of the work is handed off to \texttt{libtickit}, which handles the actual character rendering.
-In user applications we suggest using \texttt{libtickit} for event loops and other input/output handling, as integrating a different utility may prove difficult given the dependencies of \name.
+In user applications we suggest using \texttt{libtickit} for event loops and other input/output handling, as integrating a different utility may prove difficult given the dependencies of \name{}.
 
 \subsubsection{Algorithms} \label{ch:methods:interface:tickit:algorithms}
 
@@ -541,7 +541,7 @@ Through trial and error, we've found that varying the font size through odd valu
 
 \subsubsection{Outcome} \label{ch:methods:interface:tickit:outcome}
 
-While developing the terminal interface was a long and iterative process, the result is a simple and straightforward interface available for use by consumers of the \name\ library.
+While developing the terminal interface was a long and iterative process, the result is a simple and straightforward interface available for use by consumers of the \name{} library.
 As with \texttt{rayterm-gpu}, due to time constraints \texttt{rayterm} has a sparse unit test suite; however, its simplicity and reliance on \texttt{libtickit} (which is extremely well tested) lowers the importance of such testing.
 For usage, user applications should at minimum simply allocate a new \texttt{Terminal} with the \texttt{new} keyword.
 Then, the Tickit \texttt{run} or \texttt{tick} routines should be called to handle re-exposure; otherwise, the terminal will not receive render updates.
@@ -551,11 +551,11 @@ With this extremely simple interface, complex applications can be designed.
 
 \subsection{RTExplore Sample} \label{ch:methods:interface:sample}
 
-Within the \name\ implementation repository \cite{raytermGpuImpl} we provide \texttt{rtexplore}, a simple terminal-based real-time ray-traced viewport into the test world of \texttt{raytrace}.
-This sample acts as both an integration test and proof of concept for other users of \name.
-When running this sample, or indeed any \name\ consumer application, five shared libraries must be linkable; these are listed below.
-Depending on how \texttt{libtickit} was compiled into \name, \texttt{libtickit.so} may also need to be available.
-A video demonstration of \texttt{rtexplore} is available as well \cite{raytermDemo}.
+Within the \name{} implementation repository~\cite{raytermGpuImpl} we provide \texttt{rtexplore}, a simple terminal-based real-time ray-traced viewport into the test world of \texttt{raytrace}.
+This sample acts as both an integration test and proof of concept for other users of \name{}.
+When running this sample, or indeed any \name{} consumer application, five shared libraries must be linkable; these are listed below.
+Depending on how \texttt{libtickit} was compiled into \name{}, \texttt{libtickit.so} may also need to be available.
+A video demonstration of \texttt{rtexplore} is available as well~\cite{raytermDemo}.
 
 \vspace{-0.5em}
 \begin{itemize}
@@ -577,6 +577,6 @@ The \texttt{rtexplore} sample uses a custom Tickit event loop to control input/o
 The key listener detects key presses in the terminal from the user, and modifies the \texttt{Camera} used for rendering by small amounts;
 The A, W, S, and D keys control camera position, while the arrow keys control orientation.
 The mouse listener is not used for input, but the caught events are still displayed in the info string, as are past key events.
-Thus, most major features of \name\ are utilized by \texttt{rtexplore}.
-Of course, this application has huge room for improvement, as does the rest of \name.
+Thus, most major features of \name{} are utilized by \texttt{rtexplore}.
+Of course, this application has huge room for improvement, as does the rest of \name{}.
 Some options for future work are provided in Section~\ref{ch:conclusion:future}.
