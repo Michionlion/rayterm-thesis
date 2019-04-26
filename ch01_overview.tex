@@ -37,7 +37,7 @@ All of these come together to make \name{} the perfect combination of feasible d
 
 \name{} is open-source\,---\,beyond the algorithms and aesthetic, this provides another identity for the project.
 Open-source is an easy way for many people to both contribute to and use software, and developing such enabling software is an exciting journey in and of itself.
-As another differientiator, \name{} fills a fairly small niche: computer graphics in a terminal emulator (see Section~\ref{ch:intro:overview:libtickit}).
+As another differentiator, \name{} fills a fairly small niche: computer graphics in a terminal emulator (see Section~\ref{ch:intro:overview:libtickit}).
 The only real application exploited in this niche is the rendering of images to the terminal\,---\,in fact, some of the initial inspiration for \name{} came from TerminalImageViewer~\cite{tivGithub}, a program to accomplish that very task.
 There are many more possibilities, however.
 There is no need to keep the terminal in a by-gone era, stuck with only colored characters and still graphics.
@@ -168,7 +168,7 @@ This allows each {\it character~pixel\/} to represent a hard gradient.
 
 There are two main image modes possible for use in \name{}.
 The first is {\it pixel~mode}, in which the Unicode ``half-block'' symbol (\texttt{U+2584}) is used; this is the current default and only implemented mode.
-Since monospaced character output (such as in a terminal) is normally twice as tall as it is wide, the half-block can split a single character into two square pixels that can be colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
+Since mono-spaced character output (such as in a terminal) is normally twice as tall as it is wide, the half-block can split a single character into two square pixels that can be colored differently: the upper pixel with the background color of the character, and the lower with the character or foreground color of the pixel.
 This means that a typical 85 by 30 character terminal results in a screen space of 85 by 60 pixels.
 This mode also dramatically reduces the number of ray-tracing computations needed, since only one ray per pixel per sample is required (although at least eight are suggested\,---\,more complicated modes would need many times more rays).
 
@@ -214,7 +214,7 @@ A vector is denoted with an arrow over its name: $\vec{v} = (-2, 3, 1)$ is a vec
 A specific value in a vector is referenced by either its zero-based index, $\vec{v}_{0}$ is the first value in $\vec{v}$ (note the arrow is above $v$ only, and not the index), or its dimension\,---\,$\vec{v}_x$ is the same value.
 The dimensions are by convention $x$, $y$, $z$, and $w$.
 In \name{} however, we generally work only with vectors where $n = 3$ (only in $x$, $y$, and $z$), and each vector represents either a direction or a position in three-dimensional space.
-Vectors are related to both multivariable calculus and linear algebra\,---\,an expansion on this basic explanation can be found in virtually any textbook on these topics.
+Vectors are related to both multi-variable calculus and linear algebra\,---\,an expansion on this basic explanation can be found in virtually any textbook on these topics.
 
 \subsubsection{Vector Operations}
 
@@ -260,7 +260,7 @@ The dot product of $\vec{u}$ and $\vec{v}$ is denoted as $\vec{u} \bullet \vec{v
 \subsubsection{Vector Equations}
 
 With the operations described above, we can write equations using vectors.
-This greatly simplifies the description of the mathematics in Section~\ref{ch:intro:background:raytracing_math}, since without vector mathematics every operation would need to be notated in cartesian coordinates.
+This greatly simplifies the description of the mathematics in Section~\ref{ch:intro:background:raytracing_math}, since without vector mathematics every operation would need to be notated in Cartesian coordinates.
 It should be noted that exponentiation for vectors is calculated on a component-wise basis\,---\,for example, $\vec{(1, 4, 2)}$ squared is $\vec{(1, 16, 4)}$.
 This is by convention in graphics programming since it provides an easy description of such an operation.
 This is not, however, always the case in other mathematical applications of vectors.
@@ -277,7 +277,7 @@ Note that this causes the order of operands to matter\,---\,a different order wi
   \vec{u} \bullet \vec{v} = |\vec{u}| \cdot |\vec{v}| \cdot \cos{\theta}
 }{Cosine Vector Dot Product}
 
-Second, {\it dotting\/} two vectors multiplies their lengths while keeping in mind their direction\,---\,two vectors perfectly parrallel to each other would have a dot product that was simply their lengths multiplied.
+Second, {\it dotting\/} two vectors multiplies their lengths while keeping in mind their direction\,---\,two vectors perfectly parallel to each other would have a dot product that was simply their lengths multiplied.
 However, two vectors perfectly perpendicular to each other have a dot product of zero.
 There is actually a second definition of the dot product (Formula~\ref{Cosine Vector Dot Product}) that can be a little easier to understand with this context.
 In this formula, $\theta$ is the angle between the two operands, and $|\vec{w}|$ is the length of $\vec{w}$.
@@ -410,7 +410,7 @@ First, the language has a huge ecosystem of low-level tools, with interfaces to 
 This ensures that no matter the need, there was most likely a library out there that could fill that need.
 Secondly, C++ allows low-level C-like programming while keeping abstractions such as objects available.
 Lastly, C++ is a reasonably fast language: with no virtual machine, unlike Java or Kotlin, garbage collection is not a burden.
-Decades of work have gone into compiler toolchains such as \texttt{g++} and \texttt{clang}, enabling optimizations that would likely not be possible for newer languages.
+Decades of work have gone into compiler tool-chains such as \texttt{g++} and \texttt{clang}, enabling optimizations that would likely not be possible for newer languages.
 
 Our implementation attempts to stay simple and straightforward, using classes and greater abstractions only as necessary.
 This ensures that overhead is minimal, as well as guaranteeing readability for open-source contributors.

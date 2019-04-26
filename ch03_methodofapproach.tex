@@ -93,7 +93,7 @@ The implementations behind these are covered in Section~\ref{ch:implementation:p
 \label{fig:rayterm-cpu_raymath_geometry}
 \end{figure}
 
-The main component in \texttt{rayterm-cpu} is \texttt{raytrace}; it handles world representation, materials, and raytracing.
+The main component in \texttt{rayterm-cpu} is \texttt{raytrace}; it handles world representation, materials, and ray-tracing.
 \texttt{rayterm-cpu} only renders in \texttt{ppm} mode, since the Tickit interface was only integrated in the \texttt{rayterm-gpu} implementation, since that was the final prototype.
 \texttt{raytrace} represents objects with a \texttt{WorldObject} class, a list of which is stored in a \texttt{World}.
 
@@ -138,7 +138,7 @@ The implementation behind all of these structures and functions are covered in S
 The sequential renderer implements single-branch Monte Carlo ray-tracing, a type of rendering that can produce physically accurate images with little development effort.
 The algorithm is largely based on randomness, only modifying the path of a single ray at a time as it bounces around the scene.
 When encountering objects, a particular Probability Distribution Function (PDF) is used to calculate where the ray will bounce.
-These PDFs vary based on the material and are hardcoded in the \texttt{Material} implementation.
+These PDFs vary based on the material and are hard-coded in the \texttt{Material} implementation.
 The result of this algorithm is extremely noisy because of this randomness (see Figure~\ref{fig:rayterm-cpu_ppm_noisy}), so many samples must be taken and then averaged to gain a true value for a single pixel; this simulates the many millions of photons that would have traveled to that pixel in a real camera.
 The number of samples per pixel, sometimes termed ``spp,'' is the number of rays generated from a random origin within the pixel; this is done for every pixel in the image.
 An example of various spp values is shown in Figure~\ref{fig:rayterm-cpu_ppm_noisy}.
@@ -184,13 +184,13 @@ This would reduce the noise at low spp values significantly better than simply i
 
 \noteworthy{
   N_{ops} = R \cdot S \cdot D \cdot N
-}{Raytracing Operations}
+}{Ray-tracing Operations}
 
 In discussing the complexity of this implementation, there are four main variables to keep in mind: first, the number of pixels to render, $R$; second, the number of samples per pixel, $S$; third, the maximum number of recursions per sample, $D$; and fourth, the number of intersectable objects in the scene, $N$.
 The number of pixels to render varies with the resolution of the desired image.
 The number of samples per pixel and the maximum number of recursions are both user-specified configurable values.
 The number of objects in the scene can vary wildly, but most test scenes in \texttt{rayterm-cpu} have less than $10$ objects.
-This gives us Formula~\ref{Raytracing Operations} to calculate the number of base ``ray tracing operations'' which we call $N_{ops}$.
+This gives us Formula~\ref{Ray-tracing Operations} to calculate the number of base ``ray tracing operations'' which we call $N_{ops}$.
 These operations consist of a single ray-tracing intersection operation, which involves testing a ray against a single parametric equation for intersection.
 As long as that operation can be considered constant, $O(R \cdot S \cdot D \cdot N)$ is the time complexity of the Monte Carlo algorithm used in \texttt{rayterm-cpu}.
 For spheres and disks, the only geometry supported, the intersection routine depends on both $sqrt()$ and $dot()$.
@@ -259,7 +259,7 @@ Now that the kind of ray has been chosen, the refraction or reflection direction
 There is an additional possibility that the specific ray we have cannot be refracted because of total internal reflection\,---\,in this case, we switch over to a reflection ray.
 The ray direction in the reflection case is calculated with Formula~\ref{Ray Reflection} as in previous materials.
 The ray direction in the refraction case is calculated with Formula~\ref{Ray Refraction}.
-In this formula, $\eta = \frac{n_{from}}{n_{to}}$ where $n_{from}$ is the index of refraction of the medium we are transfering from and $n_{to}$ is the corresponding index.
+In this formula, $\eta = \frac{n_{from}}{n_{to}}$ where $n_{from}$ is the index of refraction of the medium we are transferring from and $n_{to}$ is the corresponding index.
 Additionally, $I = (\vec{R_{in}} \bullet \vec{S_{normal}})$ where $\vec{R_{in}}$ is the incoming ray and $\vec{S_{normal}}$ is the surface normal.
 Finally, $\vec{R_{refract}}$ is the refracted ray.
 There is some additional handling in the implementation of this formula to ensure both ray directions (exiting and entering an object) are supported.
@@ -288,7 +288,7 @@ Although they may not carry over unmodified, they are the first iteration in a l
 \label{ch:methods:renderer:parallel}
 
 The parallel render engine, \texttt{rayterm-gpu}, uses a Graphics Processing Unit (GPU) to massively parallelize the raytracing algorithm.
-This improves performance dramatically because each eye-ray's children (the result of a collision between an object and a ray) are dependant on only their parent eye-ray.
+This improves performance dramatically because each eye-ray's children (the result of a collision between an object and a ray) are dependent on only their parent eye-ray.
 Thus, the computation of a single pixel's color is completely independent of every other pixel.
 
 A short introduction to NVIDIA GPUs may be useful here; they consist primarily of small units of computation circuitry called ``multiprocessors'' which themselves are controllers for several CUDA cores~\cite{fermi2009nvidia}, distributing workloads.
@@ -353,7 +353,7 @@ The Exception Program is also defined, with switches to only enable debug prints
 Lastly, \name{} defines the Miss Program to shade the background of the scene a smooth sky gradient.
 The Closest Hit and Any Hit Programs, however, are completely user-defined.
 These programs control the scattering of rays when they encounter an object.
-How \name{} handles the passthrough configuration of these programs is detailed in the next section.
+How \name{} handles the pass-through configuration of these programs is detailed in the next section.
 
 \name{} supports three asset types: triangle models in the \texttt{OBJ} file format, material definitions in a custom format, and CUDA functions transpiled to PTX, all from arbitrary locations on disk.
 These locations are currently specified as compile-time defines \texttt{PROGRAM\_DIRECTORY} and \texttt{ASSET\_DIRECTORY}.
@@ -379,7 +379,7 @@ This \texttt{GeometryInstance} can then be added to the scene graph and rendered
 \vspace{0.3em}
 \begin{figure}[htb]
 \centering
-\begin{mdframed}[style=MyFrame,nobreak=true,align=center,userdefinedwidth=30em]
+\begin{mdframed}[nobreak=true,align=center,userdefinedwidth=30em]
 \begin{verbatim}
 closest:diffuse,closest_hit,0
 any:diffuse,any_hit,0
@@ -505,7 +505,7 @@ However, because \texttt{rayterm-gpu} integrates with the larger \name{} system,
 \label{ch:methods:interface}
 
 The \name{} library depends on two main components: the render engine, and the terminal interface.
-This terminal interface uses the render engine to generate images for display in the terminal; it also converts those images from raw pixel colors to unicode characters.
+This terminal interface uses the render engine to generate images for display in the terminal; it also converts those images from raw pixel colors to Unicode characters.
 This interface is defined in the actual library, which we discuss in Section~\ref{ch:methods:interface:rayterm}, as well as the user application.
 We provide and discuss a sample user application in Section~\ref{ch:methods:interface:sample}.
 
@@ -538,10 +538,10 @@ In user applications we suggest using \texttt{libtickit} for event loops and oth
 There is only one real algorithm implemented in \texttt{rayterm}: the character translation algorithm.
 This algorithm converts a \texttt{PixelBuffer} from the \texttt{raytrace} component to a \texttt{UnicodeBuffer}.
 The algorithm, called \texttt{translate\_halfpixel}, has a straightforward implementation: it simply iterates over the pixels in the \texttt{PixelBuffer} two rows at a time, converting the values to \texttt{unicode\_cell} structs.
-This two-row iteration is necessary because each unicode character is actually two pixels; the foreground is the ``upper'' pixel, while the background represents the ``lower'' pixel.
+This two-row iteration is necessary because each Unicode character is actually two pixels; the foreground is the ``upper'' pixel, while the background represents the ``lower'' pixel.
 The \texttt{unicode\_cell} struct thus holds both a foreground and background color.
 
-This translation algorithm is used to translate each frame's \texttt{PixelBuffer} before rendering the screen; at the time of writing, since only \texttt{translate\_halfpixel} is supported, all characters drawn to the screen are the unicode upper half block character \texttt{U+2580} (see Figure~\ref{fig:unicode_block_characters} for similar example characters).
+This translation algorithm is used to translate each frame's \texttt{PixelBuffer} before rendering the screen; at the time of writing, since only \texttt{translate\_halfpixel} is supported, all characters drawn to the screen are the Unicode upper half block character \texttt{U+2580} (see Figure~\ref{fig:unicode_block_characters} for similar example characters).
 This causes the foreground color of a \texttt{unicode\_cell} to apply to the character portion of the character cell, and the background color to apply to the empty portion of that same cell.
 Through trial and error, we've found that varying the font size through odd values gives the best pixel-like results; even pt sizes can sometimes cause gaps which confuse the viewer.
 

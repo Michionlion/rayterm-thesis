@@ -9,7 +9,7 @@
 
 In this chapter, we will discuss a few related research papers, detail how they informed \name{}'s development, and show the improvements of \name{} over other systems.
 First, we will conduct a high-level discussion of the first ray-tracing paper through to basic details on modern-day optimizations.
-Following that, we will discuss two Github projects, one of which was a major inspiration for Unicode image composition and the algorithms involved (see Section~\ref{ch:intro:overview:unicode}).
+Following that, we will discuss two GitHub projects, one of which was a major inspiration for Unicode image composition and the algorithms involved (see Section~\ref{ch:intro:overview:unicode}).
 
 \section{Discovery of Ray-Tracing}
 \label{ch:relatedwork:discovery}
@@ -83,7 +83,7 @@ Since for practical purposes we can't infinitely recurse, we will eventually hit
 In this case, the incoming light is simply set to the ambient light level and no additional recursive calculations take place.
 This takes care of all reflection, refraction, and light travel; notice, however, that we must solve the integral over an entire sphere of directions, and we must do this for every single point we sample, for every single direction we sample from.
 This is {\it horrendously\/} inefficient.
-The significant part of this equation is the integral\,---\,since \name{} approximates it, albeit rudimentarily, \name{} approximates photorealism.
+The significant part of this equation is the integral\,---\,since \name{} approximates it, \name{} approximates photorealism.
 
 \subsection{Accelerated Intersections}
 \label{ch:relatedwork:discovery:acceleration}
@@ -122,7 +122,7 @@ Instead of a \$50 million monstrosity, relatively small GPU chips capable of the
 \subsection{Terminal Images}
 \label{ch:relatedwork:applications:tiv}
 
-A small program available on Github was the original inspiration for some details of \name{}.
+A small program available on GitHub was the original inspiration for some details of \name{}.
 Called TerminalImageViewer (\texttt{tiv})~\cite{tivGithub}, it uses RGB ANSI escape codes and Unicode block characters to display images in a terminal window.
  \name{} uses many of the same ideas to produce its own animated output.
 The algorithm behind \texttt{tiv} is also a direct inspiration for the algorithm used for ray-to-character translation.

@@ -29,7 +29,7 @@ The below sections chronicle the implementation journey, with various figures at
 
 The \texttt{raymath} component was really straightforward to implement, and there are no significant challenges.
 This was also an introduction to the Eigen library~\cite{eigenweb} and C++ in general.
-One big decision made in \texttt{raymath} was to \texttt{typedef} certain Eigen template types to ensure that the rest of \texttt{rayterm-cpu} code used only types such as \texttt{vector} or \texttt{ray}, instead of the more complicated Eigen equivelents \texttt{Eigen::Matrix<scalar, 3, 1>} and \texttt{Eigen::ParametrizedLine<scalar, 3>}.
+One big decision made in \texttt{raymath} was to \texttt{typedef} certain Eigen template types to ensure that the rest of \texttt{rayterm-cpu} code used only types such as \texttt{vector} or \texttt{ray}, instead of the more complicated Eigen equivalents \texttt{Eigen::Matrix<scalar, 3, 1>} and \texttt{Eigen::ParametrizedLine<scalar, 3>}.
 A \texttt{scalar} type was also defined, in theory for the purpose of changing from \texttt{double} to \texttt{float} calculations if desired.
 However there are some dependencies in \texttt{raytrace} on \texttt{double} calculations, so changing that now is likely to introduce problems.
 
@@ -229,7 +229,7 @@ This was a fascinating bug to tackle, and resulted in a lot of learning experien
 We additionally did the first comparison test between a Blender~\cite{blender} scene and our own.
 This test showed that once the solution was implemented, our metallic material is very similar to Blender's.
 We also learned from this comparison that the dielectric material is not quite physically accurate\,---\,notice that there is a darker edge around the glass ball in the Blender reference image, which is much smaller in the \texttt{rayterm-cpu} generated image.
-This could be caused by offsets in Blender's ray-tracing or inaccuracies in the refraction mathematics, however, it is probably the Schlick approximation~\cite{schlick1994inexpensive} that is to blame.
+This could be caused by offsets in Blender's ray-tracing or inaccuracies in the refraction mathematics, however, it is probably Schlick's approximation~\cite{schlick1994inexpensive} that is to blame, or another probability-related formula.
 
 \vspace{0.3em}
 \begin{figure}[htb]
