@@ -16,20 +16,29 @@ However, the main body of work for \name{} is located in two GitHub repsitories,
 \chapter{Larger Figures}\label{appendix:large_figures}
 This appendix shows larger images for some figures.
 
-\vspace{0.3em}
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=\textwidth]{impl-images/hq_complete_1024spp_455s}
-  \caption{Final CPU scene render}
-\label{fig:rayterm-cpu_final_render_large}
+  \includegraphics[width=\textwidth]{impl-images/rtexplore/hq_terminal_output}
+  \caption{Example of terminal output}
+\label{fig:terminal_output_large}
 \end{figure}
+
 
 \vspace{0.3em}
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=\textwidth]{impl-images/gpu/hq_complete_1024spp_23s}
-  \caption{Final GPU scene render}
+  \begin{subfigure}[htb]{\textwidth}
+  \includegraphics[width=\textwidth]{impl-images/hq_complete_1024spp_455s}
+  \caption{Final CPU render}
+\label{fig:rayterm-cpu_final_render_large}
+  \end{subfigure}
+  \begin{subfigure}[htb]{\textwidth}
+      \includegraphics[width=\textwidth]{impl-images/gpu/hq_complete_1024spp_23s}
+      \caption{Final GPU render}
 \label{fig:rayterm-gpu_final_render_large}
+  \end{subfigure}
+  \caption{CPU and GPU final scene renders}
+\label{fig:rayterm_final_ppm_outputs_large}
 \end{figure}
 
 \vspace{0.3em}
